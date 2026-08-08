@@ -50,8 +50,6 @@ export const Achievements = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6">
         {achievements.map((achievement, index) => {
-          const Icon = achievement.icon;
-
           return (
             <motion.div
               key={index}

@@ -17,26 +17,26 @@ const TextPressure = ({
   className = '',
   minFontSize = 24
 }) => {
-  const containerRef = useRef(null);
-  const titleRef = useRef(null);
-  const spansRef = useRef([]);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const spansRef = useRef<(HTMLSpanElement | null)[]>([]);
   const mouseRef = useRef({ x: 0, y: 0 });
   const cursorRef = useRef({ x: 0, y: 0 });
   const [fontSize, setFontSize] = useState(minFontSize);
   const [scaleY, setScaleY] = useState(1);
   const [lineHeight, setLineHeight] = useState(1);
   const chars = text.split('');
-  const dist = (a, b) => {
+  const dist = (a: { x: number; y: number }, b: { x: number; y: number }) => {
     const dx = b.x - a.x;
     const dy = b.y - a.y;
     return Math.sqrt(dx * dx + dy * dy);
   };
   useEffect(() => {
-    const handleMouseMove = e => {
+    const handleMouseMove = (e: MouseEvent) => {
       cursorRef.current.x = e.clientX;
       cursorRef.current.y = e.clientY;
     };
-    const handleTouchMove = e => {
+    const handleTouchMove = (e: TouchEvent) => {
       const t = e.touches[0];
       cursorRef.current.x = t.clientX;
       cursorRef.current.y = t.clientY;
@@ -79,7 +79,7 @@ const TextPressure = ({
     return () => window.removeEventListener('resize', setSize);
   }, [scale, text]);
   useEffect(() => {
-    let rafId;
+    let rafId = 0;
     const animate = () => {
       mouseRef.current.x += (cursorRef.current.x - mouseRef.current.x) / 15;
       mouseRef.current.y += (cursorRef.current.y - mouseRef.current.y) / 15;
@@ -94,7 +94,7 @@ const TextPressure = ({
             y: rect.y + rect.height / 2
           };
           const d = dist(mouseRef.current, charCenter);
-          const getAttr = (distance, minVal, maxVal) => {
+          const getAttr = (distance: number, minVal: number, maxVal: number) => {
             const val = maxVal - Math.abs((maxVal * distance) / maxDist);
             return Math.max(minVal, val + minVal);
           };
@@ -102,7 +102,7 @@ const TextPressure = ({
           const wght = weight ? Math.floor(getAttr(d, 100, 900)) : 400;
           const italVal = italic ? getAttr(d, 0, 1).toFixed(2) : 0;
           const alphaVal = alpha ? getAttr(d, 0, 1).toFixed(2) : 1;
-          span.style.opacity = alphaVal;
+          span.style.opacity = String(alphaVal);
           span.style.fontVariationSettings = `'wght' ${wght}, 'wdth' ${wdth}, 'ital' ${italVal}`;
         });
       }

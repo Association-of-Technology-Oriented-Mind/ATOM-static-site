@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Event } from '@/constants/events';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getEventById, getEvents } from '@/utils/dataService';
+import { getEvents } from '@/utils/dataService';
 import { generateSlug } from '@/utils/slug';
 import ClockCountdown from '@/components/ui/ClockCountdown';
 import ReactMarkdown from 'react-markdown';
@@ -67,7 +67,7 @@ const EventDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
   const [event, setEvent] = useState<Event | null>(null);
-  const [timeLeft, setTimeLeft] = useState<TimeLeft>({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [, setTimeLeft] = useState<TimeLeft>({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [isExpired, setIsExpired] = useState(false);
   const [showRegistrationOptions, setShowRegistrationOptions] = useState(false);
 

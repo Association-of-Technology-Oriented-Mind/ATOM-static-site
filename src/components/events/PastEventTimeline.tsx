@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Users, Star, ChevronDown, ChevronUp, Clock, Award } from 'lucide-react';
+import { Calendar, MapPin, Users, Star, ChevronDown, ChevronUp, Clock } from 'lucide-react';
 
 interface Event {
   id: number;
@@ -28,7 +28,7 @@ interface PastEventTimelineProps {
 
 const PastEventTimeline: React.FC<PastEventTimelineProps> = ({ events, onEventClick }) => {
   const [expandedEvents, setExpandedEvents] = useState<Set<number>>(new Set());
-  const [groupBy, setGroupBy] = useState<'year' | 'month'>('year');
+  const groupBy: 'year' | 'month' = 'year';
 
   const toggleExpand = (eventId: number) => {
     const newExpanded = new Set(expandedEvents);
@@ -97,15 +97,6 @@ const PastEventTimeline: React.FC<PastEventTimelineProps> = ({ events, onEventCl
     }
   });
 
-  const getEventStats = () => {
-    const totalParticipants = events.reduce((sum, event) => sum + (event.participants || 0), 0);
-    const avgRating = events.reduce((sum, event) => sum + (event.rating || 0), 0) / events.length;
-    const categories = new Set(events.map(event => event.category)).size;
-    
-    return { totalParticipants, avgRating: avgRating.toFixed(1), categories };
-  };
-
-  const stats = getEventStats();
 
   if (events.length === 0) {
     return (

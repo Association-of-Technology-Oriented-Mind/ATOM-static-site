@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Edit, Trash2, ArrowLeft, Users, UserCheck } from 'lucide-react';
+import { Plus, Edit, Trash2, ArrowLeft, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { coordinators as defaultCoordinators } from '@/constants/coordinators';

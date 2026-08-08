@@ -10,7 +10,6 @@ import {
   Image as ImageIcon,
   CheckCircle,
   AlertCircle,
-  FileImage,
   Trash2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';

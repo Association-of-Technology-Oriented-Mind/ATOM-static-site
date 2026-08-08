@@ -9,13 +9,13 @@ export const Hero = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
   const [clickCount, setClickCount] = useState(0);
-  const logoRef = useRef(null);
+  const logoRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setIsVisible(true);
   }, []);
 
-  const handleMouseMove = (e) => {
+  const handleMouseMove = (e: React.MouseEvent) => {
     if (logoRef.current) {
       const rect = logoRef.current.getBoundingClientRect();
       const centerX = rect.left + rect.width / 2;

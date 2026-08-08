@@ -1,5 +1,5 @@
 import { motion, useInView } from 'framer-motion';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { Calendar, MapPin, Clock, ArrowRight, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";

@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
-import { Calendar, Home, Image, Users } from 'lucide-react';
+import { Calendar, Home, Image } from 'lucide-react';
 
 const Navigation: React.FC = () => {
   const location = useLocation();

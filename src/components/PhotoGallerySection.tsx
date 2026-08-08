@@ -4,11 +4,18 @@ import { useNavigate } from "react-router-dom";
 
 import { galleryImages as allImages } from "@/constants/gallery";
 
+interface GalleryPhoto {
+  src: string;
+  aspectRatio: number;
+  width: number;
+  height: number;
+}
+
 const previewCount = 6; // 3×2 grid layout
 
 const PhotoGallerySection = () => {
   const navigate = useNavigate();
-  const [previewPhotos, setPreviewPhotos] = React.useState([]);
+  const [previewPhotos, setPreviewPhotos] = React.useState<GalleryPhoto[]>([]);
 
   const handleNavigateToGallery = () => {
     navigate("/full-gallery");
@@ -38,7 +45,7 @@ const PhotoGallerySection = () => {
       )
     ).then((results) => {
       if (isMounted) {
-        const validPhotos = results.filter(Boolean).slice(0, previewCount);
+        const validPhotos = (results.filter(Boolean) as GalleryPhoto[]).slice(0, previewCount);
         setPreviewPhotos(validPhotos);
       }
     });

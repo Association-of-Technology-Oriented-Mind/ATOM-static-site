@@ -11,8 +11,7 @@ import {
   Image,
   BarChart3,
   Menu,
-  X,
-  Atom
+  X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ThreeDIconPresets } from '@/components/ThreeDIcons';

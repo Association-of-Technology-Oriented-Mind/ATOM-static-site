@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -18,11 +18,11 @@ const Login: React.FC = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
   const [clickCount, setClickCount] = useState(0);
-  const logoRef = useRef(null);
+  const logoRef = useRef<HTMLDivElement>(null);
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleMouseMove = (e) => {
+  const handleMouseMove = (e: React.MouseEvent) => {
     if (logoRef.current) {
       const rect = logoRef.current.getBoundingClientRect();
       const centerX = rect.left + rect.width / 2;

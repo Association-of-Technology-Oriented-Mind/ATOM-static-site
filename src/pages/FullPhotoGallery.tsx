@@ -394,7 +394,7 @@ const FullPhotoGallery = () => {
     height: 400 + Math.random() * 200 // Random height for masonry effect
   }));
 
-  const handleImageClick = (item: Item, index: number) => {
+  const handleImageClick = (_item: Item, index: number) => {
     setSelectedImageIndex(index);
     setIsModalOpen(true);
   };

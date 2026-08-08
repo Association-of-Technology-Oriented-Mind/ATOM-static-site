@@ -1,5 +1,5 @@
-import { motion, useInView, useAnimation, AnimatePresence } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
+import { motion, useInView, AnimatePresence } from "framer-motion";
+import { useRef, useState } from "react";
 import { Send, AlertCircle, User, Phone, Mail, MessageSquare } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import emailjs from '@emailjs/browser';

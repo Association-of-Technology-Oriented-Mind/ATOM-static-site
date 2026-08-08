@@ -12,7 +12,6 @@ import Hack5 from "@/assets/HACKHIVE/Hack5.webp";
 import Hack6 from "@/assets/HACKHIVE/Hack6.webp";
 import Hack7 from "@/assets/HACKHIVE/Hack7.webp";
 import HackIcon from "@/assets/HACKHIVE/Hack.ico";
-import Pooja from "@/assets/UNBIAS/Pooja.webp";
 
 export { HackIcon };
 
