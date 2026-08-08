@@ -28,14 +28,12 @@ const EventsSection = () => {
   };
 
   const handleShowMore = () => {
-    console.log('EventsSection: handleShowMore called - navigating to /events');
     navigate('/events');
     // Scroll to top after navigation
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleEventClick = (eventId: number) => {
-    console.log('EventsSection: handleEventClick called for event', eventId, '- navigating to /events?event=' + eventId);
     navigate(`/events?event=${eventId}`);
   };
 
@@ -79,7 +77,6 @@ const EventsSection = () => {
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    console.log('Event card clicked:', event.id, event.title);
                     handleEventClick(event.id);
                   }}
                 >
@@ -152,7 +149,6 @@ const EventsSection = () => {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('Show All Events button clicked');
                 handleShowMore();
               }}
               className="bg-gradient-to-r from-atom-primary to-atom-accent hover:from-atom-primary/90 hover:to-atom-accent/90 text-white px-8 py-3 rounded-xl font-semibold text-lg transition-all duration-300 hover:scale-105 shadow-lg"
@@ -225,7 +221,6 @@ const EventsSection = () => {
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  console.log('View All Events button clicked');
                   handleShowMore();
                 }}
                 className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-3 rounded-xl font-semibold text-lg transition-all duration-300 hover:scale-105 shadow-lg"

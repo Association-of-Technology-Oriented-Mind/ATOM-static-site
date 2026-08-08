@@ -14,24 +14,9 @@ const Event: React.FC = () => {
   const navigate = useNavigate();
   const [events, setEvents] = React.useState<Event[]>([]);
 
-  // Load events on mount and clear cache to get fresh data
   useEffect(() => {
-    // Scroll to top when component mounts
     window.scrollTo({ top: 0, behavior: 'instant' });
-    
-    // Force clear cached events to get updated data from constants
-    localStorage.removeItem('cms_events');
-    console.log('Cleared cached events data');
-    
-    // Load all events (both upcoming and past)
-    const allEvents = getEvents();
-    
-    setEvents(allEvents);
-    
-    console.log('All Events:', allEvents);
-    allEvents.forEach(event => {
-      console.log(`Event: ${event.title}, Image: ${event.image}`);
-    });
+    setEvents(getEvents());
   }, []);
 
 

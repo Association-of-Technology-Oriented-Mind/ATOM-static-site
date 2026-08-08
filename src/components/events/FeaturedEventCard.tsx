@@ -45,7 +45,6 @@ const FeaturedEventCard: React.FC<FeaturedEventCardProps> = ({ event, onClick })
 
   const calculateTimeRemaining = () => {
     try {
-      console.log('Event data:', { date: event.date, time: event.time });
       
       // Parse the date parts
       const dateParts = event.date.split('-');
@@ -53,7 +52,6 @@ const FeaturedEventCard: React.FC<FeaturedEventCardProps> = ({ event, onClick })
       const month = parseInt(dateParts[1]) - 1; // Month is 0-indexed in JavaScript
       const day = parseInt(dateParts[2]);
       
-      console.log('Date parts:', { year, month, day });
       
       // Parse the time
       let hours = 0;
@@ -61,7 +59,6 @@ const FeaturedEventCard: React.FC<FeaturedEventCardProps> = ({ event, onClick })
       
       if (event.time) {
         const timeStr = event.time.trim();
-        console.log('Time string:', timeStr);
         
         // Handle 12-hour format (e.g., "09:30 AM")
         if (timeStr.includes('AM') || timeStr.includes('PM')) {
@@ -71,7 +68,6 @@ const FeaturedEventCard: React.FC<FeaturedEventCardProps> = ({ event, onClick })
             minutes = parseInt(timeMatch[2]);
             const ampm = timeMatch[3].toUpperCase();
             
-            console.log('Parsed time:', { hours, minutes, ampm });
             
             // Convert to 24-hour format
             if (ampm === 'PM' && hours !== 12) {
@@ -88,14 +84,11 @@ const FeaturedEventCard: React.FC<FeaturedEventCardProps> = ({ event, onClick })
         }
       }
       
-      console.log('Final time values:', { hours, minutes });
       
       // Create the event date using individual components
       const eventDateTime = new Date(year, month, day, hours, minutes, 0, 0);
       const now = new Date();
       
-      console.log('Event DateTime:', eventDateTime);
-      console.log('Current Time:', now);
       
       // Check if date is valid
       if (isNaN(eventDateTime.getTime())) {
@@ -104,7 +97,6 @@ const FeaturedEventCard: React.FC<FeaturedEventCardProps> = ({ event, onClick })
       }
       
       const difference = eventDateTime.getTime() - now.getTime();
-      console.log('Time difference (ms):', difference);
 
       if (difference > 0) {
         const days = Math.floor(difference / (1000 * 60 * 60 * 24));
@@ -112,11 +104,9 @@ const FeaturedEventCard: React.FC<FeaturedEventCardProps> = ({ event, onClick })
         const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
-        console.log('Calculated countdown:', { days, hours, minutes, seconds });
         return { days, hours, minutes, seconds };
       }
       
-      console.log('Event has passed');
       return null;
     } catch (error) {
       console.error('Date parsing error:', error);

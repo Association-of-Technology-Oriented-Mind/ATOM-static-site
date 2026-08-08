@@ -10,7 +10,6 @@ import NotFound from "./pages/NotFound";
 import FullPhotoGallery from "./pages/FullPhotoGallery";
 import Event from "./pages/Event";
 import EventDetailPage from "./pages/EventDetailPage";
-import EventModalDemo from "./components/events/EventModalDemo";
 import InternalRegistrationForm from "./pages/InternalRegistrationForm";
 import ExternalRegistrationForm from "./pages/ExternalRegistrationForm";
 import Login from "./pages/Login";
@@ -29,7 +28,6 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/events" element={<Event />} />
             <Route path="/events/:slug" element={<EventDetailPage />} />
-            <Route path="/modal-demo" element={<EventModalDemo />} />
             <Route path="/full-gallery" element={<FullPhotoGallery />} />
             <Route path="/registration/internal" element={<InternalRegistrationForm />} />
             <Route path="/registration/external" element={<ExternalRegistrationForm />} />

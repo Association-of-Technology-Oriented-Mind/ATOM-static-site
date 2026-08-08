@@ -70,7 +70,6 @@ const EventCard: React.FC<EventCardProps> = ({ event, onClick }) => {
                 e.currentTarget.src = '/placeholder.svg';
               }}
               onLoad={() => {
-                console.log(`Successfully loaded image: ${event.image} for event: ${event.title}`);
               }}
             />
 

@@ -1,17 +1,14 @@
-// EmailJS Configuration
-// You need to set up an EmailJS account and replace these values
-
+// EmailJS configuration for the contact form.
+// Values come from .env (see .env.example). VITE_* vars are embedded in the
+// client bundle — EmailJS public keys are designed to be client-side.
+//
+// Template variables: {{from_name}} {{from_email}} {{from_mobile}}
+//                     {{to_email}} {{message}} {{reply_to}}
 export const EMAILJS_CONFIG = {
-  // Get these from your EmailJS dashboard: https://www.emailjs.com/
-  SERVICE_ID: 'YOUR_SERVICE_ID', // e.g., 'service_abc123'
-  TEMPLATE_ID: 'YOUR_TEMPLATE_ID', // e.g., 'template_xyz789'
-  PUBLIC_KEY: 'YOUR_PUBLIC_KEY', // e.g., 'user_abcdef123456'
-};
+  SERVICE_ID: import.meta.env.VITE_EMAILJS_SERVICE_ID ?? '',
+  TEMPLATE_ID: import.meta.env.VITE_EMAILJS_TEMPLATE_ID ?? '',
+  PUBLIC_KEY: import.meta.env.VITE_EMAILJS_PUBLIC_KEY ?? '',
+} as const;
 
-// Email template variables for reference:
-// {{from_name}} - Sender's name
-// {{from_email}} - Sender's email
-// {{from_mobile}} - Sender's mobile
-// {{to_email}} - Recipient email (atom@karunya.edu)
-// {{message}} - The formatted message
-// {{reply_to}} - Reply-to email address
+export const isEmailJsConfigured = (): boolean =>
+  Boolean(EMAILJS_CONFIG.SERVICE_ID && EMAILJS_CONFIG.TEMPLATE_ID && EMAILJS_CONFIG.PUBLIC_KEY);

@@ -34,7 +34,9 @@ export default defineConfig(({ mode }) => ({
     minify: 'terser',
     terserOptions: {
       compress: {
-        drop_console: true, // Remove console.log in production
+        // Strip debug logging but keep console.error/warn, so production
+        // failures (registration, uploads, auth) stay diagnosable.
+        pure_funcs: ['console.log', 'console.info', 'console.debug'],
         drop_debugger: true,
       },
     },

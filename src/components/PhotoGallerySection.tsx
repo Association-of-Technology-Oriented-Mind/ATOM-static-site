@@ -11,22 +11,18 @@ const PhotoGallerySection = () => {
   const [previewPhotos, setPreviewPhotos] = React.useState([]);
 
   const handleNavigateToGallery = () => {
-    console.log('PhotoGallerySection: Navigating to /full-gallery');
     navigate("/full-gallery");
   };
 
   React.useEffect(() => {
     let isMounted = true;
-    console.log('PhotoGallerySection: Starting to load images...');
     Promise.all(
       allImages.map(
         (src, idx) =>
           new Promise((resolve) => {
             const img = new window.Image();
             img.src = String(src);
-            console.log(`PhotoGallerySection: Loading image ${idx + 1}/${allImages.length}:`, src);
             img.onload = () => {
-              console.log(`PhotoGallerySection: ✓ Image ${idx + 1} loaded successfully`);
               resolve({ 
                 src, 
                 aspectRatio: img.naturalWidth / img.naturalHeight,
@@ -43,8 +39,6 @@ const PhotoGallerySection = () => {
     ).then((results) => {
       if (isMounted) {
         const validPhotos = results.filter(Boolean).slice(0, previewCount);
-        console.log('PhotoGallerySection: Valid photos loaded:', validPhotos.length);
-        console.log('PhotoGallerySection: Photos data:', validPhotos);
         setPreviewPhotos(validPhotos);
       }
     });
