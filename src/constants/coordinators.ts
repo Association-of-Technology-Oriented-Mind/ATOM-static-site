@@ -1,3 +1,6 @@
+import deepakumar from '@/assets/Deepakumar.webp';
+import thirupathi from '@/assets/Thirupathi S.webp';
+
 // Core team for the current academic year.
 //
 // Positions are fixed and paired: each portfolio has a lead and a joint holder.
@@ -51,9 +54,21 @@ const seat = (
 });
 
 export const coordinators: Coordinator[] = [
-  seat(1, 'Secretary', 'Secretariat', true),
+  {
+    ...seat(1, 'Secretary', 'Secretariat', true),
+    name: 'Deepakumar S',
+    image: deepakumar,
+    bio: 'Skilled in offensive security. Awarded Best Idea at the TN Police Hackathon and secured a summer internship offer through Cyberthon 2025.',
+    linkedin: 'linkedin.com/in/deepakumar-s',
+  },
   seat(2, 'Joint Secretary', 'Secretariat', false),
-  seat(3, 'Treasurer', 'Treasury', true),
+  {
+    ...seat(3, 'Treasurer', 'Treasury', true),
+    name: 'Thirupathi S',
+    image: thirupathi,
+    bio: 'Focused on building practical tools and keeping the club’s accounts straight. Active across ATOM’s technical events.',
+    linkedin: 'linkedin.com/in/thirupathi-s',
+  },
   seat(4, 'Joint Treasurer', 'Treasury', false),
   seat(5, 'Technical Event Coordinator', 'Technical Events', true),
   seat(6, 'Joint Technical Event Coordinator', 'Technical Events', false),

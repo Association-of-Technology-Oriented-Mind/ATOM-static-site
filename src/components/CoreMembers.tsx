@@ -138,7 +138,7 @@ const MemberColumn = ({
             src={member.image}
             alt=""
             loading="lazy"
-            className="block max-h-[46vh] w-auto object-contain object-bottom grayscale"
+            className="block max-h-[46vh] w-auto object-contain object-bottom"
           />
         ) : (
           <span
