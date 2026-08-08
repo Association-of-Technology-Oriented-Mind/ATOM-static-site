@@ -124,7 +124,7 @@ from the code and have caused real bugs before.
 
 ## Support
 
-- **Issues:** https://github.com/dot-Dev-Club/Atom_Standalone/issues
+- **Issues:** https://github.com/Association-of-Technology-Oriented-Mind/ATOM/issues
 - **Email:** atom@karunya.edu
 
 ## License
