@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { gsap } from 'gsap';
-import { galleryImages } from '@/constants/gallery';
+import { useGalleryImages } from '@/hooks/useContent';
 
 const useMedia = (queries: string[], values: number[], defaultValue: number): number => {
   const get = () => values[queries.findIndex(q => matchMedia(q).matches)] ?? defaultValue;
@@ -379,20 +379,24 @@ const ImageModal: React.FC<ImageModalProps> = ({
   );
 };
 
-const images = galleryImages;
-
 const FullPhotoGallery = () => {
   const navigate = useNavigate();
+  const { data: images = [] } = useGalleryImages();
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Convert image URLs to Item format for Masonry
-  const galleryItems: Item[] = images.map((src, index) => ({
-    id: `photo-${index}`,
-    img: String(src),
-    url: String(src), // Open image in new tab when clicked
-    height: 400 + Math.random() * 200 // Random height for masonry effect
-  }));
+  // Memoised because the masonry heights are randomised: recomputing them on
+  // every render would reshuffle the layout mid-scroll.
+  const galleryItems: Item[] = useMemo(
+    () =>
+      images.map((src, index) => ({
+        id: `photo-${index}`,
+        img: String(src),
+        url: String(src), // Open image in new tab when clicked
+        height: 400 + Math.random() * 200 // Random height for masonry effect
+      })),
+    [images],
+  );
 
   const handleImageClick = (_item: Item, index: number) => {
     setSelectedImageIndex(index);

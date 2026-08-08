@@ -60,13 +60,21 @@ export const getCoordinators = () =>
 export const getClubs = () =>
   fetchCollection<(typeof defaultClubs)[number]>(COLLECTIONS.clubs, defaultClubs);
 
+/**
+ * Bundled photos plus anything uploaded through the CMS.
+ *
+ * The 133 bundled images are build-time imports served from the Hosting CDN,
+ * so they stay in the list rather than being replaced by Firestore — otherwise
+ * a single CMS upload would hide the entire existing gallery.
+ */
 export const getGalleryImages = async (): Promise<string[]> => {
   if (!isFirebaseConfigured || !db) return defaultGalleryImages;
 
   try {
     const snapshot = await getDocs(collection(db, COLLECTIONS.gallery));
-    if (snapshot.empty) return defaultGalleryImages;
-    return snapshot.docs.map(document => (document.data() as { url: string }).url);
+    const uploaded = snapshot.docs.map(document => (document.data() as { url: string }).url);
+    // Uploaded photos are the newest, so they lead.
+    return [...uploaded, ...defaultGalleryImages.filter(url => !uploaded.includes(url))];
   } catch (error) {
     console.error('Failed to load gallery from Firestore; using bundled defaults.', error);
     return defaultGalleryImages;

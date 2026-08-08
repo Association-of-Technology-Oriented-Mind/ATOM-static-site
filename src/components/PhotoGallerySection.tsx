@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
-import { galleryImages as allImages } from "@/constants/gallery";
+import { useGalleryImages } from "@/hooks/useContent";
 
 interface GalleryPhoto {
   src: string;
@@ -15,6 +15,7 @@ const previewCount = 6; // 3×2 grid layout
 
 const PhotoGallerySection = () => {
   const navigate = useNavigate();
+  const { data: allImages = [] } = useGalleryImages();
   const [previewPhotos, setPreviewPhotos] = React.useState<GalleryPhoto[]>([]);
 
   const handleNavigateToGallery = () => {
@@ -50,7 +51,7 @@ const PhotoGallerySection = () => {
       }
     });
     return () => { isMounted = false; };
-  }, []);
+  }, [allImages]);
 
   return (
     <section className="min-h-screen bg-background flex flex-col justify-center items-center py-12 sm:py-16 lg:py-20">

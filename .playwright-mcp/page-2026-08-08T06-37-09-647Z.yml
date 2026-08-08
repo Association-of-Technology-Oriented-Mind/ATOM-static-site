@@ -1,0 +1,600 @@
+- generic [ref=f4e2]:
+  - region "Notifications (F8)":
+    - list
+  - region "Notifications alt+T"
+  - main [ref=f4e3]:
+    - generic [ref=f4e6]:
+      - generic:
+        - generic:
+          - img "ATOM Club Logo"
+      - generic [ref=f4e7]:
+        - heading "A T O M" [level=1] [ref=f4e11]:
+          - generic [ref=f4e12]: A
+          - generic [ref=f4e13]: T
+          - generic [ref=f4e14]: O
+          - generic [ref=f4e15]: M
+        - heading "A s s o c i a t i o n o f T e c h n o l o g y O r e i n t e d M i n d s" [level=1] [ref=f4e18]:
+          - generic [ref=f4e19]: A
+          - generic [ref=f4e20]: s
+          - generic [ref=f4e21]: s
+          - generic [ref=f4e22]: o
+          - generic [ref=f4e23]: c
+          - generic [ref=f4e24]: i
+          - generic [ref=f4e25]: a
+          - generic [ref=f4e26]: t
+          - generic [ref=f4e27]: i
+          - generic [ref=f4e28]: o
+          - generic [ref=f4e29]: "n"
+          - generic [ref=f4e30]: o
+          - generic [ref=f4e31]: f
+          - generic [ref=f4e32]: T
+          - generic [ref=f4e33]: e
+          - generic [ref=f4e34]: c
+          - generic [ref=f4e35]: h
+          - generic [ref=f4e36]: "n"
+          - generic [ref=f4e37]: o
+          - generic [ref=f4e38]: l
+          - generic [ref=f4e39]: o
+          - generic [ref=f4e40]: g
+          - generic [ref=f4e41]: "y"
+          - generic [ref=f4e42]: O
+          - generic [ref=f4e43]: r
+          - generic [ref=f4e44]: e
+          - generic [ref=f4e45]: i
+          - generic [ref=f4e46]: "n"
+          - generic [ref=f4e47]: t
+          - generic [ref=f4e48]: e
+          - generic [ref=f4e49]: d
+          - generic [ref=f4e50]: M
+          - generic [ref=f4e51]: i
+          - generic [ref=f4e52]: "n"
+          - generic [ref=f4e53]: d
+          - generic [ref=f4e54]: s
+    - generic [ref=f4e57]:
+      - heading "A b o u t A T O M" [level=2] [ref=f4e59]:
+        - generic [ref=f4e60]:
+          - generic [ref=f4e61]: A
+          - generic [ref=f4e62]: b
+          - generic [ref=f4e63]: o
+          - generic [ref=f4e64]: u
+          - generic [ref=f4e65]: t
+          - generic [ref=f4e67]: A
+          - generic [ref=f4e68]: T
+          - generic [ref=f4e69]: O
+          - generic [ref=f4e70]: M
+      - heading "A s s o c i a t i o n o f T e c h n o l o g y O r i e n t e d M i n d s ( A T O M ) i s a s t u d e n t - d r i v e n c o m m u n i t y t h a t f o s t e r s i n n o v a t i o n , l e a r n i n g , a n d c o l l a b o r a t i o n . W e a i m t o e m p o w e r s t u d e n t s w i t h h a n d s - o n e x p e r i e n c e , t e c h n i c a l s k i l l s , a n d a p l a t f o r m t o t u r n i d e a s i n t o i m p a c t f u l s o l u t i o n s ." [level=2] [ref=f4e72]:
+        - generic [ref=f4e73]:
+          - generic [ref=f4e74]: A
+          - generic [ref=f4e75]: s
+          - generic [ref=f4e76]: s
+          - generic [ref=f4e77]: o
+          - generic [ref=f4e78]: c
+          - generic [ref=f4e79]: i
+          - generic [ref=f4e80]: a
+          - generic [ref=f4e81]: t
+          - generic [ref=f4e82]: i
+          - generic [ref=f4e83]: o
+          - generic [ref=f4e84]: "n"
+          - generic [ref=f4e86]: o
+          - generic [ref=f4e87]: f
+          - generic [ref=f4e89]: T
+          - generic [ref=f4e90]: e
+          - generic [ref=f4e91]: c
+          - generic [ref=f4e92]: h
+          - generic [ref=f4e93]: "n"
+          - generic [ref=f4e94]: o
+          - generic [ref=f4e95]: l
+          - generic [ref=f4e96]: o
+          - generic [ref=f4e97]: g
+          - generic [ref=f4e98]: "y"
+          - generic [ref=f4e100]: O
+          - generic [ref=f4e101]: r
+          - generic [ref=f4e102]: i
+          - generic [ref=f4e103]: e
+          - generic [ref=f4e104]: "n"
+          - generic [ref=f4e105]: t
+          - generic [ref=f4e106]: e
+          - generic [ref=f4e107]: d
+          - generic [ref=f4e109]: M
+          - generic [ref=f4e110]: i
+          - generic [ref=f4e111]: "n"
+          - generic [ref=f4e112]: d
+          - generic [ref=f4e113]: s
+          - generic [ref=f4e115]: (
+          - generic [ref=f4e116]: A
+          - generic [ref=f4e117]: T
+          - generic [ref=f4e118]: O
+          - generic [ref=f4e119]: M
+          - generic [ref=f4e120]: )
+          - generic [ref=f4e122]: i
+          - generic [ref=f4e123]: s
+          - generic [ref=f4e125]: a
+          - generic [ref=f4e127]: s
+          - generic [ref=f4e128]: t
+          - generic [ref=f4e129]: u
+          - generic [ref=f4e130]: d
+          - generic [ref=f4e131]: e
+          - generic [ref=f4e132]: "n"
+          - generic [ref=f4e133]: t
+          - generic [ref=f4e134]: "-"
+          - generic [ref=f4e135]: d
+          - generic [ref=f4e136]: r
+          - generic [ref=f4e137]: i
+          - generic [ref=f4e138]: v
+          - generic [ref=f4e139]: e
+          - generic [ref=f4e140]: "n"
+          - generic [ref=f4e142]: c
+          - generic [ref=f4e143]: o
+          - generic [ref=f4e144]: m
+          - generic [ref=f4e145]: m
+          - generic [ref=f4e146]: u
+          - generic [ref=f4e147]: "n"
+          - generic [ref=f4e148]: i
+          - generic [ref=f4e149]: t
+          - generic [ref=f4e150]: "y"
+          - generic [ref=f4e152]: t
+          - generic [ref=f4e153]: h
+          - generic [ref=f4e154]: a
+          - generic [ref=f4e155]: t
+          - generic [ref=f4e170]: f
+          - generic [ref=f4e171]: o
+          - generic [ref=f4e172]: s
+          - generic [ref=f4e173]: t
+          - generic [ref=f4e174]: e
+          - generic [ref=f4e175]: r
+          - generic [ref=f4e176]: s
+          - generic [ref=f4e178]: i
+          - generic [ref=f4e179]: "n"
+          - generic [ref=f4e180]: "n"
+          - generic [ref=f4e181]: o
+          - generic [ref=f4e182]: v
+          - generic [ref=f4e183]: a
+          - generic [ref=f4e184]: t
+          - generic [ref=f4e185]: i
+          - generic [ref=f4e186]: o
+          - generic [ref=f4e187]: "n"
+          - generic [ref=f4e188]: ","
+          - generic [ref=f4e190]: l
+          - generic [ref=f4e191]: e
+          - generic [ref=f4e192]: a
+          - generic [ref=f4e193]: r
+          - generic [ref=f4e194]: "n"
+          - generic [ref=f4e195]: i
+          - generic [ref=f4e196]: "n"
+          - generic [ref=f4e197]: g
+          - generic [ref=f4e198]: ","
+          - generic [ref=f4e200]: a
+          - generic [ref=f4e201]: "n"
+          - generic [ref=f4e202]: d
+          - generic [ref=f4e204]: c
+          - generic [ref=f4e205]: o
+          - generic [ref=f4e206]: l
+          - generic [ref=f4e207]: l
+          - generic [ref=f4e208]: a
+          - generic [ref=f4e209]: b
+          - generic [ref=f4e210]: o
+          - generic [ref=f4e211]: r
+          - generic [ref=f4e212]: a
+          - generic [ref=f4e213]: t
+          - generic [ref=f4e214]: i
+          - generic [ref=f4e215]: o
+          - generic [ref=f4e216]: "n"
+          - generic [ref=f4e217]: .
+          - generic [ref=f4e219]: W
+          - generic [ref=f4e220]: e
+          - generic [ref=f4e222]: a
+          - generic [ref=f4e223]: i
+          - generic [ref=f4e224]: m
+          - generic [ref=f4e226]: t
+          - generic [ref=f4e227]: o
+          - generic [ref=f4e229]: e
+          - generic [ref=f4e230]: m
+          - generic [ref=f4e231]: p
+          - generic [ref=f4e232]: o
+          - generic [ref=f4e233]: w
+          - generic [ref=f4e234]: e
+          - generic [ref=f4e235]: r
+          - generic [ref=f4e237]: s
+          - generic [ref=f4e238]: t
+          - generic [ref=f4e239]: u
+          - generic [ref=f4e240]: d
+          - generic [ref=f4e241]: e
+          - generic [ref=f4e242]: "n"
+          - generic [ref=f4e243]: t
+          - generic [ref=f4e244]: s
+          - generic [ref=f4e246]: w
+          - generic [ref=f4e247]: i
+          - generic [ref=f4e248]: t
+          - generic [ref=f4e249]: h
+          - generic [ref=f4e251]: h
+          - generic [ref=f4e252]: a
+          - generic [ref=f4e253]: "n"
+          - generic [ref=f4e254]: d
+          - generic [ref=f4e255]: s
+          - generic [ref=f4e256]: "-"
+          - generic [ref=f4e257]: o
+          - generic [ref=f4e258]: "n"
+          - generic [ref=f4e260]: e
+          - generic [ref=f4e261]: x
+          - generic [ref=f4e262]: p
+          - generic [ref=f4e263]: e
+          - generic [ref=f4e264]: r
+          - generic [ref=f4e265]: i
+          - generic [ref=f4e266]: e
+          - generic [ref=f4e267]: "n"
+          - generic [ref=f4e268]: c
+          - generic [ref=f4e269]: e
+          - generic [ref=f4e270]: ","
+          - generic [ref=f4e272]: t
+          - generic [ref=f4e273]: e
+          - generic [ref=f4e274]: c
+          - generic [ref=f4e275]: h
+          - generic [ref=f4e276]: "n"
+          - generic [ref=f4e277]: i
+          - generic [ref=f4e278]: c
+          - generic [ref=f4e279]: a
+          - generic [ref=f4e280]: l
+          - generic [ref=f4e282]: s
+          - generic [ref=f4e283]: k
+          - generic [ref=f4e284]: i
+          - generic [ref=f4e285]: l
+          - generic [ref=f4e286]: l
+          - generic [ref=f4e287]: s
+          - generic [ref=f4e288]: ","
+          - generic [ref=f4e290]: a
+          - generic [ref=f4e291]: "n"
+          - generic [ref=f4e292]: d
+          - generic [ref=f4e294]: a
+          - generic [ref=f4e296]: p
+          - generic [ref=f4e297]: l
+          - generic [ref=f4e298]: a
+          - generic [ref=f4e299]: t
+          - generic [ref=f4e300]: f
+          - generic [ref=f4e301]: o
+          - generic [ref=f4e302]: r
+          - generic [ref=f4e303]: m
+          - generic [ref=f4e305]: t
+          - generic [ref=f4e306]: o
+          - generic [ref=f4e308]: t
+          - generic [ref=f4e309]: u
+          - generic [ref=f4e310]: r
+          - generic [ref=f4e311]: "n"
+          - generic [ref=f4e313]: i
+          - generic [ref=f4e314]: d
+          - generic [ref=f4e315]: e
+          - generic [ref=f4e316]: a
+          - generic [ref=f4e317]: s
+          - generic [ref=f4e319]: i
+          - generic [ref=f4e320]: "n"
+          - generic [ref=f4e321]: t
+          - generic [ref=f4e322]: o
+          - generic [ref=f4e324]: i
+          - generic [ref=f4e325]: m
+          - generic [ref=f4e326]: p
+          - generic [ref=f4e327]: a
+          - generic [ref=f4e328]: c
+          - generic [ref=f4e329]: t
+          - generic [ref=f4e330]: f
+          - generic [ref=f4e331]: u
+          - generic [ref=f4e332]: l
+          - generic [ref=f4e334]: s
+          - generic [ref=f4e335]: o
+          - generic [ref=f4e336]: l
+          - generic [ref=f4e337]: u
+          - generic [ref=f4e338]: t
+          - generic [ref=f4e339]: i
+          - generic [ref=f4e340]: o
+          - generic [ref=f4e341]: "n"
+          - generic [ref=f4e342]: s
+          - generic [ref=f4e343]: .
+    - generic [ref=f4e344]:
+      - generic:
+        - generic:
+          - generic: "[ ]"
+          - generic: < >
+          - generic: < >
+          - generic: ( )
+          - generic: < >
+          - generic: "[ ]"
+          - generic: /* */
+          - generic: < >
+          - generic: //
+          - generic: "[ ]"
+          - generic: "[ ]"
+          - generic: //
+      - generic [ref=f4e345]:
+        - generic [ref=f4e346]:
+          - heading "Our Achievements" [level=2] [ref=f4e347]
+          - generic [ref=f4e348]:
+            - generic [ref=f4e349]:
+              - heading "50+ Projects Completed" [level=3] [ref=f4e380]
+              - paragraph [ref=f4e381]: Successfully delivered innovative technology solutions
+            - generic [ref=f4e382]:
+              - heading "Innovation Hub" [level=3] [ref=f4e401]
+              - paragraph [ref=f4e402]: Leading research and development initiatives
+            - generic [ref=f4e403]:
+              - heading "150+ Active Members" [level=3] [ref=f4e431]
+              - paragraph [ref=f4e432]: Growing community of tech enthusiasts and leaders
+            - generic [ref=f4e433]:
+              - heading "Solving real life problems" [level=3] [ref=f4e461]
+              - paragraph [ref=f4e462]: Using knowledge and creativity to find practical solutions
+            - generic [ref=f4e463]:
+              - heading "10+ Workshops" [level=3] [ref=f4e488]
+              - paragraph [ref=f4e489]: Comprehensive skill development programs
+        - generic [ref=f4e491]:
+          - generic [ref=f4e492]:
+            - heading "Events" [level=2] [ref=f4e493]
+            - paragraph [ref=f4e494]: Discover our events, workshops, and competitions that shape the future of technology
+          - generic [ref=f4e495]:
+            - generic [ref=f4e496] [cursor=pointer]:
+              - img "Battle of Binaries 1.0" [ref=f4e498]
+              - generic [ref=f4e500]:
+                - generic [ref=f4e501]:
+                  - heading "Battle of Binaries 1.0" [level=3] [ref=f4e502]
+                  - generic [ref=f4e503]:
+                    - generic [ref=f4e504]: Oct 17, 2025
+                    - generic [ref=f4e508]: 09:00 AM
+                    - generic [ref=f4e513]: Karunya Institute of Technology and Sciences, Coimbatore
+                - generic [ref=f4e518]:
+                  - generic [ref=f4e519]: Competition
+                  - generic [ref=f4e520]: Learn More
+            - generic [ref=f4e524] [cursor=pointer]:
+              - img "Software Automation Testing" [ref=f4e526]
+              - generic [ref=f4e528]:
+                - generic [ref=f4e529]:
+                  - heading "Software Automation Testing" [level=3] [ref=f4e530]
+                  - generic [ref=f4e531]:
+                    - generic [ref=f4e532]: Sep 30, 2025
+                    - generic [ref=f4e536]: 11:00 AM
+                    - generic [ref=f4e541]: DSCS Gallery Hall
+                - generic [ref=f4e546]:
+                  - generic [ref=f4e547]: Seminar
+                  - generic [ref=f4e548]: Learn More
+            - generic [ref=f4e552] [cursor=pointer]:
+              - img "DSCS Retreat 2025" [ref=f4e554]
+              - generic [ref=f4e556]:
+                - generic [ref=f4e557]:
+                  - heading "DSCS Retreat 2025" [level=3] [ref=f4e558]
+                  - generic [ref=f4e559]:
+                    - generic [ref=f4e560]: Sep 20, 2025
+                    - generic [ref=f4e564]: 09:30 AM
+                    - generic [ref=f4e569]: Emmanuel Auditorium
+                - generic [ref=f4e574]:
+                  - generic [ref=f4e575]: Retreat
+                  - generic [ref=f4e576]: Learn More
+          - button "Show All Events" [ref=f4e581] [cursor=pointer]
+        - generic [ref=f4e594]:
+          - heading "Core Members" [level=2] [ref=f4e595]
+          - generic [ref=f4e597]:
+            - generic [ref=f4e598] [cursor=pointer]:
+              - img "Bruno A" [ref=f4e600]
+              - heading "Bruno A" [level=3] [ref=f4e601]
+              - paragraph [ref=f4e602]: Secretary
+              - paragraph [ref=f4e603]: As Secretary, Bruno A is a dedicated member, committed to achieving the club's goals and fostering a strong community.
+            - generic [ref=f4e604] [cursor=pointer]:
+              - img "Kevin J" [ref=f4e606]
+              - heading "Kevin J" [level=3] [ref=f4e607]
+              - paragraph [ref=f4e608]: Co-Secretary
+              - paragraph [ref=f4e609]: As Co-Secretary, Kevin J is passionate about data science and full stack development. He has published three research papers and holds industrial certifications from Microsoft and Cisco. He is currently a Software Developer Intern with a placement offer of 5 LPA.
+            - generic [ref=f4e610] [cursor=pointer]:
+              - img "Deepakumar S" [ref=f4e612]
+              - heading "Deepakumar S" [level=3] [ref=f4e613]
+              - paragraph [ref=f4e614]: Joint Secretary
+              - paragraph [ref=f4e615]: As Joint Secretary, Deepakumar S is a skilled practitioner in offensive security. He was awarded Best Idea in the TN Police Hackathon and secured a Summer Internship Offer in Cyberthon 2025.
+            - generic [ref=f4e616] [cursor=pointer]:
+              - img "K B Uvasri" [ref=f4e618]
+              - heading "K B Uvasri" [level=3] [ref=f4e619]
+              - paragraph [ref=f4e620]: Treasurer
+              - paragraph [ref=f4e621]: As Treasurer, K B Uvasri is a winner of the Smart India Hackathon 2024 and has been a finalist in the 5G hackathon. She has published a paper on IoT-based systems and has served as an HR for three years.
+            - generic [ref=f4e622] [cursor=pointer]:
+              - img "Thirupathi S" [ref=f4e624]
+              - heading "Thirupathi S" [level=3] [ref=f4e625]
+              - paragraph [ref=f4e626]: Joint Treasurer
+              - paragraph [ref=f4e627]: As Joint Treasurer, Thirupathi S is a finalist at Cyberthon 2025 and was awarded the Special Mention Prize for innovation. He is passionate about AI and Full Stack development and has worked on several real-time AI software products.
+            - generic [ref=f4e628] [cursor=pointer]:
+              - img "Jerome T" [ref=f4e630]
+              - heading "Jerome T" [level=3] [ref=f4e631]
+              - paragraph [ref=f4e632]: Media Coordinator
+              - paragraph [ref=f4e633]: As Media Coordinator, Jerome T is a finalist in the Kavach 2023 and SIH 2023 national-level cybersecurity hackathons. He has also published a research paper on Forest fire detection using GSM/GPS module.
+            - generic [ref=f4e634] [cursor=pointer]:
+              - img "Sanjay Nesan J" [ref=f4e636]
+              - heading "Sanjay Nesan J" [level=3] [ref=f4e637]
+              - paragraph [ref=f4e638]: Joint Media Coordinator
+              - paragraph [ref=f4e639]: As Joint Media Coordinator, Sanjay Nesan J is a winner of Nexus 2024 and Mathbee 2024. He is passionate about FRONTEND and Graphic Design and developed a location-based geofencing system.
+            - generic [ref=f4e640] [cursor=pointer]:
+              - img "Gregory Joe Jeni. C" [ref=f4e642]
+              - heading "Gregory Joe Jeni. C" [level=3] [ref=f4e643]
+              - paragraph [ref=f4e644]: Joint Media Coordinator
+              - paragraph [ref=f4e645]: As Joint Media Coordinator, Gregory Joe Jeni. C won first prize in photography during his school days.
+            - generic [ref=f4e646] [cursor=pointer]:
+              - img "Reshwin R S" [ref=f4e648]
+              - heading "Reshwin R S" [level=3] [ref=f4e649]
+              - paragraph [ref=f4e650]: Technical Coordinator
+              - paragraph [ref=f4e651]: As Technical Coordinator, Reshwin R S is a winner in the Nexus hackathon.
+            - generic [ref=f4e652] [cursor=pointer]:
+              - img "Rahul Balaskandan" [ref=f4e654]
+              - heading "Rahul Balaskandan" [level=3] [ref=f4e655]
+              - paragraph [ref=f4e656]: Joint Technical Coordinator
+              - paragraph [ref=f4e657]: As the Joint Technical Coordinator, Rahul Balaskandan, a passionate cybersecurity enthusiast, has been recognized for his outstanding projects and innovative ideas at multiple hackathons. He has also broadened his expertise through several international internships.
+            - generic [ref=f4e658] [cursor=pointer]:
+              - img "Nadish B" [ref=f4e660]
+              - heading "Nadish B" [level=3] [ref=f4e661]
+              - paragraph [ref=f4e662]: Event Management Coordinator
+              - paragraph [ref=f4e663]: As Event Management Coordinator, Nadish B is a top 25 finalist in the Generative AI hackathon and is passionate about AI and Full Stack development.
+            - generic [ref=f4e664] [cursor=pointer]:
+              - img "Kaviya Varshini. G. S" [ref=f4e666]
+              - heading "Kaviya Varshini. G. S" [level=3] [ref=f4e667]
+              - paragraph [ref=f4e668]: Event Management Coordinator
+              - paragraph [ref=f4e669]: As Event Management Coordinator, Kaviya Varshini. G. S is a NEXUS winner and is passionate about cyber security.
+            - generic [ref=f4e670] [cursor=pointer]:
+              - img "Regulla Mallika Priyaharshini" [ref=f4e672]
+              - heading "Regulla Mallika Priyaharshini" [level=3] [ref=f4e673]
+              - paragraph [ref=f4e674]: Joint Event Management Coordinator
+              - paragraph [ref=f4e675]: As Joint Event Management Coordinator, Regulla Mallika Priyaharshini participated in the SIH hackathon 2024 and worked as an intern for HashTek Solutions as a cloud computing engineer.
+            - generic [ref=f4e676] [cursor=pointer]:
+              - img "Nithishkumar K" [ref=f4e678]
+              - heading "Nithishkumar K" [level=3] [ref=f4e679]
+              - paragraph [ref=f4e680]: Joint Event Management Coordinator
+              - paragraph [ref=f4e681]: As Joint Event Management Coordinator, Nithishkumar K is a cyberthon finalist and is a National level Archer with a state-level rank 1.
+            - generic [ref=f4e682] [cursor=pointer]:
+              - img "Aravindan M" [ref=f4e684]
+              - heading "Aravindan M" [level=3] [ref=f4e685]
+              - paragraph [ref=f4e686]: Sports Coordinator
+              - paragraph [ref=f4e687]: As Sports Coordinator, Aravindan M is a Silver Medalist in the International Taekwondo Championship and a finalist at IIT Bombay's Eureka 2024. He is specialized in Generative AI and is the Head of AI at Rapha MedTech.
+            - generic [ref=f4e688] [cursor=pointer]:
+              - img "Keba Daniel J" [ref=f4e690]
+              - heading "Keba Daniel J" [level=3] [ref=f4e691]
+              - paragraph [ref=f4e692]: Spiritual Coordinator
+              - paragraph [ref=f4e693]: As Spiritual Coordinator, Keba Daniel J is a winner in paper presentation, ideathon, and project expo at various colleges. He is also a data science intern at Skill Radar.
+            - generic [ref=f4e694] [cursor=pointer]:
+              - img "Franz Kingstein N" [ref=f4e696]
+              - heading "Franz Kingstein N" [level=3] [ref=f4e697]
+              - paragraph [ref=f4e698]: Joint Spiritual Coordinator
+              - paragraph [ref=f4e699]: As Joint Spiritual Coordinator, Franz Kingstein N is a part of Raising General, the people who connect Karunya to GOD. He is also Coordinated Various Spiritual Events like fellowships, Spiritual Festival and Department Retreat.
+            - generic [ref=f4e700] [cursor=pointer]:
+              - img "Jemimah Praisey P" [ref=f4e702]
+              - heading "Jemimah Praisey P" [level=3] [ref=f4e703]
+              - paragraph [ref=f4e704]: Joint Spiritual Coordinator
+              - paragraph [ref=f4e705]: As Joint Spiritual Coordinator, Jemimah Praisey P is an integral part of the team, dedicated to driving success and collaboration.
+            - generic [ref=f4e706] [cursor=pointer]:
+              - img "Bruno A" [ref=f4e708]
+              - heading "Bruno A" [level=3] [ref=f4e709]
+              - paragraph [ref=f4e710]: Secretary
+              - paragraph [ref=f4e711]: As Secretary, Bruno A is a dedicated member, committed to achieving the club's goals and fostering a strong community.
+            - generic [ref=f4e712] [cursor=pointer]:
+              - img "Kevin J" [ref=f4e714]
+              - heading "Kevin J" [level=3] [ref=f4e715]
+              - paragraph [ref=f4e716]: Co-Secretary
+              - paragraph [ref=f4e717]: As Co-Secretary, Kevin J is passionate about data science and full stack development. He has published three research papers and holds industrial certifications from Microsoft and Cisco. He is currently a Software Developer Intern with a placement offer of 5 LPA.
+            - generic [ref=f4e718] [cursor=pointer]:
+              - img "Deepakumar S" [ref=f4e720]
+              - heading "Deepakumar S" [level=3] [ref=f4e721]
+              - paragraph [ref=f4e722]: Joint Secretary
+              - paragraph [ref=f4e723]: As Joint Secretary, Deepakumar S is a skilled practitioner in offensive security. He was awarded Best Idea in the TN Police Hackathon and secured a Summer Internship Offer in Cyberthon 2025.
+            - generic [ref=f4e724] [cursor=pointer]:
+              - img "K B Uvasri" [ref=f4e726]
+              - heading "K B Uvasri" [level=3] [ref=f4e727]
+              - paragraph [ref=f4e728]: Treasurer
+              - paragraph [ref=f4e729]: As Treasurer, K B Uvasri is a winner of the Smart India Hackathon 2024 and has been a finalist in the 5G hackathon. She has published a paper on IoT-based systems and has served as an HR for three years.
+            - generic [ref=f4e730] [cursor=pointer]:
+              - img "Thirupathi S" [ref=f4e732]
+              - heading "Thirupathi S" [level=3] [ref=f4e733]
+              - paragraph [ref=f4e734]: Joint Treasurer
+              - paragraph [ref=f4e735]: As Joint Treasurer, Thirupathi S is a finalist at Cyberthon 2025 and was awarded the Special Mention Prize for innovation. He is passionate about AI and Full Stack development and has worked on several real-time AI software products.
+            - generic [ref=f4e736] [cursor=pointer]:
+              - img "Jerome T" [ref=f4e738]
+              - heading "Jerome T" [level=3] [ref=f4e739]
+              - paragraph [ref=f4e740]: Media Coordinator
+              - paragraph [ref=f4e741]: As Media Coordinator, Jerome T is a finalist in the Kavach 2023 and SIH 2023 national-level cybersecurity hackathons. He has also published a research paper on Forest fire detection using GSM/GPS module.
+            - generic [ref=f4e742] [cursor=pointer]:
+              - img "Sanjay Nesan J" [ref=f4e744]
+              - heading "Sanjay Nesan J" [level=3] [ref=f4e745]
+              - paragraph [ref=f4e746]: Joint Media Coordinator
+              - paragraph [ref=f4e747]: As Joint Media Coordinator, Sanjay Nesan J is a winner of Nexus 2024 and Mathbee 2024. He is passionate about FRONTEND and Graphic Design and developed a location-based geofencing system.
+            - generic [ref=f4e748] [cursor=pointer]:
+              - img "Gregory Joe Jeni. C" [ref=f4e750]
+              - heading "Gregory Joe Jeni. C" [level=3] [ref=f4e751]
+              - paragraph [ref=f4e752]: Joint Media Coordinator
+              - paragraph [ref=f4e753]: As Joint Media Coordinator, Gregory Joe Jeni. C won first prize in photography during his school days.
+            - generic [ref=f4e754] [cursor=pointer]:
+              - img "Reshwin R S" [ref=f4e756]
+              - heading "Reshwin R S" [level=3] [ref=f4e757]
+              - paragraph [ref=f4e758]: Technical Coordinator
+              - paragraph [ref=f4e759]: As Technical Coordinator, Reshwin R S is a winner in the Nexus hackathon.
+            - generic [ref=f4e760] [cursor=pointer]:
+              - img "Rahul Balaskandan" [ref=f4e762]
+              - heading "Rahul Balaskandan" [level=3] [ref=f4e763]
+              - paragraph [ref=f4e764]: Joint Technical Coordinator
+              - paragraph [ref=f4e765]: As the Joint Technical Coordinator, Rahul Balaskandan, a passionate cybersecurity enthusiast, has been recognized for his outstanding projects and innovative ideas at multiple hackathons. He has also broadened his expertise through several international internships.
+            - generic [ref=f4e766] [cursor=pointer]:
+              - img "Nadish B" [ref=f4e768]
+              - heading "Nadish B" [level=3] [ref=f4e769]
+              - paragraph [ref=f4e770]: Event Management Coordinator
+              - paragraph [ref=f4e771]: As Event Management Coordinator, Nadish B is a top 25 finalist in the Generative AI hackathon and is passionate about AI and Full Stack development.
+            - generic [ref=f4e772] [cursor=pointer]:
+              - img "Kaviya Varshini. G. S" [ref=f4e774]
+              - heading "Kaviya Varshini. G. S" [level=3] [ref=f4e775]
+              - paragraph [ref=f4e776]: Event Management Coordinator
+              - paragraph [ref=f4e777]: As Event Management Coordinator, Kaviya Varshini. G. S is a NEXUS winner and is passionate about cyber security.
+            - generic [ref=f4e778] [cursor=pointer]:
+              - img "Regulla Mallika Priyaharshini" [ref=f4e780]
+              - heading "Regulla Mallika Priyaharshini" [level=3] [ref=f4e781]
+              - paragraph [ref=f4e782]: Joint Event Management Coordinator
+              - paragraph [ref=f4e783]: As Joint Event Management Coordinator, Regulla Mallika Priyaharshini participated in the SIH hackathon 2024 and worked as an intern for HashTek Solutions as a cloud computing engineer.
+            - generic [ref=f4e784] [cursor=pointer]:
+              - img "Nithishkumar K" [ref=f4e786]
+              - heading "Nithishkumar K" [level=3] [ref=f4e787]
+              - paragraph [ref=f4e788]: Joint Event Management Coordinator
+              - paragraph [ref=f4e789]: As Joint Event Management Coordinator, Nithishkumar K is a cyberthon finalist and is a National level Archer with a state-level rank 1.
+            - generic [ref=f4e790] [cursor=pointer]:
+              - img "Aravindan M" [ref=f4e792]
+              - heading "Aravindan M" [level=3] [ref=f4e793]
+              - paragraph [ref=f4e794]: Sports Coordinator
+              - paragraph [ref=f4e795]: As Sports Coordinator, Aravindan M is a Silver Medalist in the International Taekwondo Championship and a finalist at IIT Bombay's Eureka 2024. He is specialized in Generative AI and is the Head of AI at Rapha MedTech.
+            - generic [ref=f4e796] [cursor=pointer]:
+              - img "Keba Daniel J" [ref=f4e798]
+              - heading "Keba Daniel J" [level=3] [ref=f4e799]
+              - paragraph [ref=f4e800]: Spiritual Coordinator
+              - paragraph [ref=f4e801]: As Spiritual Coordinator, Keba Daniel J is a winner in paper presentation, ideathon, and project expo at various colleges. He is also a data science intern at Skill Radar.
+            - generic [ref=f4e802] [cursor=pointer]:
+              - img "Franz Kingstein N" [ref=f4e804]
+              - heading "Franz Kingstein N" [level=3] [ref=f4e805]
+              - paragraph [ref=f4e806]: Joint Spiritual Coordinator
+              - paragraph [ref=f4e807]: As Joint Spiritual Coordinator, Franz Kingstein N is a part of Raising General, the people who connect Karunya to GOD. He is also Coordinated Various Spiritual Events like fellowships, Spiritual Festival and Department Retreat.
+            - generic [ref=f4e808] [cursor=pointer]:
+              - img "Jemimah Praisey P" [ref=f4e810]
+              - heading "Jemimah Praisey P" [level=3] [ref=f4e811]
+              - paragraph [ref=f4e812]: Joint Spiritual Coordinator
+              - paragraph [ref=f4e813]: As Joint Spiritual Coordinator, Jemimah Praisey P is an integral part of the team, dedicated to driving success and collaboration.
+          - button "View All" [ref=f4e815] [cursor=pointer]
+        - generic [ref=f4e819]:
+          - heading "Photo Gallery" [level=2] [ref=f4e820]
+          - button "View Complete Gallery" [ref=f4e822] [cursor=pointer]
+        - generic [ref=f4e823]:
+          - heading "Our Clubs" [level=2] [ref=f4e824]
+          - generic [ref=f4e825]:
+            - generic [ref=f4e826] [cursor=pointer]:
+              - generic [ref=f4e827]:
+                - img "Hack Hive Logo" [ref=f4e830]
+                - heading "Hack Hive Club" [level=3] [ref=f4e831]
+                - paragraph [ref=f4e832]: Hack Hive is a student-driven cybersecurity club that brings together passionate individuals to explore, learn, and innovate in the field of information security.
+              - generic [ref=f4e833]:
+                - img "Sanjay S" [ref=f4e834]
+                - img "Jayesh" [ref=f4e835]
+                - img "Gregory Joe Jeni C" [ref=f4e836]
+                - generic [ref=f4e837]: "+2"
+            - generic [ref=f4e838] [cursor=pointer]:
+              - generic [ref=f4e839]:
+                - img "DotDev Logo" [ref=f4e842]
+                - heading "DotDev Club" [level=3] [ref=f4e843]
+                - paragraph [ref=f4e844]: Dotdev is a student community for aspiring software engineers focused on full-stack development.
+              - generic [ref=f4e845]:
+                - img "Dharshan Kumar J" [ref=f4e846]
+                - img "Danish Prabhu K V" [ref=f4e847]
+                - img "Manisha S" [ref=f4e848]
+                - generic [ref=f4e849]: "+3"
+            - generic [ref=f4e850] [cursor=pointer]:
+              - generic [ref=f4e851]:
+                - img "Unbiased Logo" [ref=f4e854]
+                - heading "Unbiased Club" [level=3] [ref=f4e855]
+                - paragraph [ref=f4e856]: The Unbiased AI Club is a student-driven community exploring AI, ML, DL, NLP, Generative AI, and Agents. We encourage hands-on learning, collaboration, and innovation to build impactful projects for our department and beyond.
+              - generic [ref=f4e857]:
+                - img "Aravindan" [ref=f4e858]
+                - img "Ronnie A Jeffrey" [ref=f4e859]
+                - img "Aparna" [ref=f4e860]
+                - generic [ref=f4e861]: "+4"
+            - generic [ref=f4e862] [cursor=pointer]:
+              - generic [ref=f4e863]:
+                - heading "RND Club" [level=3] [ref=f4e868]
+                - paragraph [ref=f4e869]: The R&D Club under ATOM is a hub for innovation, turning real-world challenges into smart, practical, and startup-ready solutions. It empowers students to explore ideas, build prototypes, and collaborate with industry experts to bring innovations to life.
+              - generic [ref=f4e870]:
+                - img "Rumitha S" [ref=f4e871]
+                - img "Dhruv Swamy R" [ref=f4e872]
+                - img "Immanuel Sibu Chandy" [ref=f4e873]
+            - generic [ref=f4e874] [cursor=pointer]:
+              - generic [ref=f4e875]:
+                - heading "Career Guidance Club" [level=3] [ref=f4e881]
+                - paragraph [ref=f4e882]: The Career Guidance Club is established to provide students with direction and support in shaping their academic and professional journey. The club acts as a bridge between classroom learning and future career opportunities by offering mentorship, resources, and skill-development initiatives.
+              - generic [ref=f4e883]:
+                - img "Renimol S" [ref=f4e884]
+                - img "Jola Kaseena C" [ref=f4e885]
