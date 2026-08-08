@@ -128,7 +128,10 @@ const TextPressure = ({
           src: url('${fontUrl}');
           font-style: normal;
         }
-        .flex {
+        /* Scoped to this component. As a bare ".flex" it overrode Tailwind's
+           .justify-center everywhere on the page, because it is emitted after
+           the utility layer at equal specificity. */
+        .text-pressure-title.flex {
           display: flex;
           justify-content: space-between;
         }

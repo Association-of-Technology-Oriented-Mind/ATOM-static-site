@@ -1,7 +1,7 @@
 import { Hero } from '@/components/Hero';
 import { About } from '@/components/About';
 import { Achievements } from '@/components/Achievements';
-import { Coordinators } from '@/components/Coordinators';
+import CoreMembers from '@/components/CoreMembers';
 import { Clubs } from '@/components/Clubs';
 import PhotoGallerySection from '@/components/PhotoGallerySection';
 import EventsSection from '@/components/EventsSection';
@@ -38,7 +38,6 @@ const Index = () => {
           <div className="relative z-30">
             <EventsSection />
           </div>
-          <Coordinators />
           {/* PhotoGallerySection with standard z-index */}
           <div className="relative z-20">
             <PhotoGallerySection />
@@ -46,6 +45,8 @@ const Index = () => {
           <Clubs />
         </div>
       </div>
+
+      <CoreMembers />
     </main>
   );
 };
