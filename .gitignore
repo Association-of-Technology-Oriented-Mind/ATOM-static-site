@@ -28,5 +28,10 @@ dist-ssr
 .env.local
 .env.*.local
 
-# Firebase service account key (a real secret, unlike VITE_* values)
+# Firebase service account keys — real secrets, unlike the VITE_* values.
+# Anyone holding one has full admin access to the project, bypassing all
+# security rules. Never commit these.
 serviceAccount*.json
+*firebase-adminsdk*.json
+*-adminsdk-*.json
+.secrets/

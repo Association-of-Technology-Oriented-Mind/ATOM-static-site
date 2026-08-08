@@ -118,6 +118,14 @@ describe('eventSchema', () => {
     expect(result.success).toBe(false);
   });
 
+  it('accepts legacy "start,end" multi-day dates and keeps the start date', () => {
+    // Two seeded events use this form; rejecting it would drop them silently.
+    const result = eventSchema.safeParse({ ...validEvent, date: '2025-08-04,2025-08-08' });
+
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data.date).toBe('2025-08-04');
+  });
+
   it('rejects an unknown status', () => {
     const result = eventSchema.safeParse({ ...validEvent, status: 'cancelled' });
 
