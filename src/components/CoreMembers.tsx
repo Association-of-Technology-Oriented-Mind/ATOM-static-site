@@ -1,28 +1,28 @@
 import { useEffect, useRef } from 'react';
 import { Linkedin } from 'lucide-react';
 import ScrollScene from '@/components/scroll/ScrollScene';
-import { easeInOut, lerp, prog } from '@/utils/scrollMath';
+import { easeInOut, lerp, prog, sceneGradient } from '@/utils/scrollMath';
 import {
   coordinatorsByPortfolio,
   type Coordinator,
 } from '@/constants/coordinators';
 
 /**
- * Scene timeline — each portfolio gets one scrubbed scene.
+ * Scene timeline — one scrubbed scene per portfolio.
  *
- *   0.00–0.26  headline holds ("The Secretariat")
+ *   0.00–0.24  headline holds ("Meet the Secretariat")
  *   0.20–0.36  headline lifts out
- *   0.26–0.46  the pair fades and slides in
- *   0.48–0.68  detail (name, role, bio, link) resolves and stays
+ *   0.28–0.48  both members fade in from their own side
+ *   0.52–0.70  their details resolve beneath them and stay
  *
- * Ranges overlap deliberately so phases cross-dissolve instead of leaving
- * dead gaps mid-scroll.
+ * The lead occupies the right half, the joint holder the left, each with
+ * their own portrait and caption — one screen, two people, no overlap.
  */
 const HEADLINE_OUT: [number, number] = [0.2, 0.36];
-const PAIR_IN: [number, number] = [0.26, 0.46];
-const DETAIL_IN: [number, number] = [0.48, 0.68];
+const MEMBER_IN: [number, number] = [0.28, 0.48];
+const DETAIL_IN: [number, number] = [0.52, 0.7];
 
-const prefersReducedMotion = () =>
+const reducedMotion = () =>
   typeof window !== 'undefined' &&
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -35,7 +35,17 @@ const initials = (name: string) =>
     .join('')
     .toUpperCase();
 
-/** Headline that holds, then lifts away as the pair arrives. */
+/** Gradient ground; written straight to the DOM so it never re-renders. */
+const SceneBackground = ({ progress }: { progress: number }) => {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (ref.current) ref.current.style.background = sceneGradient(progress, '50%');
+  }, [progress]);
+
+  return <div ref={ref} className="absolute inset-0 z-0" />;
+};
+
 const Headline = ({
   progress,
   index,
@@ -52,94 +62,123 @@ const Headline = ({
     if (!el) return;
     const out = easeInOut(prog(progress, ...HEADLINE_OUT));
     el.style.opacity = String(1 - out);
-    el.style.transform = prefersReducedMotion()
-      ? 'none'
-      : `translateY(${-out * 48}px)`;
+    el.style.transform = reducedMotion() ? 'none' : `translateY(${-out * 56}px)`;
   }, [progress]);
 
   return (
     <div
       ref={ref}
-      className="pointer-events-none absolute inset-0 z-20 flex flex-col justify-center px-6 sm:px-10 lg:px-16"
+      className="pointer-events-none absolute inset-0 z-30 flex flex-col items-center justify-center px-[8vw] text-center"
       style={{ willChange: 'opacity, transform' }}
     >
-      <div className="mx-auto w-full max-w-5xl">
-        <span className="mono-label accent tabular-nums">
-          {String(index + 1).padStart(2, '0')} / 06
-        </span>
-        {/* display-l rather than display-xl: the stage is a fixed 100vh and
-            longer portfolio names at display-xl overflow it. */}
-        <h3 className="display-l mt-4 max-w-[12ch]">{portfolio}</h3>
-      </div>
+      <span className="mono-label accent tabular-nums">
+        {String(index + 1).padStart(2, '0')} / 06
+      </span>
+      <h3 className="display-l mt-5">
+        Meet the
+        <br />
+        {portfolio}
+      </h3>
     </div>
   );
 };
 
-const MemberFigure = ({
-  member,
+/**
+ * One member occupying half the stage: a free-standing portrait with their
+ * name and role beneath it. No frame, no card — the figure sits on the
+ * gradient the way a cutout would.
+ */
+const MemberColumn = ({
   progress,
+  member,
+  side,
 }: {
-  member: Coordinator;
   progress: number;
+  member: Coordinator;
+  side: 'left' | 'right';
 }) => {
+  const figureRef = useRef<HTMLDivElement>(null);
   const detailRef = useRef<HTMLDivElement>(null);
+  const isLeft = side === 'left';
   const filled = member.name.trim().length > 0;
 
   useEffect(() => {
-    const el = detailRef.current;
-    if (!el) return;
-    const t = easeInOut(prog(progress, ...DETAIL_IN));
-    el.style.opacity = String(t);
-    el.style.transform = prefersReducedMotion()
+    const figure = figureRef.current;
+    const detail = detailRef.current;
+    if (!figure || !detail) return;
+
+    const inT = easeInOut(prog(progress, ...MEMBER_IN));
+    figure.style.opacity = String(inT);
+    figure.style.transform = reducedMotion()
       ? 'none'
-      : `translateY(${lerp(14, 0, t)}px)`;
-  }, [progress]);
+      : `translateX(${lerp(isLeft ? -48 : 48, 0, inT)}px)`;
+
+    const detailT = easeInOut(prog(progress, ...DETAIL_IN));
+    detail.style.opacity = String(detailT);
+    detail.style.transform = reducedMotion()
+      ? 'none'
+      : `translateY(${lerp(20, 0, detailT)}px)`;
+    // A faded phase must not swallow clicks meant for what is visible.
+    detail.style.pointerEvents = detailT > 0.5 ? 'auto' : 'none';
+  }, [progress, isLeft]);
 
   return (
-    <figure className="flex flex-col">
-      {/* Capped in vh so the portrait plus its caption always fit one
-          viewport — the stage does not scroll, so overflow is lost. */}
-      <div className="relative aspect-[3/4] max-h-[46vh] w-full overflow-hidden border border-[hsl(var(--rule))] bg-[hsl(var(--ink-raised))]">
+    <div
+      className={`absolute bottom-0 top-0 z-10 flex w-1/2 flex-col items-center justify-center px-[4vw] pt-[10vh] ${
+        isLeft ? 'left-0' : 'right-0'
+      }`}
+    >
+      <div
+        ref={figureRef}
+        className="pointer-events-none flex w-full items-end justify-center pb-8"
+        style={{ opacity: 0, willChange: 'opacity, transform' }}
+      >
         {member.image ? (
           <img
             src={member.image}
-            alt={member.name}
+            alt=""
             loading="lazy"
-            className="h-full w-full object-cover grayscale"
+            className="block max-h-[46vh] w-auto object-contain object-bottom grayscale"
           />
         ) : (
-          /* An empty seat reads as reserved, not as a failed image. */
-          <div
-            className="flex h-full w-full items-center justify-center"
+          <span
+            className="select-none"
             style={{
-              backgroundImage:
-                'repeating-linear-gradient(135deg, transparent 0 11px, hsl(var(--rule)) 11px 12px)',
+              fontFamily: "'Archivo Black', system-ui, sans-serif",
+              fontSize: 'clamp(3.5rem, 9vw, 8rem)',
+              lineHeight: 1,
+              color: 'hsl(var(--graphite) / 0.35)',
             }}
             aria-hidden="true"
           >
-            <span className="display-m select-none bg-[hsl(var(--ink-raised))] px-4 py-2 text-[hsl(var(--graphite))]">
-              {filled ? initials(member.name) : 'TBA'}
-            </span>
-          </div>
+            {filled ? initials(member.name) : 'TBA'}
+          </span>
         )}
-
-        <span className="mono-label absolute bottom-0 left-0 bg-[hsl(var(--ink))] px-3 py-2">
-          {member.isLead ? 'Lead' : 'Joint'}
-        </span>
       </div>
 
-      <figcaption ref={detailRef} className="pt-5" style={{ opacity: 0 }}>
-        <h4 className="display-m">
+      <div
+        ref={detailRef}
+        className="w-full max-w-md text-center"
+        style={{ opacity: 0, willChange: 'opacity, transform' }}
+      >
+        <p className="mono-label">
+          <span className="accent">{member.isLead ? 'Lead' : 'Joint'}</span>
+          {' · '}
+          {member.role}
+        </p>
+
+        <h4 className="display-m mt-3">
           {filled ? (
             member.name
           ) : (
             <span className="text-[hsl(var(--graphite))]">Position open</span>
           )}
         </h4>
-        <p className="mono-label mt-2">{member.role}</p>
+
+        <div className="mx-auto mt-4 h-[2px] w-9 bg-[hsl(var(--phosphor))]" />
 
         {member.bio && (
-          <p className="mt-4 max-w-prose text-sm leading-relaxed text-[hsl(var(--graphite))]">
+          <p className="mx-auto mt-4 max-w-prose text-sm leading-relaxed text-[hsl(var(--graphite))]">
             {member.bio}
           </p>
         )}
@@ -159,51 +198,40 @@ const MemberFigure = ({
             LinkedIn
           </a>
         )}
-      </figcaption>
-    </figure>
+      </div>
+    </div>
   );
 };
 
-/** The pair of portraits, sliding in as the headline leaves. */
-const Pair = ({
+/** Portfolio name, held quietly at the top once the pair has arrived. */
+const SceneLabel = ({
   progress,
-  members,
+  portfolio,
 }: {
   progress: number;
-  members: Coordinator[];
+  portfolio: string;
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const t = easeInOut(prog(progress, ...PAIR_IN));
-    el.style.opacity = String(t);
-    el.style.transform = prefersReducedMotion()
-      ? 'none'
-      : `translateY(${lerp(40, 0, t)}px)`;
-    // Faded-out phases must not intercept clicks on what's visible.
-    el.style.pointerEvents = t > 0.5 ? 'auto' : 'none';
+    el.style.opacity = String(easeInOut(prog(progress, ...MEMBER_IN)));
   }, [progress]);
 
   return (
     <div
       ref={ref}
-      className="absolute inset-0 z-10 flex flex-col justify-center px-6 sm:px-10 lg:px-16"
-      style={{ opacity: 0, willChange: 'opacity, transform' }}
+      className="pointer-events-none absolute left-0 right-0 top-[8vh] z-20 text-center"
+      style={{ opacity: 0 }}
     >
-      <div className="mx-auto grid w-full max-w-3xl grid-cols-2 gap-6 sm:gap-10 lg:gap-14">
-        {members.map(member => (
-          <MemberFigure key={member.id} member={member} progress={progress} />
-        ))}
-      </div>
+      <p className="mono-label">{portfolio}</p>
     </div>
   );
 };
 
 const CoreMembers = () => (
   <section id="core-members" className="lattice relative">
-    {/* Section opening */}
     <div className="rule-b px-6 py-24 sm:px-10 lg:px-16 lg:py-32">
       <div className="mx-auto w-full max-w-5xl">
         <p className="mono-label">Academic year 2025–26</p>
@@ -215,20 +243,31 @@ const CoreMembers = () => (
       </div>
     </div>
 
-    {coordinatorsByPortfolio.map(({ portfolio, members }, index) => (
-      <ScrollScene key={portfolio} heightVh={320}>
-        {progress => (
-          <div className="lattice relative h-full w-full">
-            <Headline
-              progress={progress}
-              index={index}
-              portfolio={portfolio}
-            />
-            <Pair progress={progress} members={members} />
-          </div>
-        )}
-      </ScrollScene>
-    ))}
+    {coordinatorsByPortfolio.map(({ portfolio, members }, index) => {
+      const lead = members.find(member => member.isLead);
+      const joint = members.find(member => !member.isLead);
+
+      return (
+        <ScrollScene key={portfolio} heightVh={300}>
+          {progress => (
+            <div className="relative h-full w-full overflow-hidden">
+              <SceneBackground progress={progress} />
+
+              {/* Lead left, joint holder right. */}
+              {lead && (
+                <MemberColumn progress={progress} member={lead} side="left" />
+              )}
+              {joint && (
+                <MemberColumn progress={progress} member={joint} side="right" />
+              )}
+
+              <SceneLabel progress={progress} portfolio={portfolio} />
+              <Headline progress={progress} index={index} portfolio={portfolio} />
+            </div>
+          )}
+        </ScrollScene>
+      );
+    })}
   </section>
 );
 
