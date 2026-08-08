@@ -1,18 +1,18 @@
 // HackHive Club data and imports
-import Sanjay from '@/assets/HACKHIVE/Sanjay.jpg';
-import Jayesh from "@/assets/HACKHIVE/Jayesh.jpg";
-import Leo from '@/assets/HACKHIVE/Leo.jpg';
-import Gre from '@/assets/Gre.jpg';
-import Nithish from "@/assets/Nithishkumar.png";
-import Hack1 from "@/assets/HACKHIVE/Hack1.jpg";
-import Hack2 from "@/assets/HACKHIVE/Hack2.jpg";
-import Hack3 from "@/assets/HACKHIVE/Hack3.jpg";
-import Hack4 from "@/assets/HACKHIVE/Hack4.jpg";
-import Hack5 from "@/assets/HACKHIVE/Hack5.jpg";
-import Hack6 from "@/assets/HACKHIVE/Hack6.jpg";
-import Hack7 from "@/assets/HACKHIVE/Hack7.jpg";
+import Sanjay from '@/assets/HACKHIVE/Sanjay.webp';
+import Jayesh from "@/assets/HACKHIVE/Jayesh.webp";
+import Leo from '@/assets/HACKHIVE/Leo.webp';
+import Gre from '@/assets/Gre.webp';
+import Nithish from "@/assets/Nithishkumar.webp";
+import Hack1 from "@/assets/HACKHIVE/Hack1.webp";
+import Hack2 from "@/assets/HACKHIVE/Hack2.webp";
+import Hack3 from "@/assets/HACKHIVE/Hack3.webp";
+import Hack4 from "@/assets/HACKHIVE/Hack4.webp";
+import Hack5 from "@/assets/HACKHIVE/Hack5.webp";
+import Hack6 from "@/assets/HACKHIVE/Hack6.webp";
+import Hack7 from "@/assets/HACKHIVE/Hack7.webp";
 import HackIcon from "@/assets/HACKHIVE/Hack.ico";
-import Pooja from "@/assets/HACKHIVE/Pooja.jpg";
+import Pooja from "@/assets/UNBIAS/Pooja.webp";
 
 export { HackIcon };
 

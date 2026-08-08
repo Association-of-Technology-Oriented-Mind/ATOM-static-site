@@ -1,7 +1,7 @@
 ﻿import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import ScrollFloat from './ScrollFloat';
-import atomTeamImage from '../assets/atom-team.jpg';
+import atomTeamImage from '../assets/atom-team.webp';
 
 export const About = () => {
   const ref = useRef(null);

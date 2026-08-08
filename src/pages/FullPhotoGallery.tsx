@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { gsap } from 'gsap';
+import { galleryImages } from '@/constants/gallery';
 
 const useMedia = (queries: string[], values: number[], defaultValue: number): number => {
   const get = () => values[queries.findIndex(q => matchMedia(q).matches)] ?? defaultValue;
@@ -378,13 +379,7 @@ const ImageModal: React.FC<ImageModalProps> = ({
   );
 };
 
-const images = Object.values(
-  import.meta.glob("../assets/PHOTOS/*.{jpg,jpeg,png,gif,JPG,JPEG,PNG,GIF}", { eager: true, query: "?url", import: "default" })
-);
-
-// Debug: Log loaded images
-console.log('FullPhotoGallery: Loaded images count:', images.length);
-console.log('FullPhotoGallery: First 3 image URLs:', images.slice(0, 3));
+const images = galleryImages;
 
 const FullPhotoGallery = () => {
   const navigate = useNavigate();

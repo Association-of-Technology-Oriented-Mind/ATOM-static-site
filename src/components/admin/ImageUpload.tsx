@@ -343,7 +343,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                     alt={`Existing ${index + 1}`}
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      e.currentTarget.src = '/src/assets/placeholder.svg';
+                      e.currentTarget.src = '/placeholder.svg';
                     }}
                   />
                 </div>

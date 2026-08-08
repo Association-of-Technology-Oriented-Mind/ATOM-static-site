@@ -8,7 +8,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Lock, User, Key, Sparkles, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Waves from '@/components/Waves';
-import atomLogo from '@/assets/atom-logo.png';
+import atomLogo from '@/assets/atom-logo.webp';
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState('');

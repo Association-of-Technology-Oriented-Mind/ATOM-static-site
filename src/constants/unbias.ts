@@ -1,20 +1,20 @@
 // UnBias Club data and imports
-import Aravind from '@/assets/Aravind.jpg';
-import Ronnie from '@/assets/ra1.png';
-import Aparna from '@/assets/UNBIAS/Aparna.jpg';
-import Lebi from '@/assets/UNBIAS/Lebi.jpg';
-import Thirupathy from '@/assets/Thirupathi S.jpg';
-import Pooja from '@/assets/UNBIAS/Pooja.jpg';
-import Vasuki from '@/assets/UNBIAS/Vasuki.jpg';
+import Aravind from '@/assets/Aravind.webp';
+import Ronnie from '@/assets/ra1.webp';
+import Aparna from '@/assets/UNBIAS/Aparna.webp';
+import Lebi from '@/assets/UNBIAS/Lebi.webp';
+import Thirupathy from '@/assets/Thirupathi S.webp';
+import Pooja from '@/assets/UNBIAS/Pooja.webp';
+import Vasuki from '@/assets/UNBIAS/Vasuki.webp';
 // Note: Unbias1.jpg, Unbias3.jpg, and Unbias7.jpg don't exist
-import Bias1 from "@/assets/UNBIAS/IMG-20250913-WA0012.jpg";
-import Bias2 from "@/assets/UNBIAS/Unbias2.jpg";
-import Bias4 from "@/assets/UNBIAS/Unbias4.jpg";
-import Bias6 from "@/assets/UNBIAS/Unbias6.jpg";
-import BiasPhoto1 from "@/assets/UNBIAS/PXL_20251014_110651221.jpg";
-import BiasPhoto2 from "@/assets/UNBIAS/PXL_20251014_110656735.jpg";
-import BiasPhoto3 from "@/assets/UNBIAS/PXL_20251014_110701675.jpg";
-import BiasPhoto4 from "@/assets/UNBIAS/PXL_20251014_110723049.jpg";
+import Bias1 from "@/assets/UNBIAS/IMG-20250913-WA0012.webp";
+import Bias2 from "@/assets/UNBIAS/Unbias2.webp";
+import Bias4 from "@/assets/UNBIAS/Unbias4.webp";
+import Bias6 from "@/assets/UNBIAS/Unbias6.webp";
+import BiasPhoto1 from "@/assets/UNBIAS/PXL_20251014_110651221.webp";
+import BiasPhoto2 from "@/assets/UNBIAS/PXL_20251014_110656735.webp";
+import BiasPhoto3 from "@/assets/UNBIAS/PXL_20251014_110701675.webp";
+import BiasPhoto4 from "@/assets/UNBIAS/PXL_20251014_110723049.webp";
 import BiasIcon from "@/assets/UNBIAS/Bias.ico";
 
 export { BiasIcon };

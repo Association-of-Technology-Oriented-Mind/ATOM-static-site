@@ -2,15 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
-// List of image URLs from public/PHOTOS
-// Dynamically import all images from src/assets/PHOTOS for a clean, consistent gallery
-const allImages = Object.values(
-  import.meta.glob("../assets/PHOTOS/*.{jpg,jpeg,png,gif,JPG,JPEG,PNG,GIF}", { eager: true, query: "?url", import: "default" })
-);
-
-// Debug logging
-console.log('PhotoGallerySection: Total images found:', allImages.length);
-console.log('PhotoGallerySection: First 3 images:', allImages.slice(0, 3));
+import { galleryImages as allImages } from "@/constants/gallery";
 
 const previewCount = 6; // 3×2 grid layout
 

@@ -5,7 +5,7 @@ import PastEventTimeline from '@/components/events/PastEventTimeline';
 import { type Event } from '@/constants/events';
 import { getEvents } from '@/utils/dataService';
 import { generateSlug } from '@/utils/slug';
-import atomLogo from '@/assets/atom-logo.png';
+import atomLogo from '@/assets/atom-logo.webp';
 import '@/styles/events.css';
 import '@/styles/event-enhancements.css';
 import '@/styles/event-card-enhancements.css';

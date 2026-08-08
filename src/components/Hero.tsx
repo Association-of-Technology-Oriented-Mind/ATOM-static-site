@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { useEffect, useState, useRef } from 'react';
 import TextPressure from './TextPressure';
 import Waves from './Waves';
-import atomLogo from '@/assets/atom-logo.png';
+import atomLogo from '@/assets/atom-logo.webp';
 
 export const Hero = () => {
   const [isVisible, setIsVisible] = useState(false);
