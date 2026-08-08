@@ -11,18 +11,10 @@ export default defineConfig(({ mode }) => ({
     port: 8000,
   },
   plugins: [
-    react(), 
+    react(),
     mode === "development" && componentTagger(),
-    // Gzip compression for production
-    mode === "production" && compression({
-      algorithms: ['gzip'],
-      exclude: [/\.(br)$ /, /\.(gz)$/],
-    }),
-    // Brotli compression for production (better than gzip)
-    mode === "production" && compression({
-      algorithms: ['brotliCompress'],
-      exclude: [/\.(br)$ /, /\.(gz)$/],
-    }),
+    // No build-time compression: Firebase Hosting gzips/brotlis on the fly,
+    // so emitting .gz/.br files just adds 54 redundant uploads per deploy.
   ].filter(Boolean),
   resolve: {
     alias: {
