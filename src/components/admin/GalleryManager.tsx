@@ -11,7 +11,7 @@ import { useGalleryImages } from '@/hooks/useContent';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { replaceCollection } from '@/utils/dataService';
-import { COLLECTIONS } from '@/lib/firebase';
+import { COLLECTIONS, isStorageConfigured } from '@/lib/firebase';
 
 interface GalleryManagerProps {
   onBackToDashboard: () => void;
@@ -90,9 +90,21 @@ const GalleryManager: React.FC<GalleryManagerProps> = ({ onBackToDashboard }) =>
         </div>
       </motion.div>
 
-      <Tabs defaultValue="upload" className="space-y-6">
+      {!isStorageConfigured && (
+        <div className="glass-card border-glass-border p-6 text-sm text-foreground-secondary">
+          <p className="font-semibold text-foreground mb-1">Uploads are disabled</p>
+          <p>
+            Firebase Storage is not enabled for this project, so new images can&apos;t be
+            uploaded here. To add photos, drop the file into{' '}
+            <code className="text-atom-primary">src/assets/PHOTOS/</code>, commit, and
+            redeploy. Existing photos below are served from the build.
+          </p>
+        </div>
+      )}
+
+      <Tabs defaultValue={isStorageConfigured ? 'upload' : 'manage'} className="space-y-6">
         <TabsList className="grid w-full grid-cols-2 bg-glass/30 border-glass-border">
-          <TabsTrigger value="upload" className="flex items-center gap-2 text-foreground data-[state=active]:bg-atom-primary data-[state=active]:text-white">
+          <TabsTrigger value="upload" disabled={!isStorageConfigured} className="flex items-center gap-2 text-foreground data-[state=active]:bg-atom-primary data-[state=active]:text-white disabled:opacity-40">
             <Upload className="w-4 h-4" />
             Upload Images
           </TabsTrigger>

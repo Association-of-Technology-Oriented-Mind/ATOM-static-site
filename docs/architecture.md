@@ -146,7 +146,9 @@ and written as a unit.
 - **Cloud Firestore** — content and registration storage.
 - **Firebase Authentication** — admin sign-in; the `admin` custom claim gates
   all writes.
-- **Firebase Storage** — gallery/event image uploads (`gallery/` prefix).
+- **Firebase Storage** — gallery image uploads (`gallery/` prefix). Optional:
+  requires the Blaze plan. When absent, the CMS upload tab is disabled and
+  gallery photos are served from the build instead.
 - **Firebase Hosting** — static hosting with SPA rewrite.
 - **EmailJS** — contact form delivery to `atom@karunya.edu`. The form disables
   itself when unconfigured rather than failing silently.

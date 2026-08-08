@@ -27,3 +27,6 @@ dist-ssr
 .env
 .env.local
 .env.*.local
+
+# Firebase service account key (a real secret, unlike VITE_* values)
+serviceAccount*.json

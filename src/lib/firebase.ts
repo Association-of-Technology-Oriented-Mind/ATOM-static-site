@@ -35,6 +35,13 @@ export const db = dbInstance;
 export const auth = authInstance;
 export const storage = storageInstance;
 
+// Storage is optional: the project runs on the Spark plan without a bucket.
+// Gallery images ship with the build; the CMS upload tab hides itself rather
+// than failing per-file when no bucket is configured.
+export const isStorageConfigured = Boolean(
+  storageInstance && import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+);
+
 export const COLLECTIONS = {
   events: 'events',
   coordinators: 'coordinators',

@@ -45,14 +45,22 @@ claim.
 > add it explicitly if you store it elsewhere.
 
 **Create the Firestore database** — Firestore Database → Create database →
-production mode.
+production mode, region `asia-south1`.
+
+**Firebase Storage is optional and requires the Blaze (paid) plan.** Without a
+bucket, everything works except uploading images through the CMS — the gallery
+upload tab hides itself and explains the alternative. To add photos without
+Storage, drop files into `src/assets/PHOTOS/`, commit, and redeploy. Leave
+`VITE_FIREBASE_STORAGE_BUCKET` empty when no bucket exists.
 
 ## 3. Deploy security rules
 
 Rules are the entire authorisation layer. Deploy them before going live:
 
 ```bash
-npx firebase deploy --only firestore:rules,storage:rules
+npx firebase deploy --only firestore:rules
+# Only if a Storage bucket exists:
+npx firebase deploy --only storage:rules
 ```
 
 - `firestore.rules` — public read on content; writes require the `admin` claim.
@@ -90,3 +98,4 @@ npx firebase deploy --only hosting
 - [ ] Editing an event in the CMS persists after a hard refresh
 - [ ] Submitting a registration creates a `registrations` document
 - [ ] Uploading an image in the CMS lands in Storage under `gallery/`
+      (skip if Storage is not enabled — the upload tab should be disabled)
