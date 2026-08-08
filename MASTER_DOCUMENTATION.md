@@ -1,5 +1,11 @@
 # 📚 ATOM Club Website - Master Documentation & User Guide
 
+> **⚠️ Outdated (2026-08-08).** This guide predates the Firebase migration and
+> still describes the localStorage CMS and the hardcoded `admin` / `atomcms`
+> login, neither of which exists any more. See `docs/architecture.md`,
+> `docs/API.md`, and `docs/setup.md` for current behaviour.
+
+
 **Complete Guide for Everyone - From Newcomers to Advanced Users**
 
 ---
