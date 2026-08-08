@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, MapPin, Clock, Users, Star } from 'lucide-react';
@@ -70,7 +70,6 @@ const EventCard: React.FC<EventCardProps> = ({ event, onClick }) => {
                 e.currentTarget.src = '/placeholder.svg';
               }}
               onLoad={() => {
-                console.log(`Successfully loaded image: ${event.image} for event: ${event.title}`);
               }}
             />
 

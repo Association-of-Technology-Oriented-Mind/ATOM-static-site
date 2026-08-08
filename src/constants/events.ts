@@ -35,7 +35,7 @@ export const events: Event[] = [
     location: "Karunya Institute of Technology and Sciences, Coimbatore",
     description:
       "Battle of Binaries 1.0 - CTF (Capture The Flag) Competition. An exciting cybersecurity competition where participants solved challenges related to cryptography, web exploitation, reverse engineering, and more. Teams competed to capture flags and demonstrate their hacking skills in a safe, controlled environment.",
-    image: "/EVENTS/Battle of Binaries 1.0.jpg",
+    image: "/EVENTS/Battle of Binaries 1.0.webp",
     status: "past",
     category: "Competition",
     eventType: "paid",
@@ -50,7 +50,7 @@ export const events: Event[] = [
     location: "DSCS Gallery Hall",
     description:
       "Seminar on software automation testing methodologies using Java, conducted by Ms. Chris Zionna.",
-    image: "/EVENTS/Software Automation Testing in Java.jpg",
+    image: "/EVENTS/Software Automation Testing in Java.webp",
     status: "past",
     category: "Seminar",
     eventType: "free",
@@ -63,7 +63,7 @@ export const events: Event[] = [
     location: "Emmanuel Auditorium",
     description:
       "A leadership retreat featuring Dr. Vizia Daniel Devarapalli Founder & Senior Pastor of God's Power Ministries .",
-    image: "/EVENTS/DSCS Retreat 2025.jpg",
+    image: "/EVENTS/DSCS Retreat 2025.webp",
     status: "past",
     category: "Retreat",
     eventType: "free",
@@ -75,7 +75,7 @@ export const events: Event[] = [
     location: "AIML Gallery Hall",
     description:
       "Two-day hackathon fostering innovation and creativity, hosted by Dr. Radhakrishnan Subramaniam.",
-    image: "/EVENTS/INNOVATE-X HACKATHON.jpg",
+    image: "/EVENTS/INNOVATE-X HACKATHON.webp",
     status: "past",
     category: "Hackathon",
     eventType: "free",
@@ -87,14 +87,14 @@ export const events: Event[] = [
     location: "DSCS Gallery Hall",
     description:
       "An insightful webinar on the topic 'The Entrepreneurial Ecosystem in Tamil Nadu' was conducted by Mr. Samuel Premkumar. The students found the session highly informative and felt motivated by the opportunities shared to explore entrepreneurship.",
-    image: "/EVENTS/The Entrepreneurial Ecosystem in Tamil Nadu.jpg",
+    image: "/EVENTS/The Entrepreneurial Ecosystem in Tamil Nadu.webp",
     status: "past",
     category: "Seminar",
     eventType: "free",
     gallery: [
-      "/EVENTS/The_Entrepreneurial_Ecosystem_1.jpg",
-      "/EVENTS/The_Entrepreneurial_Ecosystem_2.jpg",
-      "/EVENTS/The_Entrepreneurial_Ecosystem_3.jpg"
+      "/EVENTS/The_Entrepreneurial_Ecosystem_1.webp",
+      "/EVENTS/The_Entrepreneurial_Ecosystem_2.webp",
+      "/EVENTS/The_Entrepreneurial_Ecosystem_3.webp"
     ]
   },
   {
@@ -105,7 +105,7 @@ export const events: Event[] = [
     location: "Emmanuel Auditorium",
     description:
       "Official inauguration ceremony of ATOM Events 2025. Chief Guest: Mr. Pragadeesan, Associate Director at E&Y. A grand opening with inspiring speeches and ribbon-cutting ceremony.",
-    image: "/EVENTS/ATOM INAUGURATION.jpg",
+    image: "/EVENTS/ATOM INAUGURATION.webp",
     status: "past",
     category: "Ceremony",
     eventType: "free",
@@ -117,7 +117,7 @@ export const events: Event[] = [
   //   location: "DSCS Gallery Hall",
   //   description:
   //     "Seminar exploring how digital disruption impacts employability, led by Dr. Radhakrishnan Subramaniam.",
-  //   image: "/EVENTS/Digital Disruption and Employability Seminar.jpg",
+  //   image: "/EVENTS/Digital Disruption and Employability Seminar.webp",
   //   status: "past",
   //   category: "Seminar",
   //   eventType: "free",
@@ -129,7 +129,7 @@ export const events: Event[] = [
     location: "DSCS Gallery Hall",
     description:
       "A comprehensive 5-day bootcamp organized by DotDev Club, held from August 4th to August 8th, 2025. This intensive program covered everything from frontend to backend development.\n\nWhat We Covered:\n\nFrontend Development:\n- Introduction to Full Stack Development\n- React with TypeScript for modern UI development\n- Version Control with Git and GitHub\n- Responsive design principles and best practices\n\nBackend Development:\n- Understanding Backend architecture - APIs, core logic, and databases\n- Working with virtual environments and their importance\n- Database deployment on Render cloud platform\n- Deploying Adminer (DB management tool) using Docker\n- Introduction to Docker and containerization\n- Hands-on API hosting and testing\n\nThis bootcamp provided students with practical, industry-relevant skills to build scalable, modern web applications from scratch. Participants gained hands-on experience with the complete development workflow, from frontend design to backend deployment.",
-    image: "/EVENTS/FULL STACK  Development BOOTCAMP.jpg",
+    image: "/EVENTS/FULL STACK  Development BOOTCAMP.webp",
     status: "past",
     category: "Bootcamp",
     eventType: "free",
@@ -151,7 +151,7 @@ export const events: Event[] = [
     location: "DSCS Gallery Hall",
     description:
       "Master the art of cybersecurity with hands-on experience in defensive and offensive security techniques.",
-    image: "/EVENTS/CYBERSECURITY Bootcamp.jpg",
+    image: "/EVENTS/CYBERSECURITY Bootcamp.webp",
     status: "past",
     category: "Bootcamp",
     eventType: "free",
@@ -163,7 +163,7 @@ export const events: Event[] = [
     location: "DSCS Gallery Hall",
     description:
       "Dive deep into the world of artificial intelligence and machine learning with cutting-edge techniques and real-world applications.",
-    image: "/EVENTS/AI_ML Bootcamp.jpg",
+    image: "/EVENTS/AI_ML Bootcamp.webp",
     status: "past",
     category: "Bootcamp",
     eventType: "free",

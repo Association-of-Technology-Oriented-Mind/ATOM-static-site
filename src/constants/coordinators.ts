@@ -1,23 +1,23 @@
 // Coordinator data and image imports
-import Aravind from "@/assets/Aravind.jpg";
-// import Immanuel from "@/assets/Immanuel.jpg";
-import Bruno from "@/assets/Bruno.jpg";
-import Deepa from "@/assets/Deepakumar.jpg";
-import franz from "@/assets/FranzKingsteinN.jpg";
-import Jerome from "@/assets/Jerome T.png";
-import kevin from "@/assets/Kevin.jpg";
-import Malliga from "@/assets/Malliga.jpeg";
-import Nadish from "@/assets/Nadish.jpg";
-import Jemmiah from "@/assets/Jemimah Praisy.jpg";
-import Nessan from "@/assets/Nessa.jpg";
-import Raghul from "@/assets/Rahul Balaskandan.png";
-import Reshwin from "@/assets/Reshwin.jpg";
-import Thirupathy from "@/assets/Thirupathi S.jpg";
-import Uvasri from "@/assets/Uvasri.png";
-import Nithish from "@/assets/Nithishkumar.png";
-import Kaviya from "@/assets/kaviya.png";
-import Keba from "@/assets/keba.jpg";
-import Gre from '@/assets/Gre.jpg';
+import Aravind from "@/assets/Aravind.webp";
+// import Immanuel from "@/assets/Immanuel.webp";
+import Bruno from "@/assets/Bruno.webp";
+import Deepa from "@/assets/Deepakumar.webp";
+import franz from "@/assets/FranzKingsteinN.webp";
+import Jerome from "@/assets/Jerome T.webp";
+import kevin from "@/assets/Kevin.webp";
+import Malliga from "@/assets/Malliga.webp";
+import Nadish from "@/assets/Nadish.webp";
+import Jemmiah from "@/assets/Jemimah Praisy.webp";
+import Nessan from "@/assets/Nessa.webp";
+import Raghul from "@/assets/Rahul Balaskandan.webp";
+import Reshwin from "@/assets/Reshwin.webp";
+import Thirupathy from "@/assets/Thirupathi S.webp";
+import Uvasri from "@/assets/Uvasri.webp";
+import Nithish from "@/assets/Nithishkumar.webp";
+import Kaviya from "@/assets/kaviya.webp";
+import Keba from "@/assets/keba.webp";
+import Gre from '@/assets/Gre.webp';
 
 // Coordinators data
 export const coordinators = [

@@ -1,11 +1,9 @@
-﻿import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
+﻿import { useRef } from 'react';
 import ScrollFloat from './ScrollFloat';
-import atomTeamImage from '../assets/atom-team.jpg';
+import atomTeamImage from '../assets/atom-team.webp';
 
 export const About = () => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const ref = useRef<HTMLElement>(null);
 
   return (
     <section 
@@ -25,7 +23,6 @@ export const About = () => {
       <div className="relative z-10 text-center max-w-6xl mx-auto">
         <div className="text-2xl sm:text-3xl lg:text-4xl text-white/70 mb-8 sm:mb-12 lg:mb-16">
           <ScrollFloat
-            scrollContainerRef={null}
             animationDuration={6}
             ease='power1.inOut'
             scrollStart='center bottom+=50%'
@@ -38,7 +35,6 @@ export const About = () => {
         
         <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6 text-base sm:text-lg lg:text-xl leading-relaxed text-white/60 px-4 sm:px-0">
           <ScrollFloat
-            scrollContainerRef={null}
             animationDuration={7}
             ease='power1.inOut'
             scrollStart='center bottom+=50%'

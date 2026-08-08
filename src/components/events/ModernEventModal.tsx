@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Event } from '@/constants/events';
 import { useNavigate } from 'react-router-dom';
-import ClockCountdown from '@/components/ui/ClockCountdown';
 import ReactMarkdown from 'react-markdown';
 
 interface ModernEventModalProps {

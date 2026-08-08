@@ -1,14 +1,14 @@
 import { motion, useInView } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
-import { Code, Smartphone, Brain, Shield, Globe, X, Linkedin, ArrowLeft, ExternalLink, Github } from "lucide-react";
+import { X, Linkedin, ArrowLeft } from "lucide-react";
 
-import { getClubs } from "@/utils/dataService";
+import { useClubs } from "@/hooks/useContent";
 import { DotIcon, BiasIcon, HackIcon } from "@/constants/clubs";
 
 export const Clubs = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
-  const clubs = getClubs();
+  const { data: clubs = [] } = useClubs();
 
   const [selectedClub, setSelectedClub] = useState<null | typeof clubs[0]>(null);
   const [clubPage, setClubPage] = useState<null | typeof clubs[0]>(null);
@@ -88,7 +88,6 @@ export const Clubs = () => {
   };
 
   if (clubPage) {
-    const Icon = clubPage.icon;
     return (
       <motion.div
         initial={{ opacity: 0 }}
@@ -317,7 +316,6 @@ export const Clubs = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 justify-center">
           {clubs.map((club, index) => {
-            const Icon = club.icon;
             return (
               <motion.div
                 key={club.id}

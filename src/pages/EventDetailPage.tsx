@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Event } from '@/constants/events';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getEventById, getEvents } from '@/utils/dataService';
+import { useEvents } from '@/hooks/useContent';
 import { generateSlug } from '@/utils/slug';
 import ClockCountdown from '@/components/ui/ClockCountdown';
 import ReactMarkdown from 'react-markdown';
@@ -67,23 +67,22 @@ const EventDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
   const [event, setEvent] = useState<Event | null>(null);
-  const [timeLeft, setTimeLeft] = useState<TimeLeft>({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [, setTimeLeft] = useState<TimeLeft>({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [isExpired, setIsExpired] = useState(false);
   const [showRegistrationOptions, setShowRegistrationOptions] = useState(false);
 
+  const { data: events, isLoading: eventsLoading } = useEvents();
+
   useEffect(() => {
-    // Find event by slug
-    if (slug) {
-      const events = getEvents();
-      const foundEvent = events.find(e => generateSlug(e.title) === slug);
-      if (foundEvent) {
-        setEvent(foundEvent);
-      } else {
-        // Event not found, redirect to events page
-        navigate('/events');
-      }
+    if (!slug || eventsLoading || !events) return;
+
+    const foundEvent = events.find(e => generateSlug(e.title) === slug);
+    if (foundEvent) {
+      setEvent(foundEvent);
+    } else {
+      navigate('/events');
     }
-  }, [slug, navigate]);
+  }, [slug, navigate, events, eventsLoading]);
 
   useEffect(() => {
     if (!event || event.status !== 'upcoming') return;

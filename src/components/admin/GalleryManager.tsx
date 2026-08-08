@@ -7,65 +7,48 @@ import { Image as ImageIcon, Upload, Grid, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { ThreeDIconPresets } from '../ThreeDIcons';
 import ImageUpload from './ImageUpload';
-import { getGalleryImages } from '@/utils/dataService';
-
-// Default gallery images from assets
-const defaultGalleryImages = [
-  '/src/assets/PHOTOS/1000040131.jpg',
-  '/src/assets/PHOTOS/1000040149.jpg',
-  '/src/assets/PHOTOS/1000040167.jpg',
-  '/src/assets/PHOTOS/IMG_9452.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_094947838.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_095043160.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_095256976.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_095520986.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_095546359.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_103850197.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_104029210.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_104102851.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_104155194.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_104340841.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_104419689.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_104439233.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_104459009.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_104634043.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_104654023.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_104710298.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_104839305.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_104926951.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_105120442.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_105151695.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_105415430.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_153839440.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_154406240.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_155659059.jpg',
-  '/src/assets/PHOTOS/SAVE_20250903_211046.jpg'
-];
+import { useGalleryImages } from '@/hooks/useContent';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { replaceCollection } from '@/utils/dataService';
+import { COLLECTIONS, isStorageConfigured } from '@/lib/firebase';
 
 interface GalleryManagerProps {
   onBackToDashboard: () => void;
 }
 
 const GalleryManager: React.FC<GalleryManagerProps> = ({ onBackToDashboard }) => {
+  const { data: storedImages = [] } = useGalleryImages();
+  const queryClient = useQueryClient();
   const [galleryImages, setGalleryImages] = useState<string[]>([]);
 
   useEffect(() => {
-    // Load gallery from localStorage or defaults
-    const images = getGalleryImages();
-    setGalleryImages(images);
-  }, []);
+    setGalleryImages(storedImages);
+  }, [storedImages]);
 
-  const handleImagesUploaded = (newImages: string[]) => {
-    const updatedGallery = [...galleryImages, ...newImages];
-    setGalleryImages(updatedGallery);
-    localStorage.setItem('cms_gallery', JSON.stringify(updatedGallery));
+  const persist = async (updated: string[], previous: string[]) => {
+    setGalleryImages(updated);
+    try {
+      await replaceCollection(
+        COLLECTIONS.gallery,
+        updated.map(url => ({ id: url, url })),
+        'id',
+      );
+      queryClient.invalidateQueries({ queryKey: ['gallery'] });
+    } catch (error) {
+      console.error('Failed to save gallery:', error);
+      setGalleryImages(previous);
+      toast.error('Could not save gallery', {
+        description: error instanceof Error ? error.message : 'Please try again.',
+      });
+    }
   };
 
-  const handleRemoveImage = (index: number) => {
-    const updatedGallery = galleryImages.filter((_, i) => i !== index);
-    setGalleryImages(updatedGallery);
-    localStorage.setItem('cms_gallery', JSON.stringify(updatedGallery));
-  };
+  const handleImagesUploaded = (newImages: string[]) =>
+    persist([...galleryImages, ...newImages], galleryImages);
+
+  const handleRemoveImage = (index: number) =>
+    persist(galleryImages.filter((_, i) => i !== index), galleryImages);
 
   return (
     <div className="space-y-8">
@@ -107,9 +90,21 @@ const GalleryManager: React.FC<GalleryManagerProps> = ({ onBackToDashboard }) =>
         </div>
       </motion.div>
 
-      <Tabs defaultValue="upload" className="space-y-6">
+      {!isStorageConfigured && (
+        <div className="glass-card border-glass-border p-6 text-sm text-foreground-secondary">
+          <p className="font-semibold text-foreground mb-1">Uploads are disabled</p>
+          <p>
+            Firebase Storage is not enabled for this project, so new images can&apos;t be
+            uploaded here. To add photos, drop the file into{' '}
+            <code className="text-atom-primary">src/assets/PHOTOS/</code>, commit, and
+            redeploy. Existing photos below are served from the build.
+          </p>
+        </div>
+      )}
+
+      <Tabs defaultValue={isStorageConfigured ? 'upload' : 'manage'} className="space-y-6">
         <TabsList className="grid w-full grid-cols-2 bg-glass/30 border-glass-border">
-          <TabsTrigger value="upload" className="flex items-center gap-2 text-foreground data-[state=active]:bg-atom-primary data-[state=active]:text-white">
+          <TabsTrigger value="upload" disabled={!isStorageConfigured} className="flex items-center gap-2 text-foreground data-[state=active]:bg-atom-primary data-[state=active]:text-white disabled:opacity-40">
             <Upload className="w-4 h-4" />
             Upload Images
           </TabsTrigger>

@@ -2,39 +2,35 @@ import React from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
-// List of image URLs from public/PHOTOS
-// Dynamically import all images from src/assets/PHOTOS for a clean, consistent gallery
-const allImages = Object.values(
-  import.meta.glob("../assets/PHOTOS/*.{jpg,jpeg,png,gif,JPG,JPEG,PNG,GIF}", { eager: true, query: "?url", import: "default" })
-);
+import { useGalleryImages } from "@/hooks/useContent";
 
-// Debug logging
-console.log('PhotoGallerySection: Total images found:', allImages.length);
-console.log('PhotoGallerySection: First 3 images:', allImages.slice(0, 3));
+interface GalleryPhoto {
+  src: string;
+  aspectRatio: number;
+  width: number;
+  height: number;
+}
 
 const previewCount = 6; // 3×2 grid layout
 
 const PhotoGallerySection = () => {
   const navigate = useNavigate();
-  const [previewPhotos, setPreviewPhotos] = React.useState([]);
+  const { data: allImages = [] } = useGalleryImages();
+  const [previewPhotos, setPreviewPhotos] = React.useState<GalleryPhoto[]>([]);
 
   const handleNavigateToGallery = () => {
-    console.log('PhotoGallerySection: Navigating to /full-gallery');
     navigate("/full-gallery");
   };
 
   React.useEffect(() => {
     let isMounted = true;
-    console.log('PhotoGallerySection: Starting to load images...');
     Promise.all(
       allImages.map(
         (src, idx) =>
           new Promise((resolve) => {
             const img = new window.Image();
             img.src = String(src);
-            console.log(`PhotoGallerySection: Loading image ${idx + 1}/${allImages.length}:`, src);
             img.onload = () => {
-              console.log(`PhotoGallerySection: ✓ Image ${idx + 1} loaded successfully`);
               resolve({ 
                 src, 
                 aspectRatio: img.naturalWidth / img.naturalHeight,
@@ -50,14 +46,12 @@ const PhotoGallerySection = () => {
       )
     ).then((results) => {
       if (isMounted) {
-        const validPhotos = results.filter(Boolean).slice(0, previewCount);
-        console.log('PhotoGallerySection: Valid photos loaded:', validPhotos.length);
-        console.log('PhotoGallerySection: Photos data:', validPhotos);
+        const validPhotos = (results.filter(Boolean) as GalleryPhoto[]).slice(0, previewCount);
         setPreviewPhotos(validPhotos);
       }
     });
     return () => { isMounted = false; };
-  }, []);
+  }, [allImages]);
 
   return (
     <section className="min-h-screen bg-background flex flex-col justify-center items-center py-12 sm:py-16 lg:py-20">

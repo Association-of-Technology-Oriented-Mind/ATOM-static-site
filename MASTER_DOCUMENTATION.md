@@ -1,5 +1,11 @@
 # 📚 ATOM Club Website - Master Documentation & User Guide
 
+> **⚠️ Outdated (2026-08-08).** This guide predates the Firebase migration and
+> still describes the localStorage CMS and the hardcoded `admin` / `atomcms`
+> login, neither of which exists any more. See `docs/architecture.md`,
+> `docs/API.md`, and `docs/setup.md` for current behaviour.
+
+
 **Complete Guide for Everyone - From Newcomers to Advanced Users**
 
 ---
@@ -120,8 +126,8 @@ bun dev
 
 ```
 URL:      http://localhost:5173/login
-Username: admin
-Password: atomcms
+Username: <removed>
+   Password: <removed>
 
 ⚠️ CHANGE THESE BEFORE DEPLOYING!
 ```
@@ -277,8 +283,8 @@ At the top of every page:
 
 2. **Enter Credentials**:
    ```
-   Username: admin
-   Password: atomcms
+   Username: <removed>
+   Password: <removed>
    ```
 
 3. **Click "Login"**
@@ -1501,8 +1507,8 @@ Gallery:      /full-gallery
 ### Admin Credentials
 
 ```
-Username: admin
-Password: atomcms
+Username: <removed>
+   Password: <removed>
 
 ⚠️ CHANGE IN PRODUCTION!
 ```

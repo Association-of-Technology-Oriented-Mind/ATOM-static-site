@@ -1,9 +1,9 @@
-import { motion, useInView, useAnimation, AnimatePresence } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
+import { motion, useInView, AnimatePresence } from "framer-motion";
+import { useRef, useState } from "react";
 import { Send, AlertCircle, User, Phone, Mail, MessageSquare } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import emailjs from '@emailjs/browser';
-import { EMAILJS_CONFIG } from '@/config/emailjs';
+import { EMAILJS_CONFIG, isEmailJsConfigured } from '@/config/emailjs';
 
 export const Contact = () => {
   const ref = useRef(null);
@@ -56,6 +56,15 @@ export const Contact = () => {
       toast({
         title: "Validation Error",
         description: "Please fix the errors and try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!isEmailJsConfigured()) {
+      toast({
+        title: "Contact form unavailable",
+        description: "Please email us directly at atom@karunya.edu",
         variant: "destructive",
       });
       return;

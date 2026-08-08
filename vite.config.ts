@@ -11,18 +11,10 @@ export default defineConfig(({ mode }) => ({
     port: 8000,
   },
   plugins: [
-    react(), 
+    react(),
     mode === "development" && componentTagger(),
-    // Gzip compression for production
-    mode === "production" && compression({
-      algorithms: ['gzip'],
-      exclude: [/\.(br)$ /, /\.(gz)$/],
-    }),
-    // Brotli compression for production (better than gzip)
-    mode === "production" && compression({
-      algorithms: ['brotliCompress'],
-      exclude: [/\.(br)$ /, /\.(gz)$/],
-    }),
+    // No build-time compression: Firebase Hosting gzips/brotlis on the fly,
+    // so emitting .gz/.br files just adds 54 redundant uploads per deploy.
   ].filter(Boolean),
   resolve: {
     alias: {
@@ -34,7 +26,9 @@ export default defineConfig(({ mode }) => ({
     minify: 'terser',
     terserOptions: {
       compress: {
-        drop_console: true, // Remove console.log in production
+        // Strip debug logging but keep console.error/warn, so production
+        // failures (registration, uploads, auth) stay diagnosable.
+        pure_funcs: ['console.log', 'console.info', 'console.debug'],
         drop_debugger: true,
       },
     },
@@ -42,14 +36,12 @@ export default defineConfig(({ mode }) => ({
       output: {
         // Code splitting for better caching
         manualChunks: {
-          // Vendor chunk for stable dependencies
-          vendor: ['react', 'react-dom'],
-          // UI libraries chunk
+          vendor: ['react', 'react-dom', 'react-router-dom'],
           ui: ['framer-motion', 'lucide-react'],
-          // Animation libraries
           animations: ['@use-gesture/react', 'gsap'],
-          // Email functionality
-          email: ['@emailjs/browser'],
+          // Firebase is only needed by the admin and registration routes;
+          // keeping it separate keeps it out of the landing page's critical path.
+          firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/storage'],
         },
       },
     },

@@ -1,98 +1,129 @@
-import { events as defaultEvents, Event } from '@/constants/events';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  orderBy,
+  query,
+  setDoc,
+} from 'firebase/firestore';
+import { events as defaultEvents, type Event } from '@/constants/events';
 import { coordinators as defaultCoordinators } from '@/constants/coordinators';
 import { clubs as defaultClubs } from '@/constants/clubs';
+import { galleryImages as defaultGalleryImages } from '@/constants/gallery';
+import { COLLECTIONS, db, isFirebaseConfigured } from '@/lib/firebase';
+import { eventSchema } from '@/lib/schemas';
 
-// Default gallery images
-const defaultGalleryImages = [
-  '/src/assets/PHOTOS/1000040131.jpg',
-  '/src/assets/PHOTOS/1000040149.jpg',
-  '/src/assets/PHOTOS/1000040167.jpg',
-  '/src/assets/PHOTOS/IMG_9452.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_094947838.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_095043160.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_095256976.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_095520986.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_095546359.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_103850197.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_104029210.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_104102851.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_104155194.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_104340841.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_104419689.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_104439233.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_104459009.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_104634043.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_104654023.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_104710298.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_104839305.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_104926951.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_105120442.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_105151695.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_105415430.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_153839440.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_154406240.jpg',
-  '/src/assets/PHOTOS/IMG_20250902_155659059.jpg',
-  '/src/assets/PHOTOS/SAVE_20250903_211046.jpg'
-];
+// Firestore is the source of truth once configured. The bundled constants stay
+// as the fallback so the public site still renders on a fresh clone with no
+// .env, and so a Firestore outage degrades to stale content rather than a blank
+// page.
 
-export const getEvents = (): Event[] => {
-  if (typeof window === 'undefined') return defaultEvents;
-  
-  const stored = localStorage.getItem('cms_events');
-  if (stored) {
-    try {
-      const parsedEvents = JSON.parse(stored);
-      // Check if stored events have the new image path format
-      const hasNewFormat = parsedEvents.some((event: Event) => 
-        event.image && event.image.startsWith('/EVENTS/')
-      );
-      
-      // If stored events don't have the new format, use default events
-      if (!hasNewFormat) {
-        console.log('Updating localStorage with new event image paths...');
-        localStorage.setItem('cms_events', JSON.stringify(defaultEvents));
-        return defaultEvents;
-      }
-      
-      return parsedEvents;
-    } catch (error) {
-      // If parsing fails, use default events
-      console.log('localStorage parsing failed, using default events...');
-      localStorage.setItem('cms_events', JSON.stringify(defaultEvents));
-      return defaultEvents;
-    }
+const fetchCollection = async <T>(name: string, fallback: T[]): Promise<T[]> => {
+  if (!isFirebaseConfigured || !db) return fallback;
+
+  try {
+    const snapshot = await getDocs(collection(db, name));
+    if (snapshot.empty) return fallback;
+    return snapshot.docs.map(document => document.data() as T);
+  } catch (error) {
+    console.error(`Failed to load "${name}" from Firestore; using bundled defaults.`, error);
+    return fallback;
   }
-  
-  return defaultEvents;
 };
 
-// Utility function to force refresh events data
-export const refreshEventsData = () => {
-  localStorage.removeItem('cms_events');
-  localStorage.setItem('cms_events', JSON.stringify(defaultEvents));
-  console.log('Events data refreshed with updated image paths');
+export const getEvents = async (): Promise<Event[]> => {
+  if (!isFirebaseConfigured || !db) return defaultEvents;
+
+  try {
+    const snapshot = await getDocs(query(collection(db, COLLECTIONS.events), orderBy('date', 'desc')));
+    if (snapshot.empty) return defaultEvents;
+
+    // Drop malformed documents rather than letting them crash the events page.
+    return snapshot.docs.flatMap(document => {
+      const parsed = eventSchema.safeParse(document.data());
+      if (!parsed.success) {
+        console.error(`Skipping invalid event document "${document.id}"`, parsed.error.issues);
+        return [];
+      }
+      return [parsed.data as Event];
+    });
+  } catch (error) {
+    console.error('Failed to load events from Firestore; using bundled defaults.', error);
+    return defaultEvents;
+  }
 };
 
-export const getUpcomingEvents = () => getEvents().filter(event => event.status === 'upcoming');
-export const getPastEvents = () => getEvents().filter(event => event.status === 'past');
-export const getEventCategories = () => Array.from(new Set(getEvents().map(event => event.category)));
-export const getEventYears = () => Array.from(new Set(getEvents().map(event => new Date(event.date).getFullYear().toString())));
-export const getEventById = (id: number) => getEvents().find(event => event.id === id);
+export const getCoordinators = () =>
+  fetchCollection<(typeof defaultCoordinators)[number]>(COLLECTIONS.coordinators, defaultCoordinators);
 
-export const getCoordinators = () => {
-  if (typeof window === 'undefined') return defaultCoordinators;
-  const stored = localStorage.getItem('cms_coordinators');
-  return stored ? JSON.parse(stored) : defaultCoordinators;
+export const getClubs = () =>
+  fetchCollection<(typeof defaultClubs)[number]>(COLLECTIONS.clubs, defaultClubs);
+
+/**
+ * Bundled photos plus anything uploaded through the CMS.
+ *
+ * The 133 bundled images are build-time imports served from the Hosting CDN,
+ * so they stay in the list rather than being replaced by Firestore — otherwise
+ * a single CMS upload would hide the entire existing gallery.
+ */
+export const getGalleryImages = async (): Promise<string[]> => {
+  if (!isFirebaseConfigured || !db) return defaultGalleryImages;
+
+  try {
+    const snapshot = await getDocs(collection(db, COLLECTIONS.gallery));
+    const uploaded = snapshot.docs.map(document => (document.data() as { url: string }).url);
+    // Uploaded photos are the newest, so they lead.
+    return [...uploaded, ...defaultGalleryImages.filter(url => !uploaded.includes(url))];
+  } catch (error) {
+    console.error('Failed to load gallery from Firestore; using bundled defaults.', error);
+    return defaultGalleryImages;
+  }
 };
 
-export const getClubs = () => {
-  if (typeof window === 'undefined') return defaultClubs;
-  const stored = localStorage.getItem('cms_clubs');
-  return stored ? JSON.parse(stored) : defaultClubs;
+export const saveEvent = async (event: Event): Promise<void> => {
+  if (!db) throw new Error('Firestore is not configured.');
+  await setDoc(doc(db, COLLECTIONS.events, String(event.id)), eventSchema.parse(event));
 };
 
-export const getGalleryImages = (): string[] => {
-  if (typeof window === 'undefined') return defaultGalleryImages;
-  const stored = localStorage.getItem('cms_gallery');
-  return stored ? JSON.parse(stored) : defaultGalleryImages;
+export const deleteEvent = async (id: number): Promise<void> => {
+  if (!db) throw new Error('Firestore is not configured.');
+  await deleteDoc(doc(db, COLLECTIONS.events, String(id)));
 };
+
+export const saveGalleryImage = async (url: string): Promise<void> => {
+  if (!db) throw new Error('Firestore is not configured.');
+  await setDoc(doc(collection(db, COLLECTIONS.gallery)), { url, createdAt: Date.now() });
+};
+
+/**
+ * Replaces a whole collection with `items`, keyed by `idKey`.
+ * The admin managers edit in-memory arrays and save the result wholesale, so
+ * documents removed from the array are deleted from Firestore too.
+ */
+export const replaceCollection = async <T extends object>(
+  name: string,
+  items: T[],
+  idKey: keyof T,
+): Promise<void> => {
+  if (!db) throw new Error('Firestore is not configured.');
+  const firestore = db;
+
+  const existing = await getDocs(collection(firestore, name));
+  const nextIds = new Set(items.map(item => String(item[idKey])));
+
+  await Promise.all([
+    ...existing.docs
+      .filter(document => !nextIds.has(document.id))
+      .map(document => deleteDoc(document.ref)),
+    ...items.map(item =>
+      setDoc(doc(firestore, name, String(item[idKey])), item as Record<string, unknown>),
+    ),
+  ]);
+};
+
+export const filterUpcoming = (events: Event[]) => events.filter(event => event.status === 'upcoming');
+export const filterPast = (events: Event[]) => events.filter(event => event.status === 'past');
+export const eventCategories = (events: Event[]) => Array.from(new Set(events.map(event => event.category)));
+export const eventYears = (events: Event[]) =>
+  Array.from(new Set(events.map(event => new Date(event.date).getFullYear().toString())));

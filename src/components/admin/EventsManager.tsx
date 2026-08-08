@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Edit, Trash2, Upload, ArrowLeft, Calendar, MapPin, Clock } from 'lucide-react';
+import { Plus, Edit, Trash2, Upload, ArrowLeft, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { events as defaultEvents, Event as EventType } from '@/constants/events';
+import { useQueryClient } from '@tanstack/react-query';
+import { useEvents } from '@/hooks/useContent';
+import { replaceCollection } from '@/utils/dataService';
+import { COLLECTIONS } from '@/lib/firebase';
 import { ThreeDIconPresets } from '../ThreeDIcons';
 import ImageUpload from './ImageUpload';
 import MDEditor from '@uiw/react-md-editor';
@@ -28,19 +31,26 @@ const EventsManager: React.FC<EventsManagerProps> = ({ onBackToDashboard }) => {
   const [formData, setFormData] = useState<Partial<EventType>>({});
   const [showImageUpload, setShowImageUpload] = useState(false);
 
-  useEffect(() => {
-    // Load events from localStorage or defaults
-    const stored = localStorage.getItem('cms_events');
-    if (stored) {
-      setEvents(JSON.parse(stored));
-    } else {
-      setEvents(defaultEvents);
-    }
-  }, []);
+  const { data: storedEvents = defaultEvents } = useEvents();
+  const queryClient = useQueryClient();
 
-  const handleSaveEvents = (newEvents: EventType[]) => {
+  useEffect(() => {
+    setEvents(storedEvents);
+  }, [storedEvents]);
+
+  const handleSaveEvents = async (newEvents: EventType[]) => {
+    const previous = events;
     setEvents(newEvents);
-    localStorage.setItem('cms_events', JSON.stringify(newEvents));
+    try {
+      await replaceCollection(COLLECTIONS.events, newEvents, 'id');
+      queryClient.invalidateQueries({ queryKey: ['events'] });
+    } catch (error) {
+      console.error('Failed to save events:', error);
+      setEvents(previous);
+      toast.error('Could not save events', {
+        description: error instanceof Error ? error.message : 'Please try again.',
+      });
+    }
   };
 
   const handleAdd = () => {

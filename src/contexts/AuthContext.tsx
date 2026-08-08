@@ -1,10 +1,19 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { ADMIN_CREDENTIALS } from '../config/admin-credentials';
+import {
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut,
+  type User,
+} from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 
 interface AuthContextType {
+  user: User | null;
   isAuthenticated: boolean;
-  login: (username: string, password: string) => boolean;
-  logout: () => void;
+  /** True until Firebase restores any existing session, so guards don't flash. */
+  isLoading: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,32 +31,36 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in on mount
-    const authStatus = localStorage.getItem('cms_authenticated');
-    if (authStatus === 'true') {
-      setIsAuthenticated(true);
+    if (!auth) {
+      setIsLoading(false);
+      return;
     }
+    return onAuthStateChanged(auth, nextUser => {
+      setUser(nextUser);
+      setIsLoading(false);
+    });
   }, []);
 
-  const login = (username: string, password: string): boolean => {
-    if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
-      setIsAuthenticated(true);
-      localStorage.setItem('cms_authenticated', 'true');
-      return true;
+  const login = async (email: string, password: string): Promise<void> => {
+    if (!auth) {
+      throw new Error('Authentication is not configured. Set the Firebase env vars.');
     }
-    return false;
+    await signInWithEmailAndPassword(auth, email, password);
   };
 
-  const logout = () => {
-    setIsAuthenticated(false);
-    localStorage.removeItem('cms_authenticated');
+  const logout = async (): Promise<void> => {
+    if (!auth) return;
+    await signOut(auth);
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider
+      value={{ user, isAuthenticated: user !== null, isLoading, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

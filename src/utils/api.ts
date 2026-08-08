@@ -1,63 +1,53 @@
-const API_BASE_URL = 'https://api.atom.org.in';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { COLLECTIONS, db } from '@/lib/firebase';
+import {
+  externalRegistrationSchema,
+  internalRegistrationSchema,
+  type ExternalRegistration,
+  type InternalRegistration,
+} from '@/lib/schemas';
 
-interface RegistrationData {
-  name: string;
-  reg_no: string;
-  email: string;
-  recipt_no: string;
-  year_of_study: string;
-  phone_no?: string;
-  division?: string;
-  dept_name?: string;
-  college_name?: string;
-}
+// Registrations previously POSTed to api.atom.org.in, which no longer resolves
+// (no DNS record) — every submission silently failed while still showing the
+// user a success screen. They now land in Firestore.
 
-interface ApiResponse {
+export interface RegistrationResult {
   success: boolean;
-  message?: string;
-  data?: unknown;
+  message: string;
 }
 
 export const registerParticipant = async (
-  data: RegistrationData,
-  type: 'internal' | 'external'
-): Promise<ApiResponse> => {
-  try {
-    const endpoint = type === 'internal' ? '/register/internal' : '/register/external';
-    const url = `${API_BASE_URL}${endpoint}`;
+  data: InternalRegistration | ExternalRegistration,
+  type: 'internal' | 'external',
+): Promise<RegistrationResult> => {
+  const parsed =
+    type === 'internal'
+      ? internalRegistrationSchema.safeParse(data)
+      : externalRegistrationSchema.safeParse(data);
 
-    // Map phone_no to phone_number for backend compatibility
-    const requestData = {
-      ...data,
-      phone_number: data.phone_no,
-    };
-    // Remove phone_no from the request if it exists
-    delete requestData.phone_no;
+  if (!parsed.success) {
+    return { success: false, message: parsed.error.issues[0]?.message ?? 'Invalid form data.' };
+  }
 
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(requestData),
-    });
-
-    const result = await response.json();
-
-    if (!response.ok) {
-      throw new Error(result.message || `HTTP error! status: ${response.status}`);
-    }
-
-    return {
-      success: true,
-      message: result.message || 'Registration successful!',
-      data: result,
-    };
-  } catch (error) {
-    console.error('Registration API error:', error);
+  if (!db) {
     return {
       success: false,
-      message: error instanceof Error ? error.message : 'An error occurred during registration',
+      message: 'Registration is temporarily unavailable. Please contact atom@karunya.edu.',
+    };
+  }
+
+  try {
+    await addDoc(collection(db, COLLECTIONS.registrations), {
+      ...parsed.data,
+      type,
+      createdAt: serverTimestamp(),
+    });
+    return { success: true, message: 'Registration successful!' };
+  } catch (error) {
+    console.error('Registration failed:', error);
+    return {
+      success: false,
+      message: 'Could not submit your registration. Please try again or email atom@karunya.edu.',
     };
   }
 };

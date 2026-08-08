@@ -3,35 +3,19 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import PastEventTimeline from '@/components/events/PastEventTimeline';
 import { type Event } from '@/constants/events';
-import { getEvents } from '@/utils/dataService';
+import { useEvents } from '@/hooks/useContent';
 import { generateSlug } from '@/utils/slug';
-import atomLogo from '@/assets/atom-logo.png';
+import atomLogo from '@/assets/atom-logo.webp';
 import '@/styles/events.css';
 import '@/styles/event-enhancements.css';
 import '@/styles/event-card-enhancements.css';
 
 const Event: React.FC = () => {
   const navigate = useNavigate();
-  const [events, setEvents] = React.useState<Event[]>([]);
+  const { data: events = [] } = useEvents();
 
-  // Load events on mount and clear cache to get fresh data
   useEffect(() => {
-    // Scroll to top when component mounts
     window.scrollTo({ top: 0, behavior: 'instant' });
-    
-    // Force clear cached events to get updated data from constants
-    localStorage.removeItem('cms_events');
-    console.log('Cleared cached events data');
-    
-    // Load all events (both upcoming and past)
-    const allEvents = getEvents();
-    
-    setEvents(allEvents);
-    
-    console.log('All Events:', allEvents);
-    allEvents.forEach(event => {
-      console.log(`Event: ${event.title}, Image: ${event.image}`);
-    });
   }, []);
 
 

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { gsap } from 'gsap';
+import { useGalleryImages } from '@/hooks/useContent';
 
 const useMedia = (queries: string[], values: number[], defaultValue: number): number => {
   const get = () => values[queries.findIndex(q => matchMedia(q).matches)] ?? defaultValue;
@@ -378,28 +379,26 @@ const ImageModal: React.FC<ImageModalProps> = ({
   );
 };
 
-const images = Object.values(
-  import.meta.glob("../assets/PHOTOS/*.{jpg,jpeg,png,gif,JPG,JPEG,PNG,GIF}", { eager: true, query: "?url", import: "default" })
-);
-
-// Debug: Log loaded images
-console.log('FullPhotoGallery: Loaded images count:', images.length);
-console.log('FullPhotoGallery: First 3 image URLs:', images.slice(0, 3));
-
 const FullPhotoGallery = () => {
   const navigate = useNavigate();
+  const { data: images = [] } = useGalleryImages();
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Convert image URLs to Item format for Masonry
-  const galleryItems: Item[] = images.map((src, index) => ({
-    id: `photo-${index}`,
-    img: String(src),
-    url: String(src), // Open image in new tab when clicked
-    height: 400 + Math.random() * 200 // Random height for masonry effect
-  }));
+  // Memoised because the masonry heights are randomised: recomputing them on
+  // every render would reshuffle the layout mid-scroll.
+  const galleryItems: Item[] = useMemo(
+    () =>
+      images.map((src, index) => ({
+        id: `photo-${index}`,
+        img: String(src),
+        url: String(src), // Open image in new tab when clicked
+        height: 400 + Math.random() * 200 // Random height for masonry effect
+      })),
+    [images],
+  );
 
-  const handleImageClick = (item: Item, index: number) => {
+  const handleImageClick = (_item: Item, index: number) => {
     setSelectedImageIndex(index);
     setIsModalOpen(true);
   };

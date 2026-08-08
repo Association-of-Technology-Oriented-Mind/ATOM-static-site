@@ -2,20 +2,20 @@ import { motion } from 'framer-motion';
 import { useEffect, useState, useRef } from 'react';
 import TextPressure from './TextPressure';
 import Waves from './Waves';
-import atomLogo from '@/assets/atom-logo.png';
+import atomLogo from '@/assets/atom-logo.webp';
 
 export const Hero = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
   const [clickCount, setClickCount] = useState(0);
-  const logoRef = useRef(null);
+  const logoRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setIsVisible(true);
   }, []);
 
-  const handleMouseMove = (e) => {
+  const handleMouseMove = (e: React.MouseEvent) => {
     if (logoRef.current) {
       const rect = logoRef.current.getBoundingClientRect();
       const centerX = rect.left + rect.width / 2;
