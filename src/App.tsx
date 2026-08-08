@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -6,16 +7,25 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import FullPhotoGallery from "./pages/FullPhotoGallery";
-import Event from "./pages/Event";
-import EventDetailPage from "./pages/EventDetailPage";
-import InternalRegistrationForm from "./pages/InternalRegistrationForm";
-import ExternalRegistrationForm from "./pages/ExternalRegistrationForm";
-import Login from "./pages/Login";
-import Admin from "./pages/Admin";
+
+// Only the landing page is eager. Everything else — especially the admin
+// bundle and its Firebase dependencies — loads on demand.
+const NotFound = lazy(() => import("./pages/NotFound"));
+const FullPhotoGallery = lazy(() => import("./pages/FullPhotoGallery"));
+const Event = lazy(() => import("./pages/Event"));
+const EventDetailPage = lazy(() => import("./pages/EventDetailPage"));
+const InternalRegistrationForm = lazy(() => import("./pages/InternalRegistrationForm"));
+const ExternalRegistrationForm = lazy(() => import("./pages/ExternalRegistrationForm"));
+const Login = lazy(() => import("./pages/Login"));
+const Admin = lazy(() => import("./pages/Admin"));
 
 const queryClient = new QueryClient();
+
+const RouteFallback = () => (
+  <div className="min-h-screen flex items-center justify-center bg-background">
+    <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-white/80" />
+  </div>
+);
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -24,21 +34,23 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/events" element={<Event />} />
-            <Route path="/events/:slug" element={<EventDetailPage />} />
-            <Route path="/full-gallery" element={<FullPhotoGallery />} />
-            <Route path="/registration/internal" element={<InternalRegistrationForm />} />
-            <Route path="/registration/external" element={<ExternalRegistrationForm />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/admin" element={
-              <ProtectedRoute>
-                <Admin />
-              </ProtectedRoute>
-            } />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <Suspense fallback={<RouteFallback />}>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/events" element={<Event />} />
+              <Route path="/events/:slug" element={<EventDetailPage />} />
+              <Route path="/full-gallery" element={<FullPhotoGallery />} />
+              <Route path="/registration/internal" element={<InternalRegistrationForm />} />
+              <Route path="/registration/external" element={<ExternalRegistrationForm />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/admin" element={
+                <ProtectedRoute>
+                  <Admin />
+                </ProtectedRoute>
+              } />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
         </BrowserRouter>
       </AuthProvider>
     </TooltipProvider>

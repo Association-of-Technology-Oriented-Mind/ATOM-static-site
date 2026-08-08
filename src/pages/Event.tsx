@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import PastEventTimeline from '@/components/events/PastEventTimeline';
 import { type Event } from '@/constants/events';
-import { getEvents } from '@/utils/dataService';
+import { useEvents } from '@/hooks/useContent';
 import { generateSlug } from '@/utils/slug';
 import atomLogo from '@/assets/atom-logo.webp';
 import '@/styles/events.css';
@@ -12,11 +12,10 @@ import '@/styles/event-card-enhancements.css';
 
 const Event: React.FC = () => {
   const navigate = useNavigate();
-  const [events, setEvents] = React.useState<Event[]>([]);
+  const { data: events = [] } = useEvents();
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
-    setEvents(getEvents());
   }, []);
 
 

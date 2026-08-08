@@ -11,7 +11,7 @@ import Waves from '@/components/Waves';
 import atomLogo from '@/assets/atom-logo.webp';
 
 const Login: React.FC = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -56,13 +56,18 @@ const Login: React.FC = () => {
     setError('');
     setIsLoading(true);
 
-    // Simulate loading for better UX
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    if (login(username, password)) {
+    try {
+      await login(email, password);
       navigate('/admin');
-    } else {
-      setError('Invalid credentials');
+    } catch (err) {
+      // Firebase error codes are deliberately vague about which half of the
+      // credentials was wrong; don't leak more than it does.
+      const code = (err as { code?: string }).code;
+      setError(
+        code === 'auth/invalid-credential' || code === 'auth/user-not-found' || code === 'auth/wrong-password'
+          ? 'Invalid email or password'
+          : 'Sign-in failed. Please try again.',
+      );
       setIsLoading(false);
     }
   };
@@ -312,19 +317,20 @@ const Login: React.FC = () => {
                 transition={{ duration: 0.6, delay: 0.6 }}
                 className="relative z-10 space-y-2"
               >
-                <Label htmlFor="username" className="text-slate-300 text-sm font-medium">
-                  Username
+                <Label htmlFor="email" className="text-slate-300 text-sm font-medium">
+                  Email
                 </Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
                   <Input
-                    id="username"
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    id="email"
+                    type="email"
+                    autoComplete="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                     className="pl-10 bg-white/5 border-white/20 text-white placeholder:text-slate-400 focus:border-cyan-400 focus:ring-cyan-400/20 transition-all duration-200"
-                    placeholder="Enter your username"
+                    placeholder="you@karunya.edu"
                   />
                 </div>
               </motion.div>

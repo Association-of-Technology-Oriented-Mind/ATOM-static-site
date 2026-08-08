@@ -1,0 +1,51 @@
+rules_version = '2';
+
+// Access control lives here, not in the client bundle. VITE_FIREBASE_* values
+// are public by design; these rules are what actually protect the data.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null && request.auth.token.admin == true;
+    }
+
+    // Public content: anyone may read, only admins may write.
+    match /events/{document} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /coordinators/{document} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /clubs/{document} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /gallery/{document} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Registrations contain personal data (name, email, phone, receipt no.):
+    // anyone may submit one, only admins may read them back.
+    match /registrations/{document} {
+      allow read: if isAdmin();
+      allow create: if request.resource.data.keys().hasAll(
+                         ['name', 'email', 'phone_no', 'reg_no', 'type'])
+                    && request.resource.data.name is string
+                    && request.resource.data.name.size() > 1
+                    && request.resource.data.name.size() < 200
+                    && request.resource.data.email is string
+                    && request.resource.data.email.matches('.+@.+\\..+')
+                    && request.resource.data.phone_no is string
+                    && request.resource.data.type in ['internal', 'external'];
+      allow update, delete: if isAdmin();
+    }
+
+    // Deny anything not matched above.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

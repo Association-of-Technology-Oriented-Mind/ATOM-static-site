@@ -1,4 +1,6 @@
 import React, { useState, useCallback, useRef } from 'react';
+import { getDownloadURL, ref as storageRef, uploadBytesResumable } from 'firebase/storage';
+import { storage } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -56,16 +58,25 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     return null;
   };
 
-  const processFile = async (file: File): Promise<string> => {
+  // Uploads to Firebase Storage and returns the public download URL.
+  // Previously this read files as base64 data URLs into localStorage, which
+  // exceeded the ~5MB quota on roughly one photo and threw QuotaExceededError.
+  const processFile = async (file: File, onProgress: (pct: number) => void): Promise<string> => {
+    if (!storage) throw new Error('Image storage is not configured.');
+
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const objectRef = storageRef(storage, `gallery/${Date.now()}-${safeName}`);
+    const task = uploadBytesResumable(objectRef, file, { contentType: file.type });
+
     return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        // Compress/resize image if needed (basic implementation)
-        resolve(result);
-      };
-      reader.onerror = () => reject(new Error('Failed to read file'));
-      reader.readAsDataURL(file);
+      task.on(
+        'state_changed',
+        snapshot => onProgress(Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100)),
+        reject,
+        () => {
+          getDownloadURL(task.snapshot.ref).then(resolve).catch(reject);
+        },
+      );
     });
   };
 
@@ -102,19 +113,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     for (let i = 0; i < newUploadedFiles.length; i++) {
       const uploadedFile = newUploadedFiles[i];
       try {
-        // Simulate upload progress
-        for (let progress = 0; progress <= 100; progress += 10) {
-          await new Promise(resolve => setTimeout(resolve, 50));
+        const processedImage = await processFile(uploadedFile.file, progress => {
           setUploadedFiles(prev =>
-            prev.map(f =>
-              f.file === uploadedFile.file
-                ? { ...f, progress }
-                : f
-            )
+            prev.map(f => (f.file === uploadedFile.file ? { ...f, progress } : f))
           );
-        }
-
-        const processedImage = await processFile(uploadedFile.file);
+        });
         processedImages.push(processedImage);
 
         setUploadedFiles(prev =>

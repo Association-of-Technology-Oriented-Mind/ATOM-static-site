@@ -2,12 +2,12 @@ import { motion, useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import { X, Linkedin, Grid, ArrowLeft } from "lucide-react";
 
-import { getCoordinators } from "@/utils/dataService";
+import { useCoordinators } from "@/hooks/useContent";
 
 export const Coordinators = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
-  const coordinators = getCoordinators();
+  const { data: coordinators = [] } = useCoordinators();
   const [selectedCoordinator, setSelectedCoordinator] = useState<
     typeof coordinators[0] | null
   >(null);

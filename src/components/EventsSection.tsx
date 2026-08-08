@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ThreeDIconPresets } from './ThreeDIcons';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { getEvents } from '@/utils/dataService';
+import { useEvents } from '@/hooks/useContent';
 
 const EventsSection = () => {
   const ref = useRef(null);
@@ -14,8 +14,8 @@ const EventsSection = () => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   
-  // Get the first 3 events for preview (all events, not just upcoming)
-  const allEvents = getEvents();
+  // First 3 events for preview (all events, not just upcoming)
+  const { data: allEvents = [] } = useEvents();
   const previewEvents = allEvents.slice(0, 3);
 
   const formatDate = (dateString: string) => {

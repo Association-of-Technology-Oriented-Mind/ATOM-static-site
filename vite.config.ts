@@ -44,14 +44,12 @@ export default defineConfig(({ mode }) => ({
       output: {
         // Code splitting for better caching
         manualChunks: {
-          // Vendor chunk for stable dependencies
-          vendor: ['react', 'react-dom'],
-          // UI libraries chunk
+          vendor: ['react', 'react-dom', 'react-router-dom'],
           ui: ['framer-motion', 'lucide-react'],
-          // Animation libraries
           animations: ['@use-gesture/react', 'gsap'],
-          // Email functionality
-          email: ['@emailjs/browser'],
+          // Firebase is only needed by the admin and registration routes;
+          // keeping it separate keeps it out of the landing page's critical path.
+          firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/storage'],
         },
       },
     },

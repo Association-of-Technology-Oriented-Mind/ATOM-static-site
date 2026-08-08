@@ -12,6 +12,10 @@ import { Plus, Edit, X, ArrowLeft, Building } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { clubs as defaultClubs } from '@/constants/clubs';
+import { useQueryClient } from '@tanstack/react-query';
+import { useClubs } from '@/hooks/useContent';
+import { replaceCollection } from '@/utils/dataService';
+import { COLLECTIONS } from '@/lib/firebase';
 import { ThreeDIconPresets } from '../ThreeDIcons';
 
 interface ClubsManagerProps {
@@ -51,19 +55,32 @@ const ClubsManager: React.FC<ClubsManagerProps> = ({ onBackToDashboard }) => {
   const [editingClub, setEditingClub] = useState<Club | null>(null);
   const [formData, setFormData] = useState<Partial<Club>>({});
 
-  useEffect(() => {
-    // Load clubs from localStorage or defaults
-    const stored = localStorage.getItem('cms_clubs');
-    if (stored) {
-      setClubs(JSON.parse(stored));
-    } else {
-      setClubs(defaultClubs);
-    }
-  }, []);
+  const { data: storedClubs } = useClubs();
+  const queryClient = useQueryClient();
 
-  const saveClubs = (newClubs: Club[]) => {
+  useEffect(() => {
+    setClubs((storedClubs ?? defaultClubs) as Club[]);
+  }, [storedClubs]);
+
+  const saveClubs = async (newClubs: Club[]) => {
+    const previous = clubs;
     setClubs(newClubs);
-    localStorage.setItem('cms_clubs', JSON.stringify(newClubs));
+    try {
+      // `icon` may hold a React component from the bundled defaults, which
+      // Firestore cannot serialise; the UI resolves icons by club id anyway.
+      const serialisable = newClubs.map(({ icon, ...rest }) => ({
+        ...rest,
+        icon: typeof icon === 'string' ? icon : '',
+      }));
+      await replaceCollection(COLLECTIONS.clubs, serialisable, 'id');
+      queryClient.invalidateQueries({ queryKey: ['clubs'] });
+    } catch (error) {
+      console.error('Failed to save clubs:', error);
+      setClubs(previous);
+      toast.error('Could not save clubs', {
+        description: error instanceof Error ? error.message : 'Please try again.',
+      });
+    }
   };
 
   const handleEdit = (club: Club) => {

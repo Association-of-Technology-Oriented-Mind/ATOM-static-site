@@ -10,6 +10,10 @@ import { Plus, Edit, Trash2, ArrowLeft, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { coordinators as defaultCoordinators } from '@/constants/coordinators';
+import { useQueryClient } from '@tanstack/react-query';
+import { useCoordinators } from '@/hooks/useContent';
+import { replaceCollection } from '@/utils/dataService';
+import { COLLECTIONS } from '@/lib/firebase';
 import { ThreeDIconPresets } from '../ThreeDIcons';
 
 interface Coordinator {
@@ -31,19 +35,26 @@ const CoordinatorsManager: React.FC<CoordinatorsManagerProps> = ({ onBackToDashb
   const [editingCoordinator, setEditingCoordinator] = useState<Coordinator | null>(null);
   const [formData, setFormData] = useState<Partial<Coordinator>>({});
 
-  useEffect(() => {
-    // Load coordinators from localStorage or defaults
-    const stored = localStorage.getItem('cms_coordinators');
-    if (stored) {
-      setCoordinators(JSON.parse(stored));
-    } else {
-      setCoordinators(defaultCoordinators);
-    }
-  }, []);
+  const { data: storedCoordinators } = useCoordinators();
+  const queryClient = useQueryClient();
 
-  const saveCoordinators = (newCoordinators: Coordinator[]) => {
+  useEffect(() => {
+    setCoordinators((storedCoordinators ?? defaultCoordinators) as Coordinator[]);
+  }, [storedCoordinators]);
+
+  const saveCoordinators = async (newCoordinators: Coordinator[]) => {
+    const previous = coordinators;
     setCoordinators(newCoordinators);
-    localStorage.setItem('cms_coordinators', JSON.stringify(newCoordinators));
+    try {
+      await replaceCollection(COLLECTIONS.coordinators, newCoordinators, 'id');
+      queryClient.invalidateQueries({ queryKey: ['coordinators'] });
+    } catch (error) {
+      console.error('Failed to save coordinators:', error);
+      setCoordinators(previous);
+      toast.error('Could not save coordinators', {
+        description: error instanceof Error ? error.message : 'Please try again.',
+      });
+    }
   };
 
   const handleAdd = () => {

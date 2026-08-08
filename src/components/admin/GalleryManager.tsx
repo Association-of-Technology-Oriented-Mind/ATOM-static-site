@@ -7,32 +7,48 @@ import { Image as ImageIcon, Upload, Grid, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { ThreeDIconPresets } from '../ThreeDIcons';
 import ImageUpload from './ImageUpload';
-import { getGalleryImages } from '@/utils/dataService';
+import { useGalleryImages } from '@/hooks/useContent';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { replaceCollection } from '@/utils/dataService';
+import { COLLECTIONS } from '@/lib/firebase';
 
 interface GalleryManagerProps {
   onBackToDashboard: () => void;
 }
 
 const GalleryManager: React.FC<GalleryManagerProps> = ({ onBackToDashboard }) => {
+  const { data: storedImages = [] } = useGalleryImages();
+  const queryClient = useQueryClient();
   const [galleryImages, setGalleryImages] = useState<string[]>([]);
 
   useEffect(() => {
-    // Load gallery from localStorage or defaults
-    const images = getGalleryImages();
-    setGalleryImages(images);
-  }, []);
+    setGalleryImages(storedImages);
+  }, [storedImages]);
 
-  const handleImagesUploaded = (newImages: string[]) => {
-    const updatedGallery = [...galleryImages, ...newImages];
-    setGalleryImages(updatedGallery);
-    localStorage.setItem('cms_gallery', JSON.stringify(updatedGallery));
+  const persist = async (updated: string[], previous: string[]) => {
+    setGalleryImages(updated);
+    try {
+      await replaceCollection(
+        COLLECTIONS.gallery,
+        updated.map(url => ({ id: url, url })),
+        'id',
+      );
+      queryClient.invalidateQueries({ queryKey: ['gallery'] });
+    } catch (error) {
+      console.error('Failed to save gallery:', error);
+      setGalleryImages(previous);
+      toast.error('Could not save gallery', {
+        description: error instanceof Error ? error.message : 'Please try again.',
+      });
+    }
   };
 
-  const handleRemoveImage = (index: number) => {
-    const updatedGallery = galleryImages.filter((_, i) => i !== index);
-    setGalleryImages(updatedGallery);
-    localStorage.setItem('cms_gallery', JSON.stringify(updatedGallery));
-  };
+  const handleImagesUploaded = (newImages: string[]) =>
+    persist([...galleryImages, ...newImages], galleryImages);
+
+  const handleRemoveImage = (index: number) =>
+    persist(galleryImages.filter((_, i) => i !== index), galleryImages);
 
   return (
     <div className="space-y-8">

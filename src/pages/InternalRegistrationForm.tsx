@@ -7,6 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { registerParticipant } from '@/utils/api';
+import { internalRegistrationSchema } from '@/lib/schemas';
+import { useToast } from '@/hooks/use-toast';
 import '@/styles/event-enhancements.css';
 
 interface FormData {
@@ -34,6 +36,7 @@ const InternalRegistrationForm: React.FC = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const { toast } = useToast();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -45,20 +48,19 @@ const InternalRegistrationForm: React.FC = () => {
   };
 
   const validateForm = (): boolean => {
-    const newErrors: Partial<FormData> = {};
+    const result = internalRegistrationSchema.safeParse(formData);
+    if (result.success) {
+      setErrors({});
+      return true;
+    }
 
-    if (!formData.name.trim()) newErrors.name = 'Name is required';
-    if (!formData.reg_no.trim()) newErrors.reg_no = 'Registration number is required';
-    if (!formData.division.trim()) newErrors.division = 'Division is required';
-    if (!formData.year_of_study.trim()) newErrors.year_of_study = 'Year of study is required';
-    if (!formData.email.trim()) newErrors.email = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Invalid email format';
-    if (!formData.phone_no.trim()) newErrors.phone_no = 'Phone number is required';
-    else if (!/^\d{10}$/.test(formData.phone_no.replace(/\s|-/g, ''))) newErrors.phone_no = 'Phone number must be 10 digits';
-    if (!formData.recipt_no.trim()) newErrors.recipt_no = 'Receipt number is required';
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    const fieldErrors: Partial<FormData> = {};
+    for (const issue of result.error.issues) {
+      const field = issue.path[0] as keyof FormData;
+      if (field && !fieldErrors[field]) fieldErrors[field] = issue.message;
+    }
+    setErrors(fieldErrors);
+    return false;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -75,9 +77,12 @@ const InternalRegistrationForm: React.FC = () => {
     if (result.success) {
       setIsSubmitted(true);
     } else {
-      // Handle error - for now just log it, you could add error state
       console.error('Registration failed:', result.message);
-      alert(result.message || 'Registration failed. Please try again.');
+      toast({
+        title: 'Registration failed',
+        description: result.message,
+        variant: 'destructive',
+      });
     }
   };
 

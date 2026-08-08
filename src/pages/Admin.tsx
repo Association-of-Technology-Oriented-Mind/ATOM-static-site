@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -19,35 +19,24 @@ import EventsManager from '@/components/admin/EventsManager';
 import CoordinatorsManager from '@/components/admin/CoordinatorsManager';
 import ClubsManager from '@/components/admin/ClubsManager';
 import GalleryManager from '@/components/admin/GalleryManager';
-import { getEvents, getCoordinators, getClubs, getGalleryImages } from '@/utils/dataService';
+import { useEvents, useCoordinators, useClubs, useGalleryImages } from '@/hooks/useContent';
 
 const Admin: React.FC = () => {
   const { logout } = useAuth();
   const [activeSection, setActiveSection] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Statistics
-  const [stats, setStats] = useState({
-    events: 0,
-    coordinators: 0,
-    clubs: 0,
-    gallery: 0
-  });
+  const { data: events = [] } = useEvents();
+  const { data: coordinators = [] } = useCoordinators();
+  const { data: clubs = [] } = useClubs();
+  const { data: gallery = [] } = useGalleryImages();
 
-  useEffect(() => {
-    // Load statistics
-    const events = getEvents();
-    const coordinators = getCoordinators();
-    const clubs = getClubs();
-    const gallery = getGalleryImages();
-
-    setStats({
-      events: events.length,
-      coordinators: coordinators.length,
-      clubs: clubs.length,
-      gallery: gallery.length
-    });
-  }, []);
+  const stats = {
+    events: events.length,
+    coordinators: coordinators.length,
+    clubs: clubs.length,
+    gallery: gallery.length,
+  };
 
   const handleLogout = () => {
     logout();
