@@ -126,8 +126,8 @@ bun dev
 
 ```
 URL:      http://localhost:5173/login
-Username: admin
-Password: atomcms
+Username: <removed>
+   Password: <removed>
 
 ⚠️ CHANGE THESE BEFORE DEPLOYING!
 ```
@@ -283,8 +283,8 @@ At the top of every page:
 
 2. **Enter Credentials**:
    ```
-   Username: admin
-   Password: atomcms
+   Username: <removed>
+   Password: <removed>
    ```
 
 3. **Click "Login"**
@@ -1507,8 +1507,8 @@ Gallery:      /full-gallery
 ### Admin Credentials
 
 ```
-Username: admin
-Password: atomcms
+Username: <removed>
+   Password: <removed>
 
 ⚠️ CHANGE IN PRODUCTION!
 ```

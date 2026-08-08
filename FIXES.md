@@ -4,6 +4,28 @@ Running bug log. Newest on top.
 
 ---
 
+## 2026-08-08 — Multi-day events silently dropped from the site
+
+**Symptom:** Two events ("INNOVATE-X Hackathon", "Full Stack Development
+Bootcamp") would have disappeared once content was read from Firestore,
+appearing nowhere and raising no visible error.
+
+**Root cause:** Both store their range in one field as
+`"2025-08-04,2025-08-08"`. `eventSchema` required a bare `YYYY-MM-DD`, so
+`getEvents()` treated them as malformed and skipped them — the deliberate
+"skip invalid documents" path in `src/utils/dataService.ts:44` doing exactly
+what it was designed to do, against data nobody had checked. The schema had
+been written from the TypeScript type rather than the real data.
+
+**Fix:** `src/lib/schemas.ts` now accepts `"start,end"`, keeps the start date
+for display, and adds an optional `endDate`.
+
+**Verified:** All 9 seeded events render on https://atom-2026.web.app/events,
+including both multi-day ones. Regression test in `src/lib/schemas.test.ts`
+("accepts legacy multi-day dates"); 26 tests passing.
+
+---
+
 ## 2026-08-08 — Admin auth bypassable by forging a localStorage flag
 
 **Symptom:** Anyone could open devtools, set

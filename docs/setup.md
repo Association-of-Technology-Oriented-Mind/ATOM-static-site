@@ -1,61 +1,75 @@
 # Setup
 
-Firebase project: **`atom-dscs`** (already referenced in `.firebaserc`).
+Firebase project: **`atom-2026`** (see `.firebaserc`). Live at
+https://atom-2026.web.app.
+
+Most of this is already done for the current deployment. Follow it when
+setting up a new machine, or standing the project up from scratch.
 
 ## 1. Local development
 
 ```bash
 npm ci
-cp .env.example .env   # fill in the values from step 2
+cp .env.example .env   # fill in from step 2
 npm run dev            # http://localhost:8000
 ```
 
 The site runs without Firebase configured — content falls back to
-`src/constants/*`. Admin login, uploads and registration require step 2.
+`src/constants/*`. Admin login, registrations and live content need step 2.
 
-## 2. Firebase console (one-time, needs account access)
+## 2. Firebase configuration
 
-**Get the config values** — Project settings → Your apps → SDK setup and
-configuration. Copy each field into the matching `VITE_FIREBASE_*` var in
-`.env`.
+**Get the config values** — Console → Project settings → Your apps → SDK setup
+and configuration. Copy each field into the matching `VITE_FIREBASE_*` var in
+`.env`. Or via CLI:
 
-**Enable authentication** — Authentication → Sign-in method → enable
-Email/Password. Then Users → Add user, and create the admin account.
+```bash
+firebase apps:sdkconfig WEB
+```
 
-**Grant the admin claim.** Being signed in is not enough; every write checks
-for a custom claim. With a service account key:
+These values are **not secret** — they compile into the public bundle by
+design. Access control comes from `firestore.rules`.
+
+**Enable authentication** — Console → Authentication → Sign-in method → enable
+Email/Password. This step cannot be scripted; Google requires it once in the
+console. Then Users → Add user to create an admin account.
+
+**Create the Firestore database** — Console → Firestore Database → Create
+database → production mode, region `asia-south1` (Mumbai; lowest latency for
+Karunya, and permanent once set). Or:
+
+```bash
+firebase firestore:databases:create "(default)" --location asia-south1
+```
+
+**Firebase Storage is optional and requires the Blaze (paid) plan.** Without a
+bucket everything works except CMS image uploads — the gallery upload tab
+disables itself and explains the alternative. Leave
+`VITE_FIREBASE_STORAGE_BUCKET` empty when no bucket exists.
+
+## 3. Grant admin rights
+
+Signing in is not enough. Every write checks for an `admin` custom claim, so a
+new account can open the CMS but all saves fail until this runs.
+
+1. Console → Project settings → Service accounts → **Generate new private key**
+2. Save it as `.secrets/serviceAccount.json` (gitignored — this one *is* a real
+   secret; it bypasses all security rules)
+3. Run:
 
 ```bash
 npm i -D firebase-admin
-GOOGLE_APPLICATION_CREDENTIALS=./serviceAccount.json node -e "
-  const { initializeApp, cert } = require('firebase-admin/app');
-  const { getAuth } = require('firebase-admin/auth');
-  initializeApp({ credential: cert(require('./serviceAccount.json')) });
-  getAuth().getUserByEmail('ADMIN@EMAIL').then(u =>
-    getAuth().setCustomUserClaims(u.uid, { admin: true })
-  ).then(() => console.log('done'));
-"
+GOOGLE_APPLICATION_CREDENTIALS=.secrets/serviceAccount.json \
+  node scripts/set-admin-claim.mjs atom@karunya.edu.in
 ```
 
-The admin must sign out and back in before the refreshed token carries the
-claim.
+The user must sign out and back in — claims only land on a freshly issued
+token.
 
-> Keep `serviceAccount.json` out of git — it is a real secret, unlike the
-> `VITE_*` values. It is already covered by the `.env`/`*.local` ignore rules;
-> add it explicitly if you store it elsewhere.
+## 4. Deploy security rules
 
-**Create the Firestore database** — Firestore Database → Create database →
-production mode, region `asia-south1`.
-
-**Firebase Storage is optional and requires the Blaze (paid) plan.** Without a
-bucket, everything works except uploading images through the CMS — the gallery
-upload tab hides itself and explains the alternative. To add photos without
-Storage, drop files into `src/assets/PHOTOS/`, commit, and redeploy. Leave
-`VITE_FIREBASE_STORAGE_BUCKET` empty when no bucket exists.
-
-## 3. Deploy security rules
-
-Rules are the entire authorisation layer. Deploy them before going live:
+Rules are the entire authorization layer. Deploy them before going live, and
+before any code that depends on a rule change.
 
 ```bash
 npx firebase deploy --only firestore:rules
@@ -68,34 +82,59 @@ npx firebase deploy --only storage:rules
 - `storage.rules` — public read on `gallery/`; uploads require the `admin`
   claim, max 5 MB, images only.
 
-## 4. Seed content (optional)
+## 5. Seed content (optional)
 
 Copies the bundled events into Firestore. Safe to re-run — documents are keyed
-by id, so it upserts.
+by id, so it upserts rather than duplicating.
 
 ```bash
-npm i -D firebase-admin
-GOOGLE_APPLICATION_CREDENTIALS=./serviceAccount.json node scripts/seed-firestore.mjs
+GOOGLE_APPLICATION_CREDENTIALS=.secrets/serviceAccount.json \
+  node scripts/seed-firestore.mjs
 ```
 
-Coordinators and clubs import image binaries, so seed those through the admin
-UI instead.
+Coordinators and clubs import image binaries, so they aren't seeded; they
+render from the constants until edited through the CMS.
 
-## 5. Deploy
+## 6. Deploy
 
 ```bash
 npm run build
 npx firebase deploy --only hosting
 ```
 
+Only changed files upload. If connections drop on a slow uplink:
+
+```bash
+FIREBASE_HOSTING_UPLOAD_CONCURRENCY=1 npx firebase deploy --only hosting
+```
+
 ## Verification checklist
 
 - [ ] `npm run typecheck` — clean
-- [ ] `npm test` — 25 passing
-- [ ] `npm run build` — main entry ~114 kB, no `/src/assets` strings in `dist`
+- [ ] `npm test` — 26 passing
+- [ ] `npm run build` — no `/src/assets` strings in `dist`
 - [ ] `/admin` redirects to `/login` when signed out
 - [ ] Signing in as the admin reaches the dashboard
 - [ ] Editing an event in the CMS persists after a hard refresh
 - [ ] Submitting a registration creates a `registrations` document
+- [ ] `registrations` is **not** readable without the admin claim
 - [ ] Uploading an image in the CMS lands in Storage under `gallery/`
       (skip if Storage is not enabled — the upload tab should be disabled)
+
+## Troubleshooting
+
+**`PERMISSION_DENIED` on a Firebase CLI command**
+The logged-in account lacks access to the project. `firebase login:list` shows
+who you are; `firebase projects:list` shows what you can reach.
+
+**`CONFIGURATION_NOT_FOUND` on sign-in**
+Authentication has never been enabled for the project. Console →
+Authentication → Get started.
+
+**`BILLING_NOT_ENABLED`**
+You hit an Identity Platform or Storage feature that needs the Blaze plan.
+Classic Email/Password auth and Firestore both work on the free tier.
+
+**Writes fail with "Missing or insufficient permissions"**
+The signed-in user has no `admin` claim, or hasn't re-authenticated since it
+was granted. See step 3.

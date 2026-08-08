@@ -8,7 +8,11 @@ serves three audiences: visitors browsing events, clubs, coordinators and the
 photo gallery; students submitting event registrations; and club admins editing
 site content through a password-protected CMS. It is a single-page React
 application deployed to Firebase Hosting, with Firebase providing the database,
-authentication and file storage — there is no custom backend service.
+authentication and (optionally) file storage — there is no custom backend
+service.
+
+Deployed at https://atom-2026.web.app, Firebase project `atom-2026`, Firestore
+in `asia-south1`.
 
 ## Tech Stack
 
@@ -18,7 +22,7 @@ authentication and file storage — there is no custom backend service.
 - **Data/state:** TanStack Query 5, Zod 3 for validation
 - **Database:** Cloud Firestore
 - **Auth:** Firebase Authentication (email/password + `admin` custom claim)
-- **File storage:** Firebase Storage
+- **File storage:** Firebase Storage (optional — off; needs the Blaze plan)
 - **Animation:** framer-motion, GSAP, OGL (WebGL)
 - **Email:** EmailJS (contact form only)
 - **Hosting:** Firebase Hosting
