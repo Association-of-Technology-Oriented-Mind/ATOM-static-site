@@ -100,7 +100,13 @@ removed localStorage CMS and hardcoded login. `docs/` is authoritative.
 
 ## Design direction
 
-Current UI is dark glassmorphism with blue/cyan gradients. A redesign toward a
-technical/brutalist direction is agreed but **not started** — check with the
-owner before making visual changes. It will rewrite most components, including
-`EventDetailPage.tsx`, so avoid large cosmetic refactors until then.
+A technical/brutalist redesign is **in progress**. Read `GOAL.md` before
+touching any public-site component — it lists what is done, what is left, and
+the decisions already made.
+
+- `docs/design-system.md` holds the tokens and rules. Lattice tokens in
+  `index.css` are additive; the admin CMS still depends on the old ones.
+- Scroll-pinned sections use `src/components/scroll/ScrollScene.tsx`. Phase
+  children must write styles directly to the DOM via refs — never React state,
+  which would re-render the tree every frame.
+- Scroll scenes cannot be verified from the DOM alone. Screenshot them.

@@ -46,7 +46,9 @@ live content.
 
 | Doc | Read it when |
 | --- | --- |
-| [docs/onboarding.md](docs/onboarding.md) | **Start here** — new to the project |
+| [GOAL.md](GOAL.md) | **Start here if continuing the redesign** — what's done, what's left |
+| [docs/onboarding.md](docs/onboarding.md) | New to the project |
+| [docs/design-system.md](docs/design-system.md) | Visual direction and tokens |
 | [docs/setup.md](docs/setup.md) | Setting up Firebase or a new machine |
 | [docs/architecture.md](docs/architecture.md) | Understanding how it fits together |
 | [docs/API.md](docs/API.md) | Working with Firestore data |

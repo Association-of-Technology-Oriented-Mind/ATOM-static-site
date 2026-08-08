@@ -124,7 +124,7 @@ const MemberColumn = ({
 
   return (
     <div
-      className={`absolute bottom-0 top-0 z-10 flex w-1/2 flex-col items-center justify-center px-[4vw] pt-[10vh] ${
+      className={`absolute bottom-0 top-0 z-10 flex w-1/2 flex-col items-center justify-center px-[4vw] pt-[16vh] ${
         isLeft ? 'left-0' : 'right-0'
       }`}
     >
@@ -177,13 +177,19 @@ const MemberColumn = ({
 
         <div className="mx-auto mt-4 h-[2px] w-9 bg-[hsl(var(--phosphor))]" />
 
-        {member.bio && (
-          <p className="mx-auto mt-4 max-w-prose text-sm leading-relaxed text-[hsl(var(--graphite))]">
+        {/* Bio and link keep their space while a seat is unfilled, so the
+            composition doesn't shift once real people are added. */}
+        {member.bio ? (
+          <p className="mx-auto mt-5 max-w-prose text-sm leading-relaxed text-[hsl(var(--graphite))]">
             {member.bio}
+          </p>
+        ) : (
+          <p className="mx-auto mt-5 max-w-prose text-sm italic leading-relaxed text-[hsl(var(--graphite)/0.6)]">
+            A short introduction goes here once this seat is filled.
           </p>
         )}
 
-        {member.linkedin && (
+        {member.linkedin ? (
           <a
             href={
               member.linkedin.startsWith('http')
@@ -192,11 +198,16 @@ const MemberColumn = ({
             }
             target="_blank"
             rel="noreferrer noopener"
-            className="focus-phosphor mono-label mt-4 inline-flex items-center gap-2 text-[hsl(var(--chalk))] transition-colors hover:text-[hsl(var(--phosphor))]"
+            className="focus-phosphor mono-label mt-5 inline-flex items-center gap-2 text-[hsl(var(--chalk))] transition-colors hover:text-[hsl(var(--phosphor))]"
           >
             <Linkedin className="h-3.5 w-3.5" aria-hidden="true" />
             LinkedIn
           </a>
+        ) : (
+          <span className="mono-label mt-5 inline-flex items-center gap-2 text-[hsl(var(--graphite)/0.5)]">
+            <Linkedin className="h-3.5 w-3.5" aria-hidden="true" />
+            LinkedIn
+          </span>
         )}
       </div>
     </div>

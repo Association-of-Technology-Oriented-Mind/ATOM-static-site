@@ -2,6 +2,42 @@
 
 Live activity log. Newest on top.
 
+## [2026-08-08 19:35] — Core members rebuilt on a scroll-pin scrubber
+**What:** Replaced the static coordinator grid with six scroll-scrubbed scenes,
+one per portfolio. A tall wrapper pins a 100vh stage while progress 0→1 drives
+headline → members → detail. Lead sits left, joint holder right. Free-standing
+figures on a gradient — no cards or borders. Ported from the Fludigo
+/about#founders pattern; the orchestrator is reusable at
+src/components/scroll/ScrollScene.tsx.
+**Why:** The previous grid didn't scale and didn't communicate structure; Lebi
+supplied the Fludigo reference and the scroll-pin-scrubber skill.
+**State:** DONE — verified in-browser across all six scenes.
+**Next:** Club data, then the remaining homepage sections. See GOAL.md.
+
+## [2026-08-08 19:30] — Design system established
+**What:** Lattice tokens added to index.css (additive, so the admin CMS keeps
+the old ones): near-monochrome palette plus one accent, phosphor cyan #7DF9E4
+sampled from the logo. Archivo Black display, JetBrains Mono labels. Recorded
+in docs/design-system.md.
+**Why:** The site was dark glassmorphism with blue gradients — the default
+AI-website look, and on Lebi's never-do list.
+**State:** DONE
+
+## [2026-08-08 19:25] — Coordinator data replaced
+**What:** Removed 18 stale coordinators; added the 12 current seats across 6
+portfolios, each a lead/joint pair. All fields blank pending real data.
+**Why:** Every role on the site was a year out of date.
+**State:** DONE — blocked on Lebi for names, photos, bios, LinkedIn URLs.
+
+## [2026-08-08 19:20] — Fixed a site-wide CSS leak
+**What:** TextPressure.tsx injected a bare `.flex { justify-content:
+space-between }` into a global style block, overriding Tailwind's
+.justify-center on every flex container on the page. Scoped it to
+.text-pressure-title.
+**Why:** Found while debugging why a headline wouldn't centre; it had been
+silently affecting layout everywhere.
+**State:** DONE
+
 ## [2026-08-08 14:10] — Documentation rewritten for contributors
 **What:** Rewrote README (removed published admin credentials and stale
 `.jpg` paths), added `docs/onboarding.md` (developer guide) and
@@ -76,9 +112,13 @@ dead registration backend, broken gallery paths, and 182 MB build.
   9 events seeded. Storage stays off (Blaze plan only; CMS uploads disabled
   with an in-app explanation).
 - **Admin password** — should be rotated; it was shared in a screenshot.
-- **UI/UX redesign** — DECIDED: technical/brutalist direction. Not started;
-  planning it together is the next step.
-- **`EventDetailPage.tsx`** — still 1364 LOC, needs decomposition.
+- **UI/UX redesign** — IN PROGRESS. Design system and core members done; the
+  rest of the homepage, the clubs page and the footer remain. **See GOAL.md**
+  for the full picture of what is done and what is left.
+- **`EventDetailPage.tsx`** — still 1363 LOC; decompose as part of the events
+  rewrite rather than separately.
+- **Redesign not deployed** — it is on master, but the last hosting deploy
+  predates it.
 - **Dependency advisories** — 10, all dev-only (Vite dev server, React Router
   v7 major, `firebase-admin` transitive deps). None ship to users.
 - **`MASTER_DOCUMENTATION.md`** — still describes the old localStorage CMS and
