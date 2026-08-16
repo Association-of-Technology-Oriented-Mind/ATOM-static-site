@@ -103,35 +103,6 @@ const useReducedMotion = () => {
   return reducedMotion;
 };
 
-/* -------------------------------------------------------------------------- */
-/* Timeline                                                                    */
-/* -------------------------------------------------------------------------- */
-
-const getSceneTimeline = (
-  progress: number,
-  reducedMotion: boolean,
-) => {
-  const safeProgress = clamp01(progress);
-
-  if (reducedMotion) {
-    return {
-      headline: 0,
-      members: 1,
-      details: 1,
-    };
-  }
-
-  return {
-    headline:
-      1 - easeInOut(prog(safeProgress, ...HEADLINE_OUT)),
-
-    members:
-      easeInOut(prog(safeProgress, ...MEMBER_IN)),
-
-    details:
-      easeInOut(prog(safeProgress, ...DETAIL_IN)),
-  };
-};
 
 /* -------------------------------------------------------------------------- */
 /* Scene background                                                            */
