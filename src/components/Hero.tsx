@@ -1,254 +1,131 @@
+import { useEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { useEffect, useState, useRef } from 'react';
-import TextPressure from './TextPressure';
-import Waves from './Waves';
-import atomLogo from '@/assets/atom-logo.webp';
+import { OrbitalCanvas } from './OrbitalCanvas';
+import atomLogo from '@/assets/atom-logo-white.png';
+
+const ease = [0.16, 1, 0.3, 1] as const;
 
 export const Hero = () => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [isHovering, setIsHovering] = useState(false);
-  const [clickCount, setClickCount] = useState(0);
-  const logoRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    setIsVisible(true);
+  // Scroll-driven content fade out
+  const handleScroll = useCallback(() => {
+    const content = contentRef.current;
+    if (!content) return;
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reducedMotion) return;
+
+    const scrollY = window.scrollY;
+    const vh = window.innerHeight;
+    const progress = Math.min(scrollY / (vh * 0.6), 1);
+
+    content.style.opacity = String(1 - progress);
+    content.style.transform = `translateY(${-progress * 50}px) scale(${1 - progress * 0.05})`;
   }, []);
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (logoRef.current) {
-      const rect = logoRef.current.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-      
-      const deltaX = (e.clientX - centerX) / rect.width;
-      const deltaY = (e.clientY - centerY) / rect.height;
-      
-      setMousePosition({
-        x: deltaX * 30, // Increased intensity
-        y: deltaY * 30
-      });
-    }
-  };
-
-  const handleMouseEnter = () => {
-    setIsHovering(true);
-  };
-
-  const handleMouseLeave = () => {
-    setMousePosition({ x: 0, y: 0 });
-    setIsHovering(false);
-  };
-
-  const handleClick = () => {
-    setClickCount(prev => prev + 1);
-  };
+  useEffect(() => {
+    let rafId: number;
+    const onScroll = () => {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(handleScroll);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      cancelAnimationFrame(rafId);
+    };
+  }, [handleScroll]);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-start overflow-hidden">
-      {/* Animated Waves Background */}
-      <Waves
-        lineColor="#2196f3"
-        backgroundColor="rgba(33, 150, 243, 0.2)"
-        waveSpeedX={0.02}
-        waveSpeedY={0.01}
-        waveAmpX={40}
-        waveAmpY={20}
-        friction={0.9}
-        tension={0.01}
-        maxCursorMove={120}
-        xGap={12}
-        yGap={36}
-      />
+    <section
+      ref={heroRef}
+      className="relative h-full w-full flex items-center justify-center overflow-hidden bg-[hsl(var(--ink))]"
+      id="hero"
+      aria-label="ATOM — Association of Technical Oriented Minds"
+    >
+      {/* Constellation canvas — full viewport behind content */}
+      <OrbitalCanvas className="absolute inset-0 z-0 pointer-events-none" />
 
+      {/* Central ambient glow */}
+      <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_center,hsla(var(--phosphor)/0.05)_0%,transparent_50%)] pointer-events-none" aria-hidden="true" />
 
-
-      {/* Content Layout: Logo left, text right on desktop; stacked on mobile */}
-      <div className="relative z-10 flex flex-col lg:flex-row items-center w-full px-4 max-w-7xl mx-auto">
-        {/* ATOM Logo - left on desktop, top on mobile */}
+      {/* Content */}
+      <div 
+        ref={contentRef} 
+        className="relative z-10 flex flex-col items-center justify-center w-full px-4 text-center h-full max-w-[100vw]" 
+        style={{ willChange: 'opacity, transform' }}
+      >
+        
+        {/* ATOM Symbol Container */}
         <motion.div
-          initial={{ scale: 0, rotate: -180 }}
-          animate={isVisible ? { scale: 1, rotate: 0 } : {}}
-          transition={{ 
-            duration: 1, 
-            type: "spring", 
-            stiffness: 100,
-            delay: 0.2 
-          }}
-          className="mb-8 lg:mb-0 lg:mr-12 flex-shrink-0 flex items-center justify-center"
-          style={{ minWidth: '300px' }}
+          initial={{ opacity: 0, scale: 0.8, filter: 'blur(10px)' }}
+          animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+          transition={{ duration: 1.2, ease }}
+          className="flex items-center justify-center mb-4 md:mb-6"
         >
-          <motion.div 
-            ref={logoRef}
-            className="relative cursor-pointer select-none"
-            onMouseMove={handleMouseMove}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            onClick={handleClick}
-            animate={{
-              x: mousePosition.x,
-              y: mousePosition.y,
-              scale: isHovering ? 1.15 : 1,
-              rotateX: mousePosition.y * -1,
-              rotateY: mousePosition.x * 1,
-              rotateZ: isHovering ? mousePosition.x * 0.5 : 0
-            }}
-            transition={{
-              type: "spring",
-              stiffness: 200,
-              damping: 20,
-              mass: 0.8
-            }}
-            style={{
-              transformStyle: "preserve-3d"
-            }}
-            whileTap={{
-              scale: 0.95,
-              rotateZ: 360,
-              transition: { duration: 0.6 }
-            }}
+          <span 
+            className="display-hero"
           >
-            {/* Animated Glow Ring */}
-            <motion.div
-              className="absolute inset-0 rounded-full"
-              animate={isHovering ? {
-                background: [
-                  "radial-gradient(circle, rgba(33,150,243,0.3) 0%, transparent 70%)",
-                  "radial-gradient(circle, rgba(255,64,129,0.3) 0%, transparent 70%)",
-                  "radial-gradient(circle, rgba(76,175,80,0.3) 0%, transparent 70%)",
-                  "radial-gradient(circle, rgba(33,150,243,0.3) 0%, transparent 70%)"
-                ],
-                scale: [1, 1.2, 1],
-                rotate: [0, 180, 360]
-              } : {
-                background: "transparent",
-                scale: 1,
-                rotate: 0
-              }}
-              transition={{
-                duration: 2,
-                repeat: isHovering ? Infinity : 0,
-                ease: "easeInOut"
-              }}
-            />
-            
-            {/* Particle Effects */}
-            {isHovering && [0, 1, 2, 3, 4].map((i) => (
-              <motion.div
-                key={i}
-                className="absolute w-2 h-2 bg-blue-400 rounded-full"
-                initial={{
-                  x: 200 + Math.cos(i * 72 * Math.PI / 180) * 150,
-                  y: 200 + Math.sin(i * 72 * Math.PI / 180) * 150,
-                  scale: 0
-                }}
-                animate={{
-                  x: 200 + Math.cos((i * 72 + Date.now() * 0.001) * Math.PI / 180) * (100 + mousePosition.x),
-                  y: 200 + Math.sin((i * 72 + Date.now() * 0.001) * Math.PI / 180) * (100 + mousePosition.y),
-                  scale: [0, 1, 0],
-                  opacity: [0, 1, 0]
-                }}
-                transition={{
-                  duration: 1.5,
-                  repeat: Infinity,
-                  delay: i * 0.2,
-                  ease: "easeInOut"
-                }}
-              />
-            ))}
-            
-            <motion.img 
+            AT
+          </span>
+          
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+            className="relative mx-1 sm:mx-3 md:mx-4 lg:mx-6 flex items-center justify-center w-16 h-16 md:w-24 md:h-24 lg:w-36 lg:h-36 xl:w-44 xl:h-44"
+          >
+            {/* Glow behind the logo */}
+            <div className="absolute inset-0 bg-white/10 blur-xl rounded-full" />
+            <img 
               src={atomLogo} 
-              alt="ATOM Club Logo" 
-              className="w-[350px] h-[350px] md:w-[450px] md:h-[450px] animate-float relative z-10"
-              style={{ objectFit: 'contain' }}
-              animate={{
-                filter: isHovering 
-                  ? `drop-shadow(0 0 30px rgba(33, 150, 243, 0.8)) brightness(1.2) contrast(1.1)`
-                  : `drop-shadow(0 8px 16px rgba(0,0,0,0.3))`,
-                rotateY: clickCount * 180,
-                rotate: [0, 360]
-              }}
-              transition={{
-                filter: { duration: 0.3 },
-                rotateY: { duration: 0.8, ease: "easeOut" },
-                rotate: { 
-                  duration: 8, 
-                  repeat: Infinity, 
-                  ease: "linear" 
-                }
-              }}
-            />
-            
-            {/* Click Ripple Effect */}
-            <motion.div
-              key={clickCount}
-              className="absolute inset-0 border-2 border-blue-400 rounded-full"
-              initial={{ scale: 0, opacity: 0.8 }}
-              animate={{ scale: 2, opacity: 0 }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
+              alt="ATOM Logo" 
+              className="w-full h-full object-contain relative z-10 drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"
             />
           </motion.div>
+
+          <span 
+            className="display-hero"
+          >
+            M
+          </span>
         </motion.div>
 
-        {/* Text content - right */}
-        <div className="flex-1 text-left">
-          {/* Main Heading */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isVisible ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            className="mb-6 flex items-center"
-          >
-            <div style={{ width: 'auto', height: '120px', minWidth: '320px', marginRight: '24px' }}>
-              <TextPressure
-                text="ATOM"
-                flex={true}
-                alpha={false}
-                stroke={false}
-                width={true}
-                weight={true}
-                italic={true}
-                textColor="#ffffff"
-                strokeColor="#ff0000"
-                minFontSize={60}
-              />
-            </div>
-          </motion.div>
-
-          {/* Subheading */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isVisible ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.7 }}
-            className="mb-8"
-          >
-            <TextPressure
-              text="Association of Technology Oreinted Minds"
-              flex={true}
-              alpha={false}
-              stroke={false}
-              width={true}
-              weight={true}
-              italic={true}
-              textColor="#ffffff"
-              strokeColor="#ff0000"
-              minFontSize={32}
-            />
-          </motion.div>
-
-          {/* Animated Tagline */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={isVisible ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 0.8, delay: 0.9 }}
-            className="text-base md:text-lg text-foreground-secondary font-medium"
-          >
-          </motion.div>
-        </div>
-
+        {/* Subtitle wording */}
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.6, ease }}
+          className="editorial-body text-center mt-4 md:mt-6 max-w-2xl px-4"
+        >
+          Association of Technology Oriented Minds .
+        </motion.h2>
 
       </div>
+
+      {/* Scroll Indicator */}
+      <motion.div
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-20 pointer-events-none"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1, delay: 1.5 }}
+      >
+        <span className="mono-label text-[0.5rem] tracking-[0.2em] text-[hsl(var(--graphite))]">SCROLL</span>
+        <motion.div
+          animate={{ y: [0, 6, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="hsl(var(--chalk))" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </motion.div>
+      </motion.div>
+
+      {/* Bottom gradient transition to next section */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[hsl(var(--ink))] to-transparent z-10 pointer-events-none" aria-hidden="true" />
     </section>
   );
 };
+
+export default Hero;

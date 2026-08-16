@@ -1,91 +1,151 @@
+import { useRef, useEffect, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
-import { Trophy, Users, Target, Award, Lightbulb, Rocket } from 'lucide-react';
-import { ThreeDIconPresets } from './ThreeDIcons';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { useEvents } from '@/hooks/useContent';
 
-const achievements = [
-  {
-    icon: Trophy,
-    title: "50+ Projects Completed",
-    description: "Successfully delivered innovative technology solutions"
-  },
-  {
-    icon: Lightbulb,
-    title: "Innovation Hub",
-    description: "Leading research and development initiatives"
-  },
-  {
-    icon: Users,
-    title: "150+ Active Members",
-    description: "Growing community of tech enthusiasts and leaders"
-  },
-  {
-    icon: Rocket,
-    title: "Solving real life problems",
-    description: "Using knowledge and creativity to find practical solutions"
-  },
-  {
-    icon: Target,
-    title: "10+ Workshops",
-    description: "Comprehensive skill development programs"
-  }
-];
+// ── Achievements — Horizontal Stats Strip ────────────────────────────────────
+// Pure typography-driven stats. Large numbers, clean dividers.
+// Framer Motion for reveal, inline counter animation.
 
-export const Achievements = () => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
-  const isMobile = useIsMobile();
+const ease = [0.16, 1, 0.3, 1] as const;
+
+const AnimatedCounter = ({
+  target,
+  suffix = '',
+  isInView,
+}: {
+  target: number;
+  suffix?: string;
+  isInView: boolean;
+}) => {
+  const [count, setCount] = useState(0);
+  const hasAnimated = useRef(false);
+
+  useEffect(() => {
+    if (!isInView || hasAnimated.current) return;
+    hasAnimated.current = true;
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reducedMotion) {
+      setCount(target);
+      return;
+    }
+
+    const duration = 1800;
+    const startTime = performance.now();
+
+    const animate = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      // ease-out curve
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.floor(eased * target));
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        setCount(target);
+      }
+    };
+
+    requestAnimationFrame(animate);
+  }, [isInView, target]);
 
   return (
-    <section ref={ref} className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      <motion.h2
-        initial={{ opacity: 0, y: 30 }}
-        animate={isInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.6 }}
-        className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center mb-8 sm:mb-12 lg:mb-16 gradient-text"
-      >
-        Our Achievements
-      </motion.h2>
+    <span>
+      {count}
+      {suffix}
+    </span>
+  );
+};
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6">
-        {achievements.map((achievement, index) => {
-          return (
+export const Achievements = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const isInView = useInView(sectionRef, { once: true, margin: '-80px' });
+
+  const { data: events = [] } = useEvents();
+  const liveEventCount = events.length > 0 ? events.length : 9;
+
+  const stats = [
+    {
+      id: 'members',
+      target: 88,
+      suffix: '+',
+      title: 'Active Members',
+      context: 'Growing network',
+    },
+    {
+      id: 'events',
+      target: liveEventCount,
+      suffix: '',
+      title: 'Events Conducted',
+      context: 'In academic year 2025',
+    },
+    {
+      id: 'clubs',
+      target: 4,
+      suffix: '',
+      title: 'Specialist Clubs',
+      context: 'Focused domains',
+    },
+    {
+      id: 'portfolios',
+      target: 6,
+      suffix: '',
+      title: 'Core Portfolios',
+      context: 'Leadership seats',
+    },
+  ];
+
+  return (
+    <section
+      ref={sectionRef}
+      className="achievements-section"
+      id="achievements"
+      aria-labelledby="achievements-heading"
+    >
+      <div className="achievements-container">
+        {/* Header */}
+        <motion.div
+          className="achievements-header"
+          initial={{ opacity: 0, y: 12 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5, ease }}
+        >
+          <div className="achievements-label">
+            <span className="achievements-label__num">02</span>
+            <span className="achievements-label__rule" aria-hidden="true" />
+            <span>Impact &amp; Milestones</span>
+          </div>
+          <h2 id="achievements-heading" className="achievements-heading">
+            Our Numbers
+          </h2>
+        </motion.div>
+
+        {/* Stats strip */}
+        <div className="achievements-strip">
+          {stats.map((stat, index) => (
             <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 30, scale: 0.9 }}
-              animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
-              transition={{
-                duration: 0.6,
-                delay: index * 0.1,
-                type: "spring",
-                stiffness: 100
-              }}
-              className="glass-card p-4 sm:p-6 lg:p-8 text-center group transform-gpu"
-              style={{
-                transformStyle: 'preserve-3d',
-              }}
+              key={stat.id}
+              className="achievements-stat"
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.5, delay: 0.1 + index * 0.08, ease }}
             >
-              <div className="relative mb-4 sm:mb-6 flex justify-center">
-                {achievement.icon === Trophy && <ThreeDIconPresets.Trophy size={isMobile ? 32 : 48} />}
-                {achievement.icon === Users && <ThreeDIconPresets.Users size={isMobile ? 32 : 48} />}
-                {achievement.icon === Target && <ThreeDIconPresets.Target size={isMobile ? 32 : 48} />}
-                {achievement.icon === Award && <ThreeDIconPresets.Award size={isMobile ? 32 : 48} />}
-                {achievement.icon === Lightbulb && <ThreeDIconPresets.Lightbulb size={isMobile ? 32 : 48} />}
-                {achievement.icon === Rocket && <ThreeDIconPresets.Rocket size={isMobile ? 32 : 48} />}
-              </div>
-
-              <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-foreground">
-                {achievement.title}
-              </h3>
-
-              <p className="text-sm sm:text-base text-foreground-secondary leading-relaxed">
-                {achievement.description}
-              </p>
+              <span className="achievements-stat__number">
+                <AnimatedCounter
+                  target={stat.target}
+                  suffix={stat.suffix}
+                  isInView={isInView}
+                />
+              </span>
+              <span className="achievements-stat__title">{stat.title}</span>
+              <span className="achievements-stat__context">{stat.context}</span>
             </motion.div>
-          );
-        })}
+          ))}
+        </div>
       </div>
     </section>
   );
 };
+
+export default Achievements;

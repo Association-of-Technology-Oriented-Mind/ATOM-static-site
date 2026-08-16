@@ -1,15 +1,19 @@
+import { useEffect } from 'react';
 import { Hero } from '@/components/Hero';
 import { About } from '@/components/About';
 import { Achievements } from '@/components/Achievements';
+import EventsSection from '@/components/EventsSection';
 import CoreMembers from '@/components/CoreMembers';
 import { Clubs } from '@/components/Clubs';
 import PhotoGallerySection from '@/components/PhotoGallerySection';
-import EventsSection from '@/components/EventsSection';
-import { ThreeDBackground } from '@/components/ThreeDBackground';
+import { JoinCTA } from '@/components/JoinCTA';
+import Footer from '@/components/Footer';
 import { useImageProtection } from '@/hooks/useImageProtection';
 
+// Homepage section order per GOAL.md:
+// Hero → About → Achievements → Events → CoreMembers → Clubs → Gallery → Join → Footer
+
 const Index = () => {
-  // Enable comprehensive image protection
   useImageProtection({
     disableRightClick: true,
     disableDrag: true,
@@ -19,35 +23,45 @@ const Index = () => {
     showWarningOnRightClick: true,
   });
 
-  return (
-    <main className="min-h-screen bg-background overflow-x-hidden">
-      <Hero />
-      <About />
-      
-      {/* Container for sections with 3D background */}
-      <div className="relative">
-        {/* 3D Background only for the sections below */}
-        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-          <ThreeDBackground />
-        </div>
-        
-        {/* Content sections with relative positioning */}
-        <div className="relative z-10">
-          <Achievements />
-          {/* EventsSection with higher z-index to ensure clicks work properly */}
-          <div className="relative z-30">
-            <EventsSection />
-          </div>
-          {/* PhotoGallerySection with standard z-index */}
-          <div className="relative z-20">
-            <PhotoGallerySection />
-          </div>
-          <Clubs />
-        </div>
-      </div>
+  useEffect(() => {
+    // If there is a hash, let the browser scroll to it (or do it manually).
+    // Otherwise, start at top of presentation.
+    if (window.location.hash) {
+      const id = window.location.hash.replace('#', '');
+      const el = document.getElementById(id);
+      if (el) {
+        setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 100);
+      }
+    } else {
+      window.scrollTo(0, 0);
+    }
+    // Enable native CSS snap scrolling on mount
+    document.documentElement.classList.add('snap-enabled');
+    return () => {
+      // Clean up on unmount so other pages behave normally
+      document.documentElement.classList.remove('snap-enabled');
+    };
+  }, []);
 
-      <CoreMembers />
-    </main>
+  return (
+    <>
+      <main
+        className="min-h-screen overflow-x-hidden"
+        style={{ backgroundColor: 'hsl(var(--ink))' }}
+      >
+        <div className="snap-section"><Hero /></div>
+        <div className="snap-section"><About /></div>
+        <div className="snap-section"><Achievements /></div>
+        <div className="snap-section"><EventsSection /></div>
+        <div className="snap-start"><CoreMembers /></div>
+        <div className="snap-start"><Clubs /></div>
+        <div className="snap-section"><PhotoGallerySection /></div>
+        <div className="snap-section--auto-height">
+          <JoinCTA />
+          <Footer />
+        </div>
+      </main>
+    </>
   );
 };
 

@@ -419,29 +419,30 @@ const FullPhotoGallery = () => {
   };
 
   return (
-    <main className="min-h-screen bg-background overflow-hidden">
+    <main className="min-h-screen bg-[hsl(var(--ink))] overflow-hidden">
       {/* Header with back button */}
-      <div className="absolute top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-white/10">
+      <div className="absolute top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-[hsl(var(--rule))]" style={{ backgroundColor: 'hsla(var(--ink), 0.85)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <motion.button
               onClick={() => navigate(-1)}
-              className="flex items-center gap-2 px-3 py-2 text-foreground-secondary hover:text-foreground transition-colors rounded-lg hover:bg-white/5"
+              className="flex items-center gap-2 px-3 py-2 text-[hsl(var(--graphite))] hover:text-[hsl(var(--chalk))] transition-colors rounded-lg hover:bg-[hsl(var(--rule))]"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
               <ArrowLeft className="w-5 h-5" />
-              <span className="hidden sm:inline">Back</span>
+              <span className="hidden sm:inline uppercase tracking-[0.15em] mono-label" style={{ fontSize: '0.625rem' }}>Back</span>
             </motion.button>
-            
-            <motion.h1 
+
+            <motion.h1
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-2xl sm:text-3xl lg:text-4xl font-bold gradient-text text-center flex-1"
+              className="text-2xl sm:text-3xl font-bold text-center flex-1 uppercase"
+              style={{ fontFamily: 'var(--font-display)', color: 'hsl(var(--chalk))', letterSpacing: '-0.02em' }}
             >
               Event Gallery
             </motion.h1>
-            
+
             <div className="w-16 sm:w-20"></div> {/* Spacer for centering */}
           </div>
         </div>

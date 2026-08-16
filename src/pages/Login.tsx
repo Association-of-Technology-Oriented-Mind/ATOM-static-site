@@ -7,7 +7,6 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Lock, User, Key, Sparkles, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
-import Waves from '@/components/Waves';
 import atomLogo from '@/assets/atom-logo.webp';
 
 const Login: React.FC = () => {
@@ -74,21 +73,7 @@ const Login: React.FC = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      {/* Waves Background */}
-      <Waves
-        lineColor="rgba(255, 255, 255, 0.25)"
-        backgroundColor="transparent"
-        waveSpeedX={0.012}
-        waveSpeedY={0.008}
-        waveAmpX={25}
-        waveAmpY={15}
-        xGap={15}
-        yGap={25}
-        friction={0.95}
-        tension={0.008}
-        maxCursorMove={100}
-        className="opacity-80"
-      />
+      {/* Removed Waves Background, keeping gradient background */}
 
       {/* Additional floating elements */}
       <motion.div

@@ -1,0 +1,303 @@
+/* ── Orbital Constellation Hero ────────────────────────────────────────────── */
+/* Completely new hero design. Nothing from the previous hero-network.css. */
+
+.orbital-hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+  background-color: hsl(var(--ink));
+  overflow: hidden;
+  z-index: var(--z-base);
+}
+
+/* ── Canvas layer ── */
+.orbital-hero__canvas {
+  z-index: 1;
+}
+
+/* ── Structural precision grid (very subtle) ── */
+.orbital-hero__grid {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background-image:
+    linear-gradient(to right, hsl(var(--rule)) 1px, transparent 1px),
+    linear-gradient(to bottom, hsl(var(--rule)) 1px, transparent 1px);
+  background-size: 80px 80px;
+  background-position: center;
+  -webkit-mask-image: radial-gradient(ellipse 60% 50% at 55% 45%, rgba(0,0,0,0.15) 0%, transparent 70%);
+  mask-image: radial-gradient(ellipse 60% 50% at 55% 45%, rgba(0,0,0,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ── Ambient glow ── */
+.orbital-hero__glow {
+  position: absolute;
+  top: 40%;
+  left: 55%;
+  width: 70vw;
+  height: 70vw;
+  max-width: 900px;
+  max-height: 900px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle,
+    hsl(var(--phosphor) / 0.06) 0%,
+    hsl(var(--phosphor) / 0.02) 30%,
+    transparent 60%
+  );
+  filter: blur(80px);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* ── Content ── */
+.orbital-hero__content {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: var(--container-xl);
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+@media (min-width: 640px) {
+  .orbital-hero__content {
+    padding: 0 var(--space-10);
+  }
+}
+
+@media (min-width: 1024px) {
+  .orbital-hero__content {
+    padding: 0 var(--space-16);
+    max-width: 60%;
+  }
+}
+
+@media (min-width: 1440px) {
+  .orbital-hero__content {
+    max-width: 55%;
+  }
+}
+
+/* ── Identity label ── */
+.orbital-hero__label {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: hsl(var(--graphite));
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid hsl(var(--rule));
+  border-radius: var(--radius-full);
+  background: hsl(var(--ink) / 0.5);
+  backdrop-filter: blur(4px);
+  margin-bottom: var(--space-8);
+}
+
+.orbital-hero__label-dot {
+  width: 5px;
+  height: 5px;
+  background: hsl(var(--phosphor));
+  border-radius: 50%;
+  box-shadow: 0 0 8px hsl(var(--phosphor) / 0.5);
+}
+
+/* ── Headline ── */
+.orbital-hero__headline {
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 8vw, 7rem);
+  font-weight: 400;
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  color: hsl(var(--chalk));
+  text-transform: uppercase;
+  margin: 0 0 var(--space-8) 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.orbital-hero__headline-line {
+  display: block;
+}
+
+.orbital-hero__headline-line.accent {
+  color: hsl(var(--phosphor));
+}
+
+/* ── Subtitle ── */
+.orbital-hero__subtitle {
+  font-family: var(--font-body);
+  font-size: clamp(0.9375rem, 1.3vw, 1.0625rem);
+  line-height: 1.7;
+  color: hsl(var(--chalk) / 0.6);
+  max-width: 44ch;
+  margin: 0 0 var(--space-8) 0;
+  font-weight: 300;
+}
+
+/* ── CTA button ── */
+.orbital-hero__cta {
+  margin-bottom: var(--space-12);
+}
+
+/* ── Stats bar ── */
+.orbital-hero__stats {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.orbital-hero__stat {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.orbital-hero__stat-divider {
+  width: 1px;
+  height: 24px;
+  background: hsl(var(--rule));
+  margin: 0 var(--space-5);
+}
+
+.orbital-hero__stat-value {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  color: hsl(var(--chalk));
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.orbital-hero__stat-label {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: hsl(var(--graphite));
+}
+
+/* ── Scroll indicator ── */
+.orbital-hero__scroll {
+  position: absolute;
+  bottom: var(--space-8);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.orbital-hero__scroll-text {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: hsl(var(--graphite));
+}
+
+.orbital-hero__scroll-line {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, hsl(var(--phosphor) / 0.4), transparent);
+  animation: orbital-scroll-drop 2.5s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+@keyframes orbital-scroll-drop {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+/* ── Bottom transition gradient ── */
+.orbital-hero__transition {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(to bottom, transparent, hsl(var(--ink)));
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 640px) {
+  .orbital-hero__content {
+    padding-top: var(--space-20);
+    align-items: flex-start;
+  }
+
+  .orbital-hero__label {
+    margin-bottom: var(--space-6);
+    font-size: 0.5625rem;
+  }
+
+  .orbital-hero__headline {
+    font-size: clamp(2.5rem, 11vw, 4rem);
+    margin-bottom: var(--space-6);
+  }
+
+  .orbital-hero__subtitle {
+    font-size: 0.9375rem;
+    max-width: 32ch;
+  }
+
+  .orbital-hero__stats {
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+
+  .orbital-hero__stat-divider {
+    display: none;
+  }
+
+  .orbital-hero__stat {
+    gap: var(--space-2);
+    padding-right: var(--space-4);
+    border-right: 1px solid hsl(var(--rule));
+  }
+
+  .orbital-hero__stat:last-child {
+    border-right: none;
+    padding-right: 0;
+  }
+
+  .orbital-hero__scroll {
+    bottom: var(--space-6);
+  }
+}
+
+@media (max-width: 360px) {
+  .orbital-hero__headline {
+    font-size: 2.25rem;
+  }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .orbital-hero__scroll-line {
+    animation: none;
+    opacity: 0.4;
+  }
+}

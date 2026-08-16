@@ -3,7 +3,7 @@ import Danish from '@/assets/Danish.webp';
 import Jola from '@/assets/Jola.webp';
 import Darshan from '@/assets/Dharshan_KumarJ.webp';
 import Manisha from '@/assets/Manisha.webp';
-import Monish from "@/assets/Monish.webp";
+
 import Varsha from '@/assets/Varsha.webp';
 import Dot1 from "@/assets/DOTDEV/Dot1.webp"; 
 import Dot2 from "@/assets/DOTDEV/Dot2.webp"; 
@@ -74,14 +74,7 @@ export const dotdevClub = {
       bio: "",
       linkedin: "linkedin.com/in/varsha-nadarajan",
     },
-    {
-      name: "Monish",
-      role: "Educator",
-      image: Monish,
-      isMain: false,
-      bio: "",
-      linkedin: "linkedin.com/in/varsha-nadarajan",
-    },
+
   ],
   projects: [
     {

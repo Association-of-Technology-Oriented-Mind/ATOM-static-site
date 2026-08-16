@@ -1,0 +1,155 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Cormorant+Garamond:wght@400;600;700&family=Space+Grotesk:wght@600;700;800&display=swap');
+
+/* ABOUT SECTION - FULL SCREEN 100VH */
+.about-section {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 10%;
+    box-sizing: border-box;
+    overflow: hidden;
+    background-color: #03060d;
+}
+
+/* Background Layers */
+.about-bg-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.about-photo-bg {
+    position: absolute;
+    top: -5%;
+    left: -5%;
+    width: 110%;
+    height: 110%;
+    background-image: var(--about-team-photo, none);
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    /* Placeholder dark gradient background */
+    background: radial-gradient(circle at 70% 30%, #0d172a 0%, #03060d 75%);
+    will-change: transform;
+}
+
+.about-dark-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        135deg,
+        rgba(3, 6, 13, 0.62) 0%,
+        rgba(3, 6, 13, 0.45) 50%,
+        rgba(3, 6, 13, 0.68) 100%
+    );
+    z-index: 2;
+}
+
+.about-ambient-glow {
+    position: absolute;
+    top: 35%;
+    left: 20%;
+    width: 650px;
+    height: 650px;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(
+        circle,
+        rgba(56, 189, 248, 0.12) 0%,
+        rgba(153, 102, 204, 0.05) 50%,
+        transparent 70%
+    );
+    filter: blur(90px);
+    z-index: 3;
+}
+
+.about-vignette {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.85);
+    z-index: 4;
+}
+
+/* Left-of-Center Content Wrapper */
+.about-content-wrapper {
+    position: relative;
+    z-index: 10;
+    max-width: 580px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 1rem;
+    text-align: left;
+}
+
+.about-label {
+    font-family: "Cinzel", "Space Grotesk", serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #38bdf8;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    margin: 0;
+    display: inline-block;
+    opacity: 0.95;
+}
+
+.about-title {
+    font-family: "Cinzel", "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(2.8rem, 5.5vw, 4.8rem);
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.06em;
+    line-height: 1.12;
+    text-transform: uppercase;
+    margin: 0;
+    text-shadow: 0 4px 25px rgba(0, 0, 0, 0.95);
+    display: block;
+}
+
+.about-title .word {
+    display: inline-block;
+    margin-right: 0.3em;
+    color: #ffffff;
+    will-change: transform, opacity;
+}
+
+.about-description {
+    font-family: "Inter", sans-serif;
+    font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+    font-weight: 400;
+    line-height: 1.75;
+    color: rgba(241, 245, 249, 0.88);
+    letter-spacing: -0.01em;
+    margin: 0.4rem 0 0 0;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.95);
+    max-width: 550px;
+}
+
+@media (max-width: 768px) {
+    .about-section {
+        padding: 0 6%;
+    }
+    .about-content-wrapper {
+        max-width: 100%;
+    }
+    .about-description {
+        font-size: 1.05rem;
+        line-height: 1.65;
+    }
+}

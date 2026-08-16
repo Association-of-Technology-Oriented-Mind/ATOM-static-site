@@ -1,25 +1,11 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Users, Star, ChevronDown, ChevronUp, Clock } from 'lucide-react';
+import React, { useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { ArrowRight, Calendar, MapPin } from 'lucide-react';
+import type { Event } from '@/constants/events';
 
-interface Event {
-  id: number;
-  title: string;
-  date: string;
-  time?: string;
-  location: string;
-  description: string;
-  image: string;
-  status: 'upcoming' | 'past';
-  category: string;
-  participants?: number;
-  rating?: number;
-  registrationLink?: string;
-  eventType: 'free' | 'paid';
-}
+gsap.registerPlugin(ScrollTrigger);
 
 interface PastEventTimelineProps {
   events: Event[];
@@ -27,293 +13,153 @@ interface PastEventTimelineProps {
 }
 
 const PastEventTimeline: React.FC<PastEventTimelineProps> = ({ events, onEventClick }) => {
-  const [expandedEvents, setExpandedEvents] = useState<Set<number>>(new Set());
-  const groupBy: 'year' | 'month' = 'year';
+  const containerRef = useRef<HTMLDivElement>(null);
+  const yearsRef = useRef<(HTMLDivElement | null)[]>([]);
 
-  const toggleExpand = (eventId: number) => {
-    const newExpanded = new Set(expandedEvents);
-    if (newExpanded.has(eventId)) {
-      newExpanded.delete(eventId);
-    } else {
-      newExpanded.add(eventId);
-    }
-    setExpandedEvents(newExpanded);
+  // Format date helper
+  const extractYear = (dateString: string) => {
+    const firstDate = dateString.includes(',') ? dateString.split(',')[0].trim() : dateString;
+    return new Date(firstDate).getFullYear().toString();
   };
 
-  const formatDate = (dateString: string) => {
-    // Handle multi-day events (comma-separated dates)
-    // Use the first date for grouping and year extraction
+  const formatDateDisplay = (dateString: string) => {
     const firstDate = dateString.includes(',') ? dateString.split(',')[0].trim() : dateString;
     const date = new Date(firstDate);
-    
-    // Format display for multi-day events
-    let fullDisplay, shortDisplay;
-    if (dateString.includes(',')) {
-      const dates = dateString.split(',').map(d => d.trim());
-      const startDate = new Date(dates[0]);
-      const endDate = new Date(dates[1]);
-      
-      fullDisplay = `${startDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} - ${endDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`;
-      shortDisplay = `${startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
-    } else {
-      fullDisplay = date.toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
-      shortDisplay = date.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric'
-      });
-    }
-    
-    return {
-      full: fullDisplay,
-      short: shortDisplay,
-      year: date.getFullYear(),
-      month: date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
-    };
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: '2-digit'
+    }).toUpperCase();
   };
 
-  // Group events by year or month
+  // Group events by year
   const groupedEvents = events.reduce((acc, event) => {
-    const date = formatDate(event.date);
-    const key = groupBy === 'year' ? date.year.toString() : date.month;
-    
-    if (!acc[key]) {
-      acc[key] = [];
-    }
-    acc[key].push(event);
+    const year = extractYear(event.date);
+    if (!acc[year]) acc[year] = [];
+    acc[year].push(event);
     return acc;
   }, {} as Record<string, Event[]>);
 
-  // Sort groups in descending order
-  const sortedGroups = Object.entries(groupedEvents).sort(([a], [b]) => {
-    if (groupBy === 'year') {
-      return parseInt(b) - parseInt(a);
-    } else {
-      return new Date(b).getTime() - new Date(a).getTime();
-    }
-  });
+  // Sort years descending
+  const sortedYears = Object.entries(groupedEvents).sort(([a], [b]) => parseInt(b) - parseInt(a));
 
+  useEffect(() => {
+    // ScrollTrigger for sticky pinning the year
+    const mm = gsap.matchMedia();
 
-  if (events.length === 0) {
-    return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="text-center py-20"
-      >
-        <div className="text-6xl mb-4">📅</div>
-        <h3 className="text-2xl font-semibold text-white mb-2">No past events found</h3>
-        <p className="text-gray-400">Check back later for event archives</p>
-      </motion.div>
-    );
-  }
+    mm.add("(min-width: 1024px)", () => {
+      yearsRef.current.forEach((yearEl) => {
+        if (!yearEl) return;
+        const parent = yearEl.parentElement;
+        if (!parent) return;
+
+        ScrollTrigger.create({
+          trigger: parent,
+          start: "top top",
+          end: "bottom bottom",
+          pin: yearEl,
+          pinSpacing: false,
+        });
+      });
+    });
+
+    return () => mm.revert();
+  }, [sortedYears]);
 
   return (
-    <div className="space-y-8">
-      {/* Stats Overview */}
-      {/* <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
-      >
-        <Card className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 backdrop-blur-xl border border-blue-500/20 rounded-2xl">
-          <CardContent className="p-6 text-center">
-            <Users className="w-8 h-8 text-blue-400 mx-auto mb-3" />
-            <div className="text-3xl font-bold text-white mb-1">{stats.totalParticipants.toLocaleString()}</div>
-            <div className="text-blue-300 text-sm">Total Participants</div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-purple-500/10 to-purple-600/5 backdrop-blur-xl border border-purple-500/20 rounded-2xl">
-          <CardContent className="p-6 text-center">
-            <Star className="w-8 h-8 text-yellow-400 mx-auto mb-3 fill-current" />
-            <div className="text-3xl font-bold text-white mb-1">{stats.avgRating}</div>
-            <div className="text-purple-300 text-sm">Average Rating</div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-green-500/10 to-green-600/5 backdrop-blur-xl border border-green-500/20 rounded-2xl">
-          <CardContent className="p-6 text-center">
-            <Award className="w-8 h-8 text-green-400 mx-auto mb-3" />
-            <div className="text-3xl font-bold text-white mb-1">{stats.categories}</div>
-            <div className="text-green-300 text-sm">Event Categories</div>
-          </CardContent>
-        </Card>
-      </motion.div> */}
-
-      {/* Group By Toggle */}
-      {/* <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-        className="flex justify-center mb-8"
-      >
-        <div className="bg-white/5 backdrop-blur-md rounded-xl p-1 border border-white/10">
-          {['year', 'month'].map((option) => (
-            <button
-              key={option}
-              onClick={() => setGroupBy(option as 'year' | 'month')}
-              className={`px-6 py-2 rounded-lg font-medium transition-all duration-300 ${
-                groupBy === option
-                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'
-                  : 'text-gray-300 hover:text-white hover:bg-white/10'
-              }`}
+    <div className="w-full bg-[hsl(var(--ink))]" ref={containerRef}>
+      {sortedYears.map(([year, yearEvents], groupIndex) => (
+        <div 
+          key={year} 
+          className="relative flex flex-col lg:flex-row border-b border-[hsl(var(--rule))]"
+        >
+          {/* Left Column - Sticky Year */}
+          <div className="lg:w-[35%] lg:border-r lg:border-[hsl(var(--rule))] relative z-10">
+            <div 
+              ref={(el) => { yearsRef.current[groupIndex] = el; }}
+              className="px-6 sm:px-10 lg:px-16 py-10 lg:h-screen lg:flex lg:flex-col lg:justify-center"
             >
-              Group by {option.charAt(0).toUpperCase() + option.slice(1)}
-            </button>
-          ))}
-        </div>
-      </motion.div> */}
+              <h2 
+                className="text-[clamp(6rem,15vw,18rem)] font-black leading-[0.8] tracking-tighter text-[hsl(var(--chalk))] opacity-10"
+                style={{ fontFamily: "'Archivo Black', system-ui, sans-serif" }}
+              >
+                {year}
+              </h2>
+              <div className="mt-4 flex items-center gap-4">
+                <div className="h-px bg-[hsl(var(--phosphor))] w-12" />
+                <span className="mono-label text-[hsl(var(--phosphor))]">
+                  {yearEvents.length} {yearEvents.length === 1 ? 'EVENT' : 'EVENTS'}
+                </span>
+              </div>
+            </div>
+          </div>
 
-      {/* Timeline */}
-      <div className="relative">
-        {/* Timeline Line */}
-        <div className="absolute left-8 top-0 bottom-0 w-px bg-gradient-to-b from-blue-500 via-purple-500 to-pink-500 opacity-30" />
-
-        <div className="space-y-12">
-          {sortedGroups.map(([period, periodEvents], groupIndex) => (
-            <motion.div
-              key={period}
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: groupIndex * 0.1 }}
-              className="relative"
-            >
-              {/* Period Header */}
-              <div className="flex items-center mb-8">
-                <div className="relative">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-purple-500/25">
-                    {groupBy === 'year' ? period : new Date(period).getFullYear()}
+          {/* Right Column - Events Scroll */}
+          <div className="lg:w-[65%] flex flex-col">
+            {yearEvents.map((event, eventIndex) => (
+              <motion.article
+                key={event.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-10%" }}
+                transition={{ duration: 0.6, delay: eventIndex * 0.1, ease: "easeOut" }}
+                onClick={() => onEventClick && onEventClick(event)}
+                className="group relative cursor-pointer border-b border-[hsl(var(--rule))] last:border-b-0 overflow-hidden bg-[hsl(var(--ink))] hover:bg-[hsl(var(--ink-raised))] transition-colors duration-500"
+              >
+                {/* Image Section (Edge to Edge within row) */}
+                <div className="relative w-full h-[40vh] sm:h-[50vh] overflow-hidden border-b border-[hsl(var(--rule))]">
+                  <div className="absolute inset-0 bg-black/40 z-10 group-hover:bg-transparent transition-colors duration-500" />
+                  
+                  {/* Category Badge overlaying image */}
+                  <div className="absolute top-6 left-6 z-20">
+                    <span className="mono-label bg-[hsl(var(--phosphor))] text-[hsl(var(--ink))] px-3 py-1 text-xs">
+                      {event.category}
+                    </span>
                   </div>
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl blur-lg opacity-30 -z-10" />
+
+                  <img 
+                    src={event.image} 
+                    alt={event.title}
+                    className="w-full h-full object-cover transform transition-transform duration-1000 ease-out group-hover:scale-110 group-hover:rotate-1"
+                  />
                 </div>
-                <div className="ml-6">
-                  <h3 className="text-2xl font-bold text-white">{period}</h3>
-                  <p className="text-gray-400">{periodEvents.length} events</p>
-                </div>
-              </div>
 
-              {/* Events in this period */}
-              <div className="ml-24 space-y-6">
-                {periodEvents.map((event, eventIndex) => (
-                  <motion.div
-                    key={event.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: eventIndex * 0.1 }}
-                    className="relative"
-                  >
-                    {/* Connection Line */}
-                    <div className="absolute -left-24 top-6 w-16 h-px bg-gradient-to-r from-purple-500 to-transparent" />
-                    <div className="absolute -left-8 top-5 w-2 h-2 bg-purple-500 rounded-full" />
-
-                    <Card 
-                      className="bg-gradient-to-br from-white/5 to-white/2 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:border-purple-500/30 transition-all duration-300 group cursor-pointer"
-                      onClick={() => onEventClick && onEventClick(event)}
-                    >
-                      <div className="flex flex-col md:flex-row">
-                        {/* Event Image */}
-                        <div className="relative md:w-48 h-48 md:h-auto overflow-hidden">
-                          <img 
-                            src={event.image} 
-                            alt={event.title}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                          
-                          {/* Category Badge */}
-                          <Badge className="absolute top-4 left-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white border-none">
-                            {event.category}
-                          </Badge>
-                        </div>
-
-                        {/* Event Content */}
-                        <CardContent className="flex-1 p-6">
-                          <div className="flex justify-between items-start mb-4">
-                            <div>
-                              <h4 className="text-xl font-bold text-white mb-2 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-purple-400 group-hover:bg-clip-text transition-all duration-300">
-                                {event.title}
-                              </h4>
-                              
-                              <div className="space-y-1 text-sm text-gray-300">
-                                <div className="flex items-center">
-                                  <Calendar className="w-4 h-4 mr-2 text-blue-400" />
-                                  <span>{formatDate(event.date).full}</span>
-                                </div>
-                                <div className="flex items-center">
-                                  <MapPin className="w-4 h-4 mr-2 text-green-400" />
-                                  <span>{event.location}</span>
-                                </div>
-                                {event.time && (
-                                  <div className="flex items-center">
-                                    <Clock className="w-4 h-4 mr-2 text-purple-400" />
-                                    <span>{event.time}</span>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => toggleExpand(event.id)}
-                              className="text-gray-400 hover:text-white hover:bg-white/10"
-                            >
-                              {expandedEvents.has(event.id) ? (
-                                <ChevronUp className="w-4 h-4" />
-                              ) : (
-                                <ChevronDown className="w-4 h-4" />
-                              )}
-                            </Button>
-                          </div>
-
-                          {/* Event Stats */}
-                          <div className="flex items-center gap-6 mb-4 text-sm">
-                            {event.participants && (
-                              <div className="flex items-center text-gray-300">
-                                <Users className="w-4 h-4 mr-2 text-blue-400" />
-                                <span>{event.participants} participants</span>
-                              </div>
-                            )}
-                            {event.rating && (
-                              <div className="flex items-center text-gray-300">
-                                <Star className="w-4 h-4 mr-2 text-yellow-400 fill-current" />
-                                <span>{event.rating}/5 rating</span>
-                              </div>
-                            )}
-                          </div>
-
-                          {/* Expanded Content */}
-                          <AnimatePresence>
-                            {expandedEvents.has(event.id) && (
-                              <motion.div
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: 'auto' }}
-                                exit={{ opacity: 0, height: 0 }}
-                                transition={{ duration: 0.3 }}
-                                className="space-y-4"
-                              >
-                                <p className="text-gray-300 leading-relaxed">
-                                  {event.description}
-                                </p>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </CardContent>
+                {/* Content Section */}
+                <div className="p-6 sm:p-10 lg:p-12 relative flex flex-col md:flex-row md:items-end justify-between gap-6">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-4 mb-4 text-[hsl(var(--graphite))] mono-label text-xs sm:text-sm">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-[hsl(var(--phosphor))]" />
+                        <span>{formatDateDisplay(event.date)}</span>
                       </div>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          ))}
+                      <span className="opacity-50">/</span>
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4" />
+                        <span className="truncate max-w-[150px]">{event.location}</span>
+                      </div>
+                    </div>
+                    
+                    <h3 className="text-2xl sm:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-[hsl(var(--chalk))] group-hover:text-[hsl(var(--phosphor))] transition-colors duration-300 transform group-hover:translate-x-2 ease-out"
+                        style={{ fontFamily: "'Space Grotesk', system-ui, sans-serif" }}
+                    >
+                      {event.title}
+                    </h3>
+                  </div>
+
+                  <div className="shrink-0 flex items-center justify-end overflow-hidden">
+                    <div className="flex items-center gap-3 text-[hsl(var(--phosphor))] transform translate-x-8 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500 ease-out">
+                      <span className="mono-label">EXPLORE</span>
+                      <ArrowRight className="w-5 h-5" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Hover Top-Border Glow */}
+                <div className="absolute top-0 left-0 w-full h-[2px] bg-[hsl(var(--phosphor))] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-700 ease-out z-30" />
+              </motion.article>
+            ))}
+          </div>
         </div>
-      </div>
+      ))}
     </div>
   );
 };

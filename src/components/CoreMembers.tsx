@@ -1,79 +1,248 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Linkedin } from 'lucide-react';
+
 import ScrollScene from '@/components/scroll/ScrollScene';
-import { easeInOut, lerp, prog, sceneGradient } from '@/utils/scrollMath';
+import {
+  easeInOut,
+  lerp,
+  prog,
+  sceneGradient,
+} from '@/utils/scrollMath';
 import {
   coordinatorsByPortfolio,
   type Coordinator,
 } from '@/constants/coordinators';
 
-/**
- * Scene timeline — one scrubbed scene per portfolio.
- *
- *   0.00–0.24  headline holds ("Meet the Secretariat")
- *   0.20–0.36  headline lifts out
- *   0.28–0.48  both members fade in from their own side
- *   0.52–0.70  their details resolve beneath them and stay
- *
- * The lead occupies the right half, the joint holder the left, each with
- * their own portrait and caption — one screen, two people, no overlap.
- */
-const HEADLINE_OUT: [number, number] = [0.2, 0.36];
-const MEMBER_IN: [number, number] = [0.28, 0.48];
-const DETAIL_IN: [number, number] = [0.52, 0.7];
+/* -------------------------------------------------------------------------- */
+/* Scene timing                                                               */
+/* -------------------------------------------------------------------------- */
 
-const reducedMotion = () =>
-  typeof window !== 'undefined' &&
-  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+/**
+ * Timeline for each portfolio scene:
+ *
+ * 0.00 ─────────────── 0.22
+ * Portfolio introduction holds
+ *
+ * 0.22 ─────────────── 0.38
+ * Introduction exits
+ *
+ * 0.30 ─────────────── 0.50
+ * Members enter from opposite sides
+ *
+ * 0.50 ─────────────── 0.68
+ * Details appear
+ *
+ * 0.68 ─────────────── 1.00
+ * Everything remains stable
+ */
+const HEADLINE_OUT: readonly [number, number] = [0.22, 0.38];
+const MEMBER_IN: readonly [number, number] = [0.30, 0.50];
+const DETAIL_IN: readonly [number, number] = [0.50, 0.68];
+
+const TOTAL_PORTFOLIOS = 6;
+
+/* -------------------------------------------------------------------------- */
+/* Helpers                                                                    */
+/* -------------------------------------------------------------------------- */
+
+const clamp01 = (value: number) =>
+  Math.min(1, Math.max(0, value));
 
 const initials = (name: string) =>
   name
-    .split(' ')
+    .trim()
+    .split(/\s+/)
     .filter(Boolean)
     .slice(0, 2)
-    .map(part => part[0])
+    .map(part => part.charAt(0))
     .join('')
     .toUpperCase();
 
-/** Gradient ground; written straight to the DOM so it never re-renders. */
-const SceneBackground = ({ progress }: { progress: number }) => {
-  const ref = useRef<HTMLDivElement>(null);
+const normalizeLinkedInUrl = (value?: string) => {
+  if (!value) return null;
+
+  const trimmed = value.trim();
+
+  if (!trimmed) return null;
+
+  return /^https?:\/\//i.test(trimmed)
+    ? trimmed
+    : `https://${trimmed}`;
+};
+
+/* -------------------------------------------------------------------------- */
+/* Reduced motion                                                             */
+/* -------------------------------------------------------------------------- */
+
+const useReducedMotion = () => {
+  const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
-    if (ref.current) ref.current.style.background = sceneGradient(progress, '50%');
+    if (typeof window === 'undefined') return;
+
+    const mediaQuery = window.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    );
+
+    const handleChange = () => {
+      setReducedMotion(mediaQuery.matches);
+    };
+
+    handleChange();
+
+    mediaQuery.addEventListener?.('change', handleChange);
+
+    return () => {
+      mediaQuery.removeEventListener?.(
+        'change',
+        handleChange,
+      );
+    };
+  }, []);
+
+  return reducedMotion;
+};
+
+/* -------------------------------------------------------------------------- */
+/* Timeline                                                                    */
+/* -------------------------------------------------------------------------- */
+
+const getSceneTimeline = (
+  progress: number,
+  reducedMotion: boolean,
+) => {
+  const safeProgress = clamp01(progress);
+
+  if (reducedMotion) {
+    return {
+      headline: 0,
+      members: 1,
+      details: 1,
+    };
+  }
+
+  return {
+    headline:
+      1 - easeInOut(prog(safeProgress, ...HEADLINE_OUT)),
+
+    members:
+      easeInOut(prog(safeProgress, ...MEMBER_IN)),
+
+    details:
+      easeInOut(prog(safeProgress, ...DETAIL_IN)),
+  };
+};
+
+/* -------------------------------------------------------------------------- */
+/* Scene background                                                            */
+/* -------------------------------------------------------------------------- */
+
+const SceneBackground = ({
+  progress,
+}: {
+  progress: number;
+}) => {
+  const backgroundRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const element = backgroundRef.current;
+
+    if (!element) return;
+
+    element.style.background = sceneGradient(
+      clamp01(progress),
+      '50%',
+    );
   }, [progress]);
 
-  return <div ref={ref} className="absolute inset-0 z-0" />;
+  return (
+    <div
+      ref={backgroundRef}
+      aria-hidden="true"
+      className="absolute inset-0 z-0"
+    />
+  );
 };
+
+/* -------------------------------------------------------------------------- */
+/* Scene headline                                                              */
+/* -------------------------------------------------------------------------- */
 
 const Headline = ({
   progress,
   index,
   portfolio,
+  reducedMotion,
 }: {
   progress: number;
   index: number;
   portfolio: string;
+  reducedMotion: boolean;
 }) => {
-  const ref = useRef<HTMLDivElement>(null);
+  const elementRef = useRef<HTMLDivElement>(null);
+
+  const safeProgress = clamp01(progress);
+
+  const headlineProgress = reducedMotion
+    ? 0
+    : easeInOut(
+        prog(safeProgress, ...HEADLINE_OUT),
+      );
+
+  const opacity = 1 - headlineProgress;
 
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const out = easeInOut(prog(progress, ...HEADLINE_OUT));
-    el.style.opacity = String(1 - out);
-    el.style.transform = reducedMotion() ? 'none' : `translateY(${-out * 56}px)`;
-  }, [progress]);
+    const element = elementRef.current;
+
+    if (!element) return;
+
+    element.style.opacity = String(opacity);
+
+    if (reducedMotion) {
+      element.style.transform = 'none';
+      return;
+    }
+
+    element.style.transform = `translate3d(
+      0,
+      ${-headlineProgress * 56}px,
+      0
+    )`;
+  }, [
+    headlineProgress,
+    opacity,
+    reducedMotion,
+  ]);
 
   return (
     <div
-      ref={ref}
-      className="pointer-events-none absolute inset-0 z-30 flex flex-col items-center justify-center px-[8vw] text-center"
-      style={{ willChange: 'opacity, transform' }}
+      ref={elementRef}
+      className="
+        pointer-events-none
+        absolute
+        inset-0
+        z-30
+        flex
+        flex-col
+        items-center
+        justify-center
+        px-6
+        text-center
+        sm:px-10
+        lg:px-[8vw]
+      "
+      style={{
+        opacity: 0,
+        willChange: reducedMotion
+          ? 'opacity'
+          : 'opacity, transform',
+      }}
     >
       <span className="mono-label accent tabular-nums">
-        {String(index + 1).padStart(2, '0')} / 06
+        {String(index + 1).padStart(2, '0')} /{' '}
+        {String(TOTAL_PORTFOLIOS).padStart(2, '0')}
       </span>
+
       <h3 className="display-l mt-5">
         Meet the
         <br />
@@ -83,130 +252,357 @@ const Headline = ({
   );
 };
 
-/**
- * One member occupying half the stage: a free-standing portrait with their
- * name and role beneath it. No frame, no card — the figure sits on the
- * gradient the way a cutout would.
- */
+/* -------------------------------------------------------------------------- */
+/* Member column                                                              */
+/* -------------------------------------------------------------------------- */
+
 const MemberColumn = ({
   progress,
   member,
   side,
+  reducedMotion,
 }: {
   progress: number;
   member: Coordinator;
   side: 'left' | 'right';
+  reducedMotion: boolean;
 }) => {
   const figureRef = useRef<HTMLDivElement>(null);
   const detailRef = useRef<HTMLDivElement>(null);
+
   const isLeft = side === 'left';
-  const filled = member.name.trim().length > 0;
+
+  const hasMember = Boolean(
+    member.name?.trim(),
+  );
+
+  const linkedInUrl = normalizeLinkedInUrl(
+    member.linkedin,
+  );
+
+  const safeProgress = clamp01(progress);
+
+  const memberProgress = reducedMotion
+    ? 1
+    : easeInOut(
+        prog(safeProgress, ...MEMBER_IN),
+      );
+
+  const detailProgress = reducedMotion
+    ? 1
+    : easeInOut(
+        prog(safeProgress, ...DETAIL_IN),
+      );
 
   useEffect(() => {
     const figure = figureRef.current;
     const detail = detailRef.current;
+
     if (!figure || !detail) return;
 
-    const inT = easeInOut(prog(progress, ...MEMBER_IN));
-    figure.style.opacity = String(inT);
-    figure.style.transform = reducedMotion()
-      ? 'none'
-      : `translateX(${lerp(isLeft ? -48 : 48, 0, inT)}px)`;
+    /* ------------------------------ Figure ------------------------------ */
 
-    const detailT = easeInOut(prog(progress, ...DETAIL_IN));
-    detail.style.opacity = String(detailT);
-    detail.style.transform = reducedMotion()
-      ? 'none'
-      : `translateY(${lerp(20, 0, detailT)}px)`;
-    // A faded phase must not swallow clicks meant for what is visible.
-    detail.style.pointerEvents = detailT > 0.5 ? 'auto' : 'none';
-  }, [progress, isLeft]);
+    figure.style.opacity = String(
+      memberProgress,
+    );
+
+    if (reducedMotion) {
+      figure.style.transform = 'none';
+    } else {
+      const startingX = isLeft ? -52 : 52;
+
+      figure.style.transform = `translate3d(
+        ${lerp(
+          startingX,
+          0,
+          memberProgress,
+        )}px,
+        0,
+        0
+      )`;
+    }
+
+    /* ------------------------------ Detail ------------------------------ */
+
+    detail.style.opacity = String(
+      detailProgress,
+    );
+
+    if (reducedMotion) {
+      detail.style.transform = 'none';
+    } else {
+      detail.style.transform = `translate3d(
+        0,
+        ${lerp(
+          24,
+          0,
+          detailProgress,
+        )}px,
+        0
+      )`;
+    }
+
+    /*
+     * Prevent invisible content from capturing pointer events.
+     */
+    detail.style.pointerEvents =
+      detailProgress > 0.65
+        ? 'auto'
+        : 'none';
+  }, [
+    memberProgress,
+    detailProgress,
+    reducedMotion,
+    isLeft,
+  ]);
 
   return (
     <div
-      className={`absolute bottom-0 top-0 z-10 flex w-1/2 flex-col items-center justify-center px-[4vw] pt-[16vh] ${
-        isLeft ? 'left-0' : 'right-0'
-      }`}
+      className={`
+        absolute
+        inset-x-0
+        top-0
+        z-10
+        flex
+        h-full
+        w-full
+        flex-col
+        items-center
+        justify-center
+        px-5
+        pt-[12vh]
+        pb-[8vh]
+
+        sm:px-8
+
+        lg:top-0
+        lg:w-1/2
+        lg:px-[4vw]
+        lg:pt-[15vh]
+        lg:pb-[5vh]
+
+        ${
+          isLeft
+            ? 'lg:left-0 lg:right-auto'
+            : 'lg:right-0 lg:left-auto'
+        }
+      `}
     >
+      {/* ------------------------------------------------------------------ */}
+      {/* Portrait                                                            */}
+      {/* ------------------------------------------------------------------ */}
+
       <div
         ref={figureRef}
-        className="pointer-events-none flex w-full items-end justify-center pb-8"
-        style={{ opacity: 0, willChange: 'opacity, transform' }}
+        className="
+          pointer-events-none
+          flex
+          min-h-0
+          w-full
+          flex-1
+          items-end
+          justify-center
+        "
+        style={{
+          opacity: 0,
+          willChange: reducedMotion
+            ? 'opacity'
+            : 'opacity, transform',
+        }}
       >
         {member.image ? (
           <img
             src={member.image}
-            alt=""
-            loading="lazy"
-            className="block max-h-[46vh] w-auto object-contain object-bottom"
+            alt={
+              hasMember
+                ? `${member.name} portrait`
+                : ''
+            }
+            loading="eager"
+            decoding="async"
+            className="
+              block
+              max-h-[38vh]
+              max-w-[78vw]
+              w-auto
+              object-contain
+              object-bottom
+
+              sm:max-h-[42vh]
+              sm:max-w-[65vw]
+
+              lg:max-h-[44vh]
+              lg:max-w-full
+            "
           />
         ) : (
           <span
-            className="select-none"
-            style={{
-              fontFamily: "'Archivo Black', system-ui, sans-serif",
-              fontSize: 'clamp(3.5rem, 9vw, 8rem)',
-              lineHeight: 1,
-              color: 'hsl(var(--graphite) / 0.35)',
-            }}
             aria-hidden="true"
+            className="
+              select-none
+              font-black
+              leading-none
+              text-[hsl(var(--graphite)/0.25)]
+            "
+            style={{
+              fontFamily:
+                "'Archivo Black', system-ui, sans-serif",
+              fontSize:
+                'clamp(3.5rem, 9vw, 8rem)',
+            }}
           >
-            {filled ? initials(member.name) : 'TBA'}
+            {hasMember
+              ? initials(member.name)
+              : 'TBA'}
           </span>
         )}
       </div>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* Member details                                                      */}
+      {/* ------------------------------------------------------------------ */}
 
       <div
         ref={detailRef}
-        className="w-full max-w-md text-center"
-        style={{ opacity: 0, willChange: 'opacity, transform' }}
+        className="
+          w-full
+          max-w-md
+          shrink-0
+          text-center
+          lg:max-w-[34rem]
+        "
+        style={{
+          opacity: 0,
+          willChange: reducedMotion
+            ? 'opacity'
+            : 'opacity, transform',
+        }}
       >
+        {/* Role */}
+
         <p className="mono-label">
-          <span className="accent">{member.isLead ? 'Lead' : 'Joint'}</span>
-          {' · '}
-          {member.role}
+          <span className="accent">
+            {member.isLead
+              ? 'Lead'
+              : 'Joint'}
+          </span>
+
+          <span aria-hidden="true">
+            {' · '}
+          </span>
+
+          <span>
+            {member.role}
+          </span>
         </p>
 
+        {/* Name */}
+
         <h4 className="display-m mt-3">
-          {filled ? (
+          {hasMember ? (
             member.name
           ) : (
-            <span className="text-[hsl(var(--graphite))]">Position open</span>
+            <span className="text-[hsl(var(--graphite))]">
+              Position open
+            </span>
           )}
         </h4>
 
-        <div className="mx-auto mt-4 h-[2px] w-9 bg-[hsl(var(--phosphor))]" />
+        {/* Accent line */}
 
-        {/* Bio and link keep their space while a seat is unfilled, so the
-            composition doesn't shift once real people are added. */}
+        <div
+          aria-hidden="true"
+          className="
+            mx-auto
+            mt-4
+            h-[2px]
+            w-9
+            bg-[hsl(var(--phosphor))]
+          "
+        />
+
+        {/* Bio */}
+
         {member.bio ? (
-          <p className="mx-auto mt-5 max-w-prose text-sm leading-relaxed text-[hsl(var(--graphite))]">
+          <p
+            className="
+              mx-auto
+              mt-5
+              max-w-prose
+              text-sm
+              leading-relaxed
+              text-[hsl(var(--graphite))]
+            "
+          >
             {member.bio}
           </p>
         ) : (
-          <p className="mx-auto mt-5 max-w-prose text-sm italic leading-relaxed text-[hsl(var(--graphite)/0.6)]">
-            A short introduction goes here once this seat is filled.
+          <p
+            className="
+              mx-auto
+              mt-5
+              max-w-prose
+              text-sm
+              italic
+              leading-relaxed
+              text-[hsl(var(--graphite)/0.6)]
+            "
+          >
+            A short introduction will appear once
+            this position is filled.
           </p>
         )}
 
-        {member.linkedin ? (
+        {/* LinkedIn */}
+
+        {linkedInUrl ? (
           <a
-            href={
-              member.linkedin.startsWith('http')
-                ? member.linkedin
-                : `https://${member.linkedin}`
-            }
+            href={linkedInUrl}
             target="_blank"
-            rel="noreferrer noopener"
-            className="focus-phosphor mono-label mt-5 inline-flex items-center gap-2 text-[hsl(var(--chalk))] transition-colors hover:text-[hsl(var(--phosphor))]"
+            rel="noopener noreferrer"
+            aria-label={`${member.name || 'Member'} on LinkedIn`}
+            className="
+              focus-phosphor
+              mono-label
+              mt-5
+              inline-flex
+              items-center
+              gap-2
+              text-[hsl(var(--chalk))]
+              transition-colors
+              duration-200
+              hover:text-[hsl(var(--phosphor))]
+            "
           >
-            <Linkedin className="h-3.5 w-3.5" aria-hidden="true" />
-            LinkedIn
+            <Linkedin
+              className="h-3.5 w-3.5"
+              aria-hidden="true"
+            />
+
+            <span>
+              LinkedIn
+            </span>
           </a>
         ) : (
-          <span className="mono-label mt-5 inline-flex items-center gap-2 text-[hsl(var(--graphite)/0.5)]">
-            <Linkedin className="h-3.5 w-3.5" aria-hidden="true" />
-            LinkedIn
+          <span
+            aria-hidden="true"
+            className="
+              mono-label
+              mt-5
+              inline-flex
+              items-center
+              gap-2
+              text-[hsl(var(--graphite)/0.45)]
+            "
+          >
+            <Linkedin
+              className="h-3.5 w-3.5"
+              aria-hidden="true"
+            />
+
+            <span>
+              LinkedIn
+            </span>
           </span>
         )}
       </div>
@@ -214,72 +610,234 @@ const MemberColumn = ({
   );
 };
 
-/** Portfolio name, held quietly at the top once the pair has arrived. */
+/* -------------------------------------------------------------------------- */
+/* Scene label                                                                 */
+/* -------------------------------------------------------------------------- */
+
 const SceneLabel = ({
   progress,
   portfolio,
+  reducedMotion,
 }: {
   progress: number;
   portfolio: string;
+  reducedMotion: boolean;
 }) => {
-  const ref = useRef<HTMLDivElement>(null);
+  const elementRef = useRef<HTMLDivElement>(null);
+
+  const labelProgress = reducedMotion
+    ? 1
+    : easeInOut(
+        prog(
+          clamp01(progress),
+          ...MEMBER_IN,
+        ),
+      );
 
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    el.style.opacity = String(easeInOut(prog(progress, ...MEMBER_IN)));
-  }, [progress]);
+    const element = elementRef.current;
+
+    if (!element) return;
+
+    element.style.opacity = String(
+      labelProgress,
+    );
+  }, [labelProgress]);
 
   return (
     <div
-      ref={ref}
-      className="pointer-events-none absolute left-0 right-0 top-[8vh] z-20 text-center"
-      style={{ opacity: 0 }}
+      ref={elementRef}
+      aria-hidden="true"
+      className="
+        pointer-events-none
+        absolute
+        left-0
+        right-0
+        top-[5vh]
+        z-20
+        text-center
+
+        lg:top-[7vh]
+      "
+      style={{
+        opacity: 0,
+        willChange: 'opacity',
+      }}
     >
-      <p className="mono-label">{portfolio}</p>
+      <p className="mono-label">
+        {portfolio}
+      </p>
     </div>
   );
 };
 
-const CoreMembers = () => (
-  <section id="core-members" className="lattice relative">
-    <div className="rule-b px-6 py-24 sm:px-10 lg:px-16 lg:py-32">
-      <div className="mx-auto w-full max-w-5xl">
-        <p className="mono-label">Academic year 2025–26</p>
-        <h2 className="display-xl mt-6 max-w-[12ch]">Meet the core members</h2>
-        <p className="mt-8 max-w-prose text-base leading-relaxed text-[hsl(var(--graphite))]">
-          Twelve positions, six portfolios. Each portfolio is held by a lead and
-          a joint holder who run it together across the year.
-        </p>
+/* -------------------------------------------------------------------------- */
+/* Main component                                                              */
+/* -------------------------------------------------------------------------- */
+
+const CoreMembers = () => {
+  const reducedMotion = useReducedMotion();
+
+  return (
+    <section
+      id="core-members"
+      className="
+        lattice
+        relative
+      "
+      aria-labelledby="core-members-title"
+    >
+      {/* ================================================================== */}
+      {/* Section introduction                                               */}
+      {/* ================================================================== */}
+
+      <div
+        className="
+          rule-b
+          px-6
+          py-24
+
+          sm:px-10
+
+          lg:px-16
+          lg:py-32
+        "
+      >
+        <div className="
+          mx-auto
+          w-full
+          max-w-5xl
+        ">
+          <p className="mono-label">
+            Academic year 2025–26
+          </p>
+
+          <h2
+            id="core-members-title"
+            className="
+              display-xl
+              mt-6
+              max-w-[12ch]
+            "
+          >
+            Meet the core members
+          </h2>
+
+          <p
+            className="
+              mt-8
+              max-w-prose
+              text-base
+              leading-relaxed
+              text-[hsl(var(--graphite))]
+            "
+          >
+            Twelve positions, six portfolios. Each
+            portfolio is held by a lead and a joint
+            holder who run it together across the
+            year.
+          </p>
+        </div>
       </div>
-    </div>
 
-    {coordinatorsByPortfolio.map(({ portfolio, members }, index) => {
-      const lead = members.find(member => member.isLead);
-      const joint = members.find(member => !member.isLead);
+      {/* ================================================================== */}
+      {/* Portfolio scenes                                                    */}
+      {/* ================================================================== */}
 
-      return (
-        <ScrollScene key={portfolio} heightVh={300}>
-          {progress => (
-            <div className="relative h-full w-full overflow-hidden">
-              <SceneBackground progress={progress} />
+      {coordinatorsByPortfolio.map(
+        ({ portfolio, members }, index) => {
+          /*
+           * Explicitly identify members by their role.
+           * Their array order no longer determines
+           * their position in the interface.
+           */
+          const lead = members.find(
+            member => member.isLead,
+          );
 
-              {/* Lead left, joint holder right. */}
-              {lead && (
-                <MemberColumn progress={progress} member={lead} side="left" />
+          const joint = members.find(
+            member => !member.isLead,
+          );
+
+          return (
+            <ScrollScene
+              key={portfolio}
+              heightVh={300}
+            >
+              {progress => (
+                <div
+                  className="
+                    relative
+                    h-full
+                    w-full
+                    overflow-hidden
+                  "
+                  data-portfolio={portfolio}
+                >
+                  {/* Background */}
+
+                  <SceneBackground
+                    progress={progress}
+                  />
+
+                  {/* ====================================================== */}
+                  {/* LEFT — LEAD                                            */}
+                  {/* ====================================================== */}
+
+                  {lead && (
+                    <MemberColumn
+                      progress={progress}
+                      member={lead}
+                      side="left"
+                      reducedMotion={
+                        reducedMotion
+                      }
+                    />
+                  )}
+
+                  {/* ====================================================== */}
+                  {/* RIGHT — JOINT HOLDER                                   */}
+                  {/* ====================================================== */}
+
+                  {joint && (
+                    <MemberColumn
+                      progress={progress}
+                      member={joint}
+                      side="right"
+                      reducedMotion={
+                        reducedMotion
+                      }
+                    />
+                  )}
+
+                  {/* Portfolio label */}
+
+                  <SceneLabel
+                    progress={progress}
+                    portfolio={portfolio}
+                    reducedMotion={
+                      reducedMotion
+                    }
+                  />
+
+                  {/* Intro headline */}
+
+                  <Headline
+                    progress={progress}
+                    index={index}
+                    portfolio={portfolio}
+                    reducedMotion={
+                      reducedMotion
+                    }
+                  />
+                </div>
               )}
-              {joint && (
-                <MemberColumn progress={progress} member={joint} side="right" />
-              )}
-
-              <SceneLabel progress={progress} portfolio={portfolio} />
-              <Headline progress={progress} index={index} portfolio={portfolio} />
-            </div>
-          )}
-        </ScrollScene>
-      );
-    })}
-  </section>
-);
+            </ScrollScene>
+          );
+        },
+      )}
+    </section>
+  );
+};
 
 export default CoreMembers;
