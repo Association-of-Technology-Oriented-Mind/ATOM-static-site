@@ -19,6 +19,7 @@ const ExternalRegistrationForm = lazy(() => import("./pages/ExternalRegistration
 const Login = lazy(() => import("./pages/Login"));
 const Admin = lazy(() => import("./pages/Admin"));
 const ClubPage = lazy(() => import("./pages/ClubPage"));
+const CorePage = lazy(() => import("./pages/CorePage"));
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ const App = () => (
               <Route path="/events" element={<Event />} />
               <Route path="/events/:slug" element={<EventDetailPage />} />
               <Route path="/full-gallery" element={<FullPhotoGallery />} />
+              <Route path="/core" element={<CorePage />} />
               <Route path="/clubs/:slug" element={<ClubPage />} />
               <Route path="/registration/internal" element={<InternalRegistrationForm />} />
               <Route path="/registration/external" element={<ExternalRegistrationForm />} />

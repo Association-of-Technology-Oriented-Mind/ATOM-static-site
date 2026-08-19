@@ -11,25 +11,35 @@ import atomLogo from '@/assets/atom-logo-white.png';
 const NAV_LINKS = [
   { path: '/', label: 'Home' },
   { path: '/events', label: 'Events' },
+  { path: '/core', label: 'Team' },
   { path: '/full-gallery', label: 'Gallery' },
 ];
 
 const Navigation: React.FC = () => {
   const location = useLocation();
-  const [scrolled, setScrolled] = useState(false);
+  const [showNavbar, setShowNavbar] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
 
-  // Track scroll position for background transition
+  // Track scroll position for reveal trigger
   const handleScroll = useCallback(() => {
-    setScrolled(window.scrollY > 60);
-  }, []);
+    if (location.pathname !== '/') {
+      setShowNavbar(true);
+    } else {
+      setShowNavbar(window.scrollY >= window.innerHeight * 0.9);
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [handleScroll]);
+  }, [handleScroll, location.pathname]);
+
+  // Re-trigger scroll check on pathname changes (e.g. navigating between pages)
+  useEffect(() => {
+    handleScroll();
+  }, [location.pathname, handleScroll]);
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -52,22 +62,15 @@ const Navigation: React.FC = () => {
       <motion.nav
         ref={navRef}
         className="fixed top-0 left-0 right-0 z-[var(--z-nav)]"
-        initial={{ opacity: 0, y: -8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+        initial={{ opacity: 0, y: -100 }}
+        animate={showNavbar ? { opacity: 1, y: 0 } : { opacity: 0, y: -100 }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         style={{
-          backgroundColor: scrolled
-            ? 'hsla(220, 14%, 4%, 0.85)'
-            : 'transparent',
-          backdropFilter: scrolled ? 'blur(24px) saturate(1.6)' : 'none',
-          WebkitBackdropFilter: scrolled ? 'blur(24px) saturate(1.6)' : 'none',
-          borderBottom: scrolled
-            ? '1px solid hsla(168, 90%, 74%, 0.15)'
-            : '1px solid transparent',
-          boxShadow: scrolled
-            ? '0 4px 30px rgba(0, 0, 0, 0.4)'
-            : 'none',
-          transition: 'background-color 0.4s ease, backdrop-filter 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease',
+          backgroundColor: 'hsla(220, 14%, 4%, 0.85)',
+          backdropFilter: 'blur(24px) saturate(1.6)',
+          WebkitBackdropFilter: 'blur(24px) saturate(1.6)',
+          borderBottom: '1px solid hsla(168, 90%, 74%, 0.15)',
+          boxShadow: '0 4px 30px rgba(0, 0, 0, 0.4)',
         }}
         role="navigation"
         aria-label="Main navigation"

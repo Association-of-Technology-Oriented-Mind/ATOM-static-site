@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { motion, useInView, useScroll, useSpring } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, MapPin, ArrowRight, ArrowUpRight, Search, X } from 'lucide-react';
+import { ArrowUpRight, Search, X } from 'lucide-react';
 import { type Event as EventType } from '@/constants/events';
 import { useEvents } from '@/hooks/useContent';
 import { generateSlug } from '@/utils/slug';
@@ -9,17 +9,9 @@ import atomLogo from '@/assets/atom-logo-white.png';
 import { useLenis } from '@/hooks/useLenis';
 import Footer from '@/components/Footer';
 import OrbitalCanvas from '@/components/OrbitalCanvas';
+import PastEventTimeline from '@/components/events/PastEventTimeline';
 
 /* ── Helpers ─────────────────────────────────────────────────────────────── */
-
-const formatDate = (dateString: string): string => {
-  const raw = dateString.includes(',') ? dateString.split(',')[0] : dateString;
-  return new Date(raw).toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  });
-};
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -325,87 +317,12 @@ const Event: React.FC = () => {
         </div>
       </section>
 
-      {/* ── Events Grid ─────────────────────────────────────────────────── */}
-      <section className="relative z-10 w-full">
-        <div className="max-w-[var(--container-xl)] mx-auto px-6 sm:px-10 lg:px-16 py-16 sm:py-24">
-          
-          {filteredEvents.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-[hsl(var(--rule))] border border-[hsl(var(--rule))]">
-              {filteredEvents.map((event, i) => (
-                <motion.article
-                  key={event.id}
-                  onClick={() => handleEventClick(event)}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-50px' }}
-                  transition={{ duration: 0.5, delay: (i % 3) * 0.1, ease }}
-                  className="group relative cursor-pointer overflow-hidden bg-[hsl(var(--ink))] min-h-[340px] flex flex-col"
-                  tabIndex={0}
-                  onKeyDown={(e) => { if (e.key === 'Enter') handleEventClick(event); }}
-                >
-                  {/* Image */}
-                  <div className="absolute inset-0 z-0">
-                    <img
-                      src={event.image}
-                      alt={event.title}
-                      loading="lazy"
-                      className="w-full h-full object-cover opacity-60 transition-transform duration-700 group-hover:scale-105 group-hover:opacity-40"
-                    />
-                    <div
-                      className="absolute inset-0"
-                      style={{
-                        background: 'linear-gradient(to top, hsl(var(--ink)) 0%, hsl(var(--ink)/0.4) 50%, transparent 100%)'
-                      }}
-                    />
-                  </div>
-
-                  {/* Content */}
-                  <div className="relative z-10 p-8 h-full flex flex-col justify-end mt-auto">
-                    <span
-                      className="uppercase tracking-[0.2em] mb-2 inline-block"
-                      style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', color: 'hsl(var(--phosphor))' }}
-                    >
-                      {event.category}
-                    </span>
-                    <h2
-                      className="mb-4 transition-colors duration-300 group-hover:text-[hsl(var(--phosphor))]"
-                      style={{
-                        fontFamily: 'var(--font-body)',
-                        fontSize: '1.25rem',
-                        fontWeight: 500,
-                        lineHeight: 1.3,
-                        color: 'hsl(var(--chalk))',
-                      }}
-                    >
-                      {event.title}
-                    </h2>
-
-                    <div className="flex flex-col gap-2 mt-auto">
-                      <div className="flex items-center gap-2" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: 'hsl(var(--graphite))' }}>
-                        <Calendar className="w-3 h-3" />
-                        <span>{formatDate(event.date)}</span>
-                      </div>
-                      <div className="flex items-center gap-2" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: 'hsl(var(--graphite))' }}>
-                        <MapPin className="w-3 h-3" />
-                        <span className="truncate">{event.location}</span>
-                      </div>
-                    </div>
-
-                    {/* Arrow */}
-                    <div
-                      className="absolute top-8 right-8 w-8 h-8 rounded-full border flex items-center justify-center opacity-0 -translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0"
-                      style={{
-                        borderColor: 'hsl(var(--phosphor)/0.4)',
-                        color: 'hsl(var(--phosphor))'
-                      }}
-                    >
-                      <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
-                    </div>
-                  </div>
-                </motion.article>
-              ))}
-            </div>
-          ) : (
+      {/* ── Events Timeline ─────────────────────────────────────────────── */}
+      <section className="relative z-10 w-full min-h-[50vh]">
+        {filteredEvents.length > 0 ? (
+          <PastEventTimeline events={filteredEvents} onEventClick={handleEventClick} />
+        ) : (
+          <div className="max-w-[var(--container-xl)] mx-auto px-6 sm:px-10 lg:px-16 py-16 sm:py-24">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -422,8 +339,8 @@ const Event: React.FC = () => {
                 Clear search
               </button>
             </motion.div>
-          )}
-        </div>
+          </div>
+        )}
       </section>
 
       <Footer />
