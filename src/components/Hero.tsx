@@ -4,7 +4,7 @@ import { motion, useScroll, useTransform, Variants, AnimatePresence } from 'fram
 import atomLogo from '@/assets/atom-logo.webp';
 
 // ──────────────────────────────────────────────────────────
-// DIGITAL CIRCUITRY GRAPH & VORTEX SUCTION CANVAS ANIMATION
+// DIGITAL CIRCUITRY — DENSE MULTI-COLOR DISSOLVING TRACES
 // ──────────────────────────────────────────────────────────
 function CircuitryCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -20,232 +20,205 @@ function CircuitryCanvas() {
     canvas.width = w;
     canvas.height = h;
 
-    interface PathNode {
-      x: number;
-      y: number;
-    }
+    // Color palette
+    const PALETTE = [
+      { r: 125, g: 249, b: 228 }, // phosphor cyan
+      { r: 255, g: 255, b: 255 }, // white
+      { r: 130, g: 180, b: 255 }, // soft blue
+      { r: 160, g: 240, b: 180 }, // pale green
+      { r: 140, g: 140, b: 140 }, // dim grey
+    ];
 
     interface CircuitPath {
-      points: PathNode[];
-      currentX: number;
-      currentY: number;
-      targetX: number;
-      targetY: number;
-      speed: number;
-      type: 'cyan' | 'white' | 'grey';
-      color: string;
-      life: number;
-      maxLife: number;
-      pulseOffset: number;
-      pulseProgress: number; // for cyan flowing pulses
-    }
-
-    interface OrbitParticle {
-      radius: number;
+      x: number;
+      y: number;
+      prevX: number;
+      prevY: number;
       angle: number;
       speed: number;
-      size: number;
-      color: string;
+      thickness: number;
+      colorIdx: number;
+      baseOpacity: number;
+      opacityShift: number;
+      opacityShiftSpeed: number;
+      life: number;
+      maxLife: number;
+      jitterStrength: number;
+      turnChance: number;
+      trail: { x: number; y: number }[];
+      trailMax: number;
     }
 
     let paths: CircuitPath[] = [];
-    let orbitParticles: OrbitParticle[] = [];
 
-    // Target coordinates (ATOM Logo center on the right side)
     const getTargetCoords = () => {
       const isMobile = window.innerWidth < 768;
-      if (isMobile) {
-        return { x: w * 0.5, y: h * 0.75 };
-      }
+      if (isMobile) return { x: w * 0.5, y: h * 0.75 };
       return { x: w * 0.825, y: h * 0.5 };
     };
 
+    const FADE_RADIUS = 150; // dissolve zone radius around logo
+
     const spawnPath = (): CircuitPath => {
-      const startX = Math.random() * (w * 0.35);
+      const startX = Math.random() * w * 0.4;
       const startY = Math.random() * h;
       const target = getTargetCoords();
-      
-      const rand = Math.random();
-      let type: 'cyan' | 'white' | 'grey' = 'white';
-      let color = 'rgba(255, 255, 255, 0.12)';
-      let speed = Math.random() * 1.0 + 0.6;
-      
-      if (rand < 0.28) {
-        type = 'cyan';
-        color = 'rgba(125, 249, 228, 0.35)'; // High energy cyan
-        speed = Math.random() * 1.5 + 1.0;
-      } else if (rand > 0.75) {
-        type = 'grey';
-        color = 'rgba(255, 255, 255, 0.05)'; // Dim background traces
-        speed = Math.random() * 0.6 + 0.4;
-      }
+      const angle = Math.atan2(target.y - startY, target.x - startX);
 
       return {
-        points: [{ x: startX, y: startY }],
-        currentX: startX,
-        currentY: startY,
-        targetX: target.x,
-        targetY: target.y,
-        speed,
-        type,
-        color,
+        x: startX,
+        y: startY,
+        prevX: startX,
+        prevY: startY,
+        angle,
+        speed: Math.random() * 1.8 + 0.4,
+        thickness: Math.random() * 1.6 + 0.4,
+        colorIdx: Math.floor(Math.random() * PALETTE.length),
+        baseOpacity: Math.random() * 0.25 + 0.08,
+        opacityShift: 0,
+        opacityShiftSpeed: Math.random() * 0.03 + 0.005,
         life: 0,
-        maxLife: Math.random() * 240 + 120,
-        pulseOffset: Math.random() * Math.PI * 2,
-        pulseProgress: 0,
+        maxLife: Math.random() * 300 + 100,
+        jitterStrength: Math.random() * 0.06,
+        turnChance: Math.random() * 0.025 + 0.005,
+        trail: [],
+        trailMax: Math.floor(Math.random() * 60 + 20),
       };
     };
 
-    const spawnOrbitParticle = (): OrbitParticle => {
-      const randColor = Math.random() > 0.4 ? 'rgba(125, 249, 228, 0.35)' : 'rgba(255, 255, 255, 0.2)';
-      return {
-        radius: Math.random() * 150 + 40,
-        angle: Math.random() * Math.PI * 2,
-        speed: (Math.random() * 0.015 + 0.005) * (Math.random() > 0.5 ? 1 : -1),
-        size: Math.random() * 2.5 + 1.0,
-        color: randColor,
-      };
-    };
-
-    // Initialize paths
-    for (let i = 0; i < 55; i++) {
-      paths.push(spawnPath());
-    }
-
-    // Initialize orbit particles
-    for (let i = 0; i < 45; i++) {
-      orbitParticles.push(spawnOrbitParticle());
+    // Initialize 110 paths
+    const PATH_COUNT = 110;
+    for (let i = 0; i < PATH_COUNT; i++) {
+      const p = spawnPath();
+      // Stagger initial life so they don't all start together
+      p.life = Math.floor(Math.random() * p.maxLife * 0.6);
+      p.x += Math.cos(p.angle) * p.speed * p.life;
+      p.y += Math.sin(p.angle) * p.speed * p.life;
+      paths.push(p);
     }
 
     let rafId: number;
 
-    const updateAndDraw = () => {
+    const draw = () => {
       ctx.clearRect(0, 0, w, h);
 
-      // Draw subtle grid lines
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.012)';
+      // Subtle background grid
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.015)';
       ctx.lineWidth = 1;
       const gridSize = 48;
-      for (let x = 0; x < w; x += gridSize) {
+      for (let gx = 0; gx < w; gx += gridSize) {
         ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, h);
+        ctx.moveTo(gx, 0);
+        ctx.lineTo(gx, h);
         ctx.stroke();
       }
-      for (let y = 0; y < h; y += gridSize) {
+      for (let gy = 0; gy < h; gy += gridSize) {
         ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(w, y);
+        ctx.moveTo(0, gy);
+        ctx.lineTo(w, gy);
         ctx.stroke();
       }
 
       const target = getTargetCoords();
 
-      // Update and draw background circuitry paths
-      paths.forEach((p, idx) => {
+      for (let i = 0; i < paths.length; i++) {
+        const p = paths[i];
         p.life++;
-        p.pulseProgress += 0.008;
-        if (p.pulseProgress > 1) p.pulseProgress = 0;
 
-        // Calculate vector to target logo
-        const dx = p.targetX - p.currentX;
-        const dy = p.targetY - p.currentY;
+        // Shift opacity over time for shimmer
+        p.opacityShift = Math.sin(p.life * p.opacityShiftSpeed) * 0.12;
+
+        // Distance to target logo center
+        const dx = target.x - p.x;
+        const dy = target.y - p.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
-        // Advance tip
-        if (dist > 30 && p.life < p.maxLife) {
-          const angleToTarget = Math.atan2(dy, dx);
-          
-          if (dist < 220) {
-            // Spiral vortex suction effect: curve lines inwards
-            const suctionStrength = (220 - dist) / 220; // 0 to 1
-            const spiralAngle = angleToTarget + suctionStrength * Math.PI * 0.45;
-            p.currentX += Math.cos(spiralAngle) * p.speed * 1.6;
-            p.currentY += Math.sin(spiralAngle) * p.speed * 1.6;
-          } else {
-            // Snap angle to 0, 45, -45, 90, -90 degrees for digital layout
-            const snappedAngle = Math.round(angleToTarget / (Math.PI / 4)) * (Math.PI / 4);
-            p.currentX += Math.cos(snappedAngle) * p.speed;
-            p.currentY += Math.sin(snappedAngle) * p.speed;
-
-            // Occasional corner junctions
-            if (Math.random() < 0.02 && p.points.length < 7) {
-              p.points.push({ x: p.currentX, y: p.currentY });
-            }
-          }
+        // Calculate fade factor (dissolve in last FADE_RADIUS px)
+        let fadeFactor = 1;
+        if (dist < FADE_RADIUS) {
+          fadeFactor = dist / FADE_RADIUS;
+          fadeFactor = fadeFactor * fadeFactor; // quadratic ease for smoother dissolve
         }
 
-        // Apply glow filters for Cyan paths
-        const isCyan = p.type === 'cyan';
-        if (isCyan) {
-          ctx.shadowBlur = 10;
-          ctx.shadowColor = 'rgba(125, 249, 228, 0.45)';
+        // Respawn if dissolved, expired, or out of bounds
+        if (fadeFactor < 0.02 || p.life >= p.maxLife || p.x < -50 || p.x > w + 50 || p.y < -50 || p.y > h + 50) {
+          paths[i] = spawnPath();
+          continue;
+        }
+
+        // Store previous position
+        p.prevX = p.x;
+        p.prevY = p.y;
+
+        // Recalculate angle towards target with jitter
+        const angleToTarget = Math.atan2(dy, dx);
+
+        // Random sharp 90° turns
+        if (Math.random() < p.turnChance) {
+          const turnDir = Math.random() > 0.5 ? 1 : -1;
+          p.angle = Math.round(angleToTarget / (Math.PI / 4)) * (Math.PI / 4) + turnDir * (Math.PI / 2);
+          p.trail.push({ x: p.x, y: p.y }); // mark corner
+          if (p.trail.length > p.trailMax) p.trail.shift();
+        } else {
+          // Snap to grid angles but drift back towards target
+          const snapped = Math.round(angleToTarget / (Math.PI / 4)) * (Math.PI / 4);
+          p.angle += (snapped - p.angle) * 0.08;
+        }
+
+        // Apply jitter
+        p.angle += (Math.random() - 0.5) * p.jitterStrength;
+
+        // Move
+        p.x += Math.cos(p.angle) * p.speed;
+        p.y += Math.sin(p.angle) * p.speed;
+
+        // Calculate final opacity
+        const opacity = Math.max(0, (p.baseOpacity + p.opacityShift) * fadeFactor);
+        const col = PALETTE[p.colorIdx];
+        const isCyan = p.colorIdx === 0;
+
+        // Glow for cyan traces
+        if (isCyan && opacity > 0.08) {
+          ctx.shadowBlur = 8;
+          ctx.shadowColor = `rgba(${col.r}, ${col.g}, ${col.b}, ${opacity * 0.6})`;
         } else {
           ctx.shadowBlur = 0;
         }
 
-        // Draw path line
+        // Draw current segment
         ctx.beginPath();
-        ctx.moveTo(p.points[0].x, p.points[0].y);
-        for (let i = 1; i < p.points.length; i++) {
-          ctx.lineTo(p.points[i].x, p.points[i].y);
-        }
-        ctx.lineTo(p.currentX, p.currentY);
-        ctx.strokeStyle = p.color;
-        ctx.lineWidth = isCyan ? 1.4 : 1.0;
+        ctx.moveTo(p.prevX, p.prevY);
+        ctx.lineTo(p.x, p.y);
+        ctx.strokeStyle = `rgba(${col.r}, ${col.g}, ${col.b}, ${opacity})`;
+        ctx.lineWidth = p.thickness * fadeFactor;
         ctx.stroke();
 
-        // Draw corner junctions
-        ctx.shadowBlur = 0; // reset glow for nodes
-        p.points.forEach((pt) => {
-          ctx.fillStyle = isCyan ? 'rgba(125, 249, 228, 0.4)' : 'rgba(255, 255, 255, 0.12)';
-          ctx.fillRect(pt.x - 1.5, pt.y - 1.5, 3, 3);
-        });
-
-        // Pulsing tip at the end of trace
-        const pulse = Math.sin(p.life * 0.08 + p.pulseOffset) * 0.3 + 0.7;
-        ctx.fillStyle = isCyan 
-          ? `rgba(125, 249, 228, ${pulse * 0.7})` 
-          : `rgba(255, 255, 255, ${pulse * 0.4})`;
-        ctx.fillRect(p.currentX - 2.5, p.currentY - 2.5, 5, 5);
-
-        // Respawn if path gets sucked into logo center or lifespan ends
-        if (p.life >= p.maxLife || dist <= 30) {
-          paths[idx] = spawnPath();
+        // Draw trail corners as small junction nodes
+        ctx.shadowBlur = 0;
+        for (let t = 0; t < p.trail.length; t++) {
+          const trailOpacity = opacity * 0.6 * (t / p.trail.length);
+          ctx.fillStyle = `rgba(${col.r}, ${col.g}, ${col.b}, ${trailOpacity})`;
+          const sz = p.thickness * 1.5 * fadeFactor;
+          ctx.fillRect(p.trail[t].x - sz / 2, p.trail[t].y - sz / 2, sz, sz);
         }
-      });
 
-      // Update and draw orbit suction particles (Vortex)
-      ctx.shadowBlur = 0;
-      orbitParticles.forEach((op, idx) => {
-        // Orbit around target
-        op.angle += op.speed;
-        
-        // Pull particle inward gradually (suction flow)
-        op.radius -= 0.35;
-        
-        const px = target.x + Math.cos(op.angle) * op.radius;
-        const py = target.y + Math.sin(op.angle) * op.radius;
+        // Tip dot
+        const tipOpacity = opacity * 1.3;
+        ctx.fillStyle = `rgba(${col.r}, ${col.g}, ${col.b}, ${Math.min(tipOpacity, 0.8) * fadeFactor})`;
+        const tipSize = (p.thickness + 1.5) * fadeFactor;
+        ctx.fillRect(p.x - tipSize / 2, p.y - tipSize / 2, tipSize, tipSize);
+      }
 
-        // Render suction particle
-        ctx.fillStyle = op.color;
-        ctx.fillRect(px - op.size / 2, py - op.size / 2, op.size, op.size);
-
-        // Respawn when sucked into core or goes out of boundary
-        if (op.radius <= 18) {
-          orbitParticles[idx] = spawnOrbitParticle();
-          // Reset radius to outer orbit
-          orbitParticles[idx].radius = Math.random() * 80 + 120;
-        }
-      });
-
-      // Target core gravity well visual aura
-      ctx.fillStyle = 'rgba(125, 249, 228, 0.02)';
+      // Subtle ambient glow at the target
+      const gradient = ctx.createRadialGradient(target.x, target.y, 0, target.x, target.y, 200);
+      gradient.addColorStop(0, 'rgba(125, 249, 228, 0.025)');
+      gradient.addColorStop(1, 'rgba(125, 249, 228, 0)');
+      ctx.fillStyle = gradient;
       ctx.beginPath();
-      ctx.arc(target.x, target.y, 160, 0, Math.PI * 2);
+      ctx.arc(target.x, target.y, 200, 0, Math.PI * 2);
       ctx.fill();
 
-      rafId = requestAnimationFrame(updateAndDraw);
+      rafId = requestAnimationFrame(draw);
     };
 
     const handleResize = () => {
@@ -257,7 +230,7 @@ function CircuitryCanvas() {
     };
 
     window.addEventListener('resize', handleResize);
-    rafId = requestAnimationFrame(updateAndDraw);
+    rafId = requestAnimationFrame(draw);
 
     return () => {
       cancelAnimationFrame(rafId);
@@ -268,7 +241,7 @@ function CircuitryCanvas() {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 w-full h-full pointer-events-none opacity-60 z-10"
+      className="absolute inset-0 w-full h-full pointer-events-none opacity-70 z-10"
     />
   );
 }
@@ -327,10 +300,10 @@ export const Hero = () => {
         <div className="w-full md:w-[35%] h-full bg-[#0a0a0a]" />
       </div>
 
-      {/* 2. DYNAMIC CIRCUITRY & VORTEX LAYER (z-10) */}
+      {/* 2. DYNAMIC CIRCUITRY LAYER (z-10) */}
       <CircuitryCanvas />
 
-      {/* 3. FIXED MENU TOGGLE BUTTON (z-[110] so it is clickable above the overlay) */}
+      {/* 3. FIXED MENU TOGGLE BUTTON (z-[110]) */}
       <div className="fixed top-6 right-8 z-[110] flex items-center gap-6">
         <button 
           onClick={() => setMenuOpen(!menuOpen)}
@@ -354,7 +327,7 @@ export const Hero = () => {
         </button>
       </div>
 
-      {/* 4. CONTENT LAYER WITH TRANSPARENT BACKGROUNDS (z-20) */}
+      {/* 4. CONTENT LAYER (z-20) */}
       <div className="relative z-20 w-full min-h-screen flex flex-col md:flex-row pointer-events-none">
         
         {/* LEFT COLUMN CONTENT */}
@@ -424,7 +397,7 @@ export const Hero = () => {
             </motion.div>
           </motion.div>
 
-          {/* Bottom footer text (Left side) */}
+          {/* Bottom footer text */}
           <div className="text-[0.625rem] font-mono text-[hsl(var(--graphite))] tracking-wider">
             DEVELOPING INNOVATIVE SOLUTIONS FOR THE NEXT GENERATION
           </div>
@@ -444,7 +417,6 @@ export const Hero = () => {
 
           {/* Centered ATOM Emblem Logo */}
           <div className="my-auto flex items-center justify-center relative">
-            {/* Subtle logo back-glow */}
             <div className="absolute w-[200px] h-[200px] bg-[hsl(var(--phosphor))] opacity-[0.06] blur-[60px] rounded-full" />
             
             <motion.img
@@ -457,14 +429,14 @@ export const Hero = () => {
             />
           </div>
 
-          {/* Bottom space placeholder for symmetry */}
+          {/* Bottom text */}
           <div className="text-[0.625rem] font-mono text-[hsl(var(--graphite))] tracking-wider text-right uppercase">
             [ SYSTEM ACTIVE ]
           </div>
         </motion.div>
       </div>
 
-      {/* 5. STAGGERED FULLSCREEN MENU OVERLAY (z-[100]) */}
+      {/* 5. FULLSCREEN MENU OVERLAY (z-[100]) */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
@@ -474,7 +446,6 @@ export const Hero = () => {
             variants={menuVariants}
             className="fixed inset-0 z-[100] bg-[#121212] flex flex-col justify-center items-center p-8 sm:p-16"
           >
-            {/* Background elements */}
             <div className="absolute inset-0 pointer-events-none" style={{
               backgroundImage: 'linear-gradient(to right, hsl(var(--rule)) 1px, transparent 1px), linear-gradient(to bottom, hsl(var(--rule)) 1px, transparent 1px)',
               backgroundSize: '60px 60px',
