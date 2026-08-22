@@ -74,7 +74,7 @@ function CircuitryCanvas() {
         speed: Math.random() * 1.8 + 0.4,
         thickness: Math.random() * 1.6 + 0.4,
         colorIdx: Math.floor(Math.random() * PALETTE.length),
-        baseOpacity: Math.random() * 0.25 + 0.08,
+        baseOpacity: Math.random() * 0.3 + 0.15,
         opacityShift: 0,
         opacityShiftSpeed: Math.random() * 0.03 + 0.005,
         life: 0,
@@ -82,7 +82,7 @@ function CircuitryCanvas() {
         jitterStrength: Math.random() * 0.06,
         turnChance: Math.random() * 0.025 + 0.005,
         trail: [],
-        trailMax: Math.floor(Math.random() * 60 + 20),
+        trailMax: Math.floor(Math.random() * 120 + 60),
       };
     };
 
@@ -157,8 +157,6 @@ function CircuitryCanvas() {
         if (Math.random() < p.turnChance) {
           const turnDir = Math.random() > 0.5 ? 1 : -1;
           p.angle = Math.round(angleToTarget / (Math.PI / 4)) * (Math.PI / 4) + turnDir * (Math.PI / 2);
-          p.trail.push({ x: p.x, y: p.y }); // mark corner
-          if (p.trail.length > p.trailMax) p.trail.shift();
         } else {
           // Snap to grid angles but drift back towards target
           const snapped = Math.round(angleToTarget / (Math.PI / 4)) * (Math.PI / 4);
@@ -171,6 +169,10 @@ function CircuitryCanvas() {
         // Move
         p.x += Math.cos(p.angle) * p.speed;
         p.y += Math.sin(p.angle) * p.speed;
+
+        // Push every position into trail for full polyline rendering
+        p.trail.push({ x: p.x, y: p.y });
+        if (p.trail.length > p.trailMax) p.trail.shift();
 
         // Calculate final opacity
         const opacity = Math.max(0, (p.baseOpacity + p.opacityShift) * fadeFactor);
@@ -185,22 +187,20 @@ function CircuitryCanvas() {
           ctx.shadowBlur = 0;
         }
 
-        // Draw current segment
-        ctx.beginPath();
-        ctx.moveTo(p.prevX, p.prevY);
-        ctx.lineTo(p.x, p.y);
-        ctx.strokeStyle = `rgba(${col.r}, ${col.g}, ${col.b}, ${opacity})`;
-        ctx.lineWidth = p.thickness * fadeFactor;
-        ctx.stroke();
-
-        // Draw trail corners as small junction nodes
-        ctx.shadowBlur = 0;
-        for (let t = 0; t < p.trail.length; t++) {
-          const trailOpacity = opacity * 0.6 * (t / p.trail.length);
-          ctx.fillStyle = `rgba(${col.r}, ${col.g}, ${col.b}, ${trailOpacity})`;
-          const sz = p.thickness * 1.5 * fadeFactor;
-          ctx.fillRect(p.trail[t].x - sz / 2, p.trail[t].y - sz / 2, sz, sz);
+        // Draw full trail polyline
+        if (p.trail.length > 1) {
+          ctx.beginPath();
+          ctx.moveTo(p.trail[0].x, p.trail[0].y);
+          for (let t = 1; t < p.trail.length; t++) {
+            ctx.lineTo(p.trail[t].x, p.trail[t].y);
+          }
+          ctx.strokeStyle = `rgba(${col.r}, ${col.g}, ${col.b}, ${opacity})`;
+          ctx.lineWidth = p.thickness * fadeFactor;
+          ctx.stroke();
         }
+
+        // Reset shadow for nodes
+        ctx.shadowBlur = 0;
 
         // Tip dot
         const tipOpacity = opacity * 1.3;
@@ -241,7 +241,7 @@ function CircuitryCanvas() {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 w-full h-full pointer-events-none opacity-70 z-10"
+      className="absolute inset-0 w-full h-full pointer-events-none opacity-90 z-10"
     />
   );
 }
