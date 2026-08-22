@@ -4,7 +4,7 @@ import { motion, useScroll, useTransform, Variants, AnimatePresence } from 'fram
 import atomLogo from '@/assets/atom-logo.webp';
 
 // ──────────────────────────────────────────────────────────
-// DIGITAL CIRCUITRY GRAPH CANVAS ANIMATION
+// DIGITAL CIRCUITRY GRAPH & VORTEX SUCTION CANVAS ANIMATION
 // ──────────────────────────────────────────────────────────
 function CircuitryCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -32,13 +32,24 @@ function CircuitryCanvas() {
       targetX: number;
       targetY: number;
       speed: number;
+      type: 'cyan' | 'white' | 'grey';
       color: string;
       life: number;
       maxLife: number;
       pulseOffset: number;
+      pulseProgress: number; // for cyan flowing pulses
+    }
+
+    interface OrbitParticle {
+      radius: number;
+      angle: number;
+      speed: number;
+      size: number;
+      color: string;
     }
 
     let paths: CircuitPath[] = [];
+    let orbitParticles: OrbitParticle[] = [];
 
     // Target coordinates (ATOM Logo center on the right side)
     const getTargetCoords = () => {
@@ -50,27 +61,60 @@ function CircuitryCanvas() {
     };
 
     const spawnPath = (): CircuitPath => {
-      const startX = Math.random() * (w * 0.3);
+      const startX = Math.random() * (w * 0.35);
       const startY = Math.random() * h;
       const target = getTargetCoords();
       
+      const rand = Math.random();
+      let type: 'cyan' | 'white' | 'grey' = 'white';
+      let color = 'rgba(255, 255, 255, 0.12)';
+      let speed = Math.random() * 1.0 + 0.6;
+      
+      if (rand < 0.28) {
+        type = 'cyan';
+        color = 'rgba(125, 249, 228, 0.35)'; // High energy cyan
+        speed = Math.random() * 1.5 + 1.0;
+      } else if (rand > 0.75) {
+        type = 'grey';
+        color = 'rgba(255, 255, 255, 0.05)'; // Dim background traces
+        speed = Math.random() * 0.6 + 0.4;
+      }
+
       return {
         points: [{ x: startX, y: startY }],
         currentX: startX,
         currentY: startY,
         targetX: target.x,
         targetY: target.y,
-        speed: Math.random() * 1.2 + 0.6,
-        color: `rgba(255, 255, 255, ${Math.random() * 0.12 + 0.04})`,
+        speed,
+        type,
+        color,
         life: 0,
-        maxLife: Math.random() * 180 + 90,
+        maxLife: Math.random() * 240 + 120,
         pulseOffset: Math.random() * Math.PI * 2,
+        pulseProgress: 0,
+      };
+    };
+
+    const spawnOrbitParticle = (): OrbitParticle => {
+      const randColor = Math.random() > 0.4 ? 'rgba(125, 249, 228, 0.35)' : 'rgba(255, 255, 255, 0.2)';
+      return {
+        radius: Math.random() * 150 + 40,
+        angle: Math.random() * Math.PI * 2,
+        speed: (Math.random() * 0.015 + 0.005) * (Math.random() > 0.5 ? 1 : -1),
+        size: Math.random() * 2.5 + 1.0,
+        color: randColor,
       };
     };
 
     // Initialize paths
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 55; i++) {
       paths.push(spawnPath());
+    }
+
+    // Initialize orbit particles
+    for (let i = 0; i < 45; i++) {
+      orbitParticles.push(spawnOrbitParticle());
     }
 
     let rafId: number;
@@ -95,28 +139,49 @@ function CircuitryCanvas() {
         ctx.stroke();
       }
 
+      const target = getTargetCoords();
+
+      // Update and draw background circuitry paths
       paths.forEach((p, idx) => {
         p.life++;
+        p.pulseProgress += 0.008;
+        if (p.pulseProgress > 1) p.pulseProgress = 0;
 
-        // Calculate vector to target
+        // Calculate vector to target logo
         const dx = p.targetX - p.currentX;
         const dy = p.targetY - p.currentY;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
         // Advance tip
-        if (dist > 25 && p.life < p.maxLife) {
+        if (dist > 30 && p.life < p.maxLife) {
           const angleToTarget = Math.atan2(dy, dx);
           
-          // Snap angle to 0, 45, -45, 90, -90 degrees
-          const snappedAngle = Math.round(angleToTarget / (Math.PI / 4)) * (Math.PI / 4);
-          
-          p.currentX += Math.cos(snappedAngle) * p.speed;
-          p.currentY += Math.sin(snappedAngle) * p.speed;
+          if (dist < 220) {
+            // Spiral vortex suction effect: curve lines inwards
+            const suctionStrength = (220 - dist) / 220; // 0 to 1
+            const spiralAngle = angleToTarget + suctionStrength * Math.PI * 0.45;
+            p.currentX += Math.cos(spiralAngle) * p.speed * 1.6;
+            p.currentY += Math.sin(spiralAngle) * p.speed * 1.6;
+          } else {
+            // Snap angle to 0, 45, -45, 90, -90 degrees for digital layout
+            const snappedAngle = Math.round(angleToTarget / (Math.PI / 4)) * (Math.PI / 4);
+            p.currentX += Math.cos(snappedAngle) * p.speed;
+            p.currentY += Math.sin(snappedAngle) * p.speed;
 
-          // Corner nodes
-          if (Math.random() < 0.015 && p.points.length < 6) {
-            p.points.push({ x: p.currentX, y: p.currentY });
+            // Occasional corner junctions
+            if (Math.random() < 0.02 && p.points.length < 7) {
+              p.points.push({ x: p.currentX, y: p.currentY });
+            }
           }
+        }
+
+        // Apply glow filters for Cyan paths
+        const isCyan = p.type === 'cyan';
+        if (isCyan) {
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = 'rgba(125, 249, 228, 0.45)';
+        } else {
+          ctx.shadowBlur = 0;
         }
 
         // Draw path line
@@ -127,31 +192,54 @@ function CircuitryCanvas() {
         }
         ctx.lineTo(p.currentX, p.currentY);
         ctx.strokeStyle = p.color;
-        ctx.lineWidth = 1;
+        ctx.lineWidth = isCyan ? 1.4 : 1.0;
         ctx.stroke();
 
-        // Corner junctions
+        // Draw corner junctions
+        ctx.shadowBlur = 0; // reset glow for nodes
         p.points.forEach((pt) => {
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+          ctx.fillStyle = isCyan ? 'rgba(125, 249, 228, 0.4)' : 'rgba(255, 255, 255, 0.12)';
           ctx.fillRect(pt.x - 1.5, pt.y - 1.5, 3, 3);
         });
 
-        // Glowing phosphor tip
+        // Pulsing tip at the end of trace
         const pulse = Math.sin(p.life * 0.08 + p.pulseOffset) * 0.3 + 0.7;
-        ctx.fillStyle = `rgba(125, 249, 228, ${pulse * 0.35})`; // phosphor glow
+        ctx.fillStyle = isCyan 
+          ? `rgba(125, 249, 228, ${pulse * 0.7})` 
+          : `rgba(255, 255, 255, ${pulse * 0.4})`;
         ctx.fillRect(p.currentX - 2.5, p.currentY - 2.5, 5, 5);
 
-        ctx.strokeStyle = `rgba(125, 249, 228, ${pulse * 0.15})`;
-        ctx.strokeRect(p.currentX - 4.5, p.currentY - 4.5, 9, 9);
-
-        // Respawn if life expired or reached target
-        if (p.life >= p.maxLife || dist <= 25) {
+        // Respawn if path gets sucked into logo center or lifespan ends
+        if (p.life >= p.maxLife || dist <= 30) {
           paths[idx] = spawnPath();
         }
       });
 
-      // Target ambient aura
-      const target = getTargetCoords();
+      // Update and draw orbit suction particles (Vortex)
+      ctx.shadowBlur = 0;
+      orbitParticles.forEach((op, idx) => {
+        // Orbit around target
+        op.angle += op.speed;
+        
+        // Pull particle inward gradually (suction flow)
+        op.radius -= 0.35;
+        
+        const px = target.x + Math.cos(op.angle) * op.radius;
+        const py = target.y + Math.sin(op.angle) * op.radius;
+
+        // Render suction particle
+        ctx.fillStyle = op.color;
+        ctx.fillRect(px - op.size / 2, py - op.size / 2, op.size, op.size);
+
+        // Respawn when sucked into core or goes out of boundary
+        if (op.radius <= 18) {
+          orbitParticles[idx] = spawnOrbitParticle();
+          // Reset radius to outer orbit
+          orbitParticles[idx].radius = Math.random() * 80 + 120;
+        }
+      });
+
+      // Target core gravity well visual aura
       ctx.fillStyle = 'rgba(125, 249, 228, 0.02)';
       ctx.beginPath();
       ctx.arc(target.x, target.y, 160, 0, Math.PI * 2);
@@ -180,7 +268,7 @@ function CircuitryCanvas() {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 w-full h-full pointer-events-none opacity-45 z-0"
+      className="absolute inset-0 w-full h-full pointer-events-none opacity-60 z-10"
     />
   );
 }
@@ -230,13 +318,19 @@ export const Hero = () => {
     <section
       ref={containerRef}
       id="hero"
-      className="relative min-h-screen w-full overflow-hidden flex flex-col md:flex-row bg-[#0a0a0a]"
+      className="relative min-h-screen w-full overflow-hidden bg-[#0a0a0a]"
       aria-label="ATOM — Association of Technical Oriented Minds"
     >
-      {/* Circuitry Graph Animation Background */}
+      {/* 1. SPLIT BACKGROUND LAYER (z-0) */}
+      <div className="absolute inset-0 w-full h-full flex flex-col md:flex-row z-0 pointer-events-none">
+        <div className="w-full md:w-[65%] h-full bg-[#121212] border-b md:border-b-0 md:border-r border-[hsl(var(--rule))]" />
+        <div className="w-full md:w-[35%] h-full bg-[#0a0a0a]" />
+      </div>
+
+      {/* 2. DYNAMIC CIRCUITRY & VORTEX LAYER (z-10) */}
       <CircuitryCanvas />
 
-      {/* FIXED MENU TOGGLE BUTTON (top-right, z-[110] so it is clickable above the overlay) */}
+      {/* 3. FIXED MENU TOGGLE BUTTON (z-[110] so it is clickable above the overlay) */}
       <div className="fixed top-6 right-8 z-[110] flex items-center gap-6">
         <button 
           onClick={() => setMenuOpen(!menuOpen)}
@@ -260,113 +354,117 @@ export const Hero = () => {
         </button>
       </div>
 
-      {/* LEFT COLUMN - Dark Grey Background */}
-      <motion.div
-        style={{ y: leftY }}
-        className="w-full md:w-[65%] min-h-[60vh] md:min-h-screen bg-[#121212]/90 backdrop-blur-sm flex flex-col justify-between p-8 sm:p-12 lg:p-16 border-b md:border-b-0 md:border-r border-[hsl(var(--rule))] relative z-10"
-      >
-        {/* Top brand header */}
-        <div className="flex items-center justify-between md:justify-start gap-4">
-          <span className="font-mono text-xl sm:text-2xl font-black tracking-tighter text-[hsl(var(--chalk))]">
-            ATOM
-          </span>
-          <span className="mono-label text-[0.625rem] text-[hsl(var(--graphite))] tracking-widest hidden sm:inline">
-            // KARUNYA'S PREMIER TECHNICAL ASSOCIATION
-          </span>
-        </div>
-
-        {/* Center content */}
+      {/* 4. CONTENT LAYER WITH TRANSPARENT BACKGROUNDS (z-20) */}
+      <div className="relative z-20 w-full min-h-screen flex flex-col md:flex-row pointer-events-none">
+        
+        {/* LEFT COLUMN CONTENT */}
         <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="my-auto py-12 md:py-0 max-w-2xl"
+          style={{ y: leftY }}
+          className="w-full md:w-[65%] min-h-[60vh] md:min-h-screen flex flex-col justify-between p-8 sm:p-12 lg:p-16 relative pointer-events-auto"
         >
-          <motion.h1
-            variants={itemVariants}
-            className="text-[12vw] md:text-[6.5rem] lg:text-[7.5rem] font-black leading-[0.85] tracking-[-0.04em] uppercase text-[hsl(var(--chalk))]"
-          >
-            ATOM.
-          </motion.h1>
-          
-          <motion.p
-            variants={itemVariants}
-            className="text-[4vw] md:text-[2rem] lg:text-[2.25rem] font-semibold text-[hsl(var(--phosphor))] leading-tight mt-4 mb-8"
-          >
-            Association of Technology Oriented Minds
-          </motion.p>
+          {/* Top brand header */}
+          <div className="flex items-center justify-between md:justify-start gap-4">
+            <span className="font-mono text-xl sm:text-2xl font-black tracking-tighter text-[hsl(var(--chalk))]">
+              ATOM
+            </span>
+            <span className="mono-label text-[0.625rem] text-[hsl(var(--graphite))] tracking-widest hidden sm:inline">
+              // KARUNYA'S PREMIER TECHNICAL ASSOCIATION
+            </span>
+          </div>
 
-          <motion.p
-            variants={itemVariants}
-            className="text-sm sm:text-base leading-relaxed text-[hsl(var(--chalk)/0.7)] mb-10 max-w-lg"
-          >
-            Karunya's premier student-driven technical collective — four specialized clubs,
-            hundreds of builders, and one shared mission: design and engineer what comes next.
-          </motion.p>
-
-          {/* Action buttons */}
+          {/* Center content */}
           <motion.div
-            variants={itemVariants}
-            className="flex flex-wrap gap-4 z-30"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="my-auto py-12 md:py-0 max-w-2xl"
           >
-            <a
-              href="#clubs-section"
-              className="btn-tech flex items-center gap-2 border border-[hsl(var(--rule))] px-8 py-3.5 bg-black hover:border-[hsl(var(--phosphor))] hover:text-[hsl(var(--phosphor))] transition-all font-mono text-xs uppercase"
+            <motion.h1
+              variants={itemVariants}
+              className="text-[12vw] md:text-[6.5rem] lg:text-[7.5rem] font-black leading-[0.85] tracking-[-0.04em] uppercase text-[hsl(var(--chalk))]"
             >
-              Explore Clubs
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-                <path d="M1 6h10M6 1l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </a>
-            <a
-              href="#about"
-              className="btn-tech border border-[hsl(var(--rule))] px-8 py-3.5 hover:border-[hsl(var(--phosphor))] hover:text-[hsl(var(--phosphor))] transition-all font-mono text-xs uppercase"
+              ATOM.
+            </motion.h1>
+            
+            <motion.p
+              variants={itemVariants}
+              className="text-[4vw] md:text-[2rem] lg:text-[2.25rem] font-semibold text-[hsl(var(--phosphor))] leading-tight mt-4 mb-8"
             >
-              Our Story
-            </a>
+              Association of Technology Oriented Minds
+            </motion.p>
+
+            <motion.p
+              variants={itemVariants}
+              className="text-sm sm:text-base leading-relaxed text-[hsl(var(--chalk)/0.7)] mb-10 max-w-lg"
+            >
+              Karunya's premier student-driven technical collective — four specialized clubs,
+              hundreds of builders, and one shared mission: design and engineer what comes next.
+            </motion.p>
+
+            {/* Action buttons */}
+            <motion.div
+              variants={itemVariants}
+              className="flex flex-wrap gap-4 z-30"
+            >
+              <a
+                href="#clubs-section"
+                className="btn-tech flex items-center gap-2 border border-[hsl(var(--rule))] px-8 py-3.5 bg-black hover:border-[hsl(var(--phosphor))] hover:text-[hsl(var(--phosphor))] transition-all font-mono text-xs uppercase"
+              >
+                Explore Clubs
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                  <path d="M1 6h10M6 1l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </a>
+              <a
+                href="#about"
+                className="btn-tech border border-[hsl(var(--rule))] px-8 py-3.5 hover:border-[hsl(var(--phosphor))] hover:text-[hsl(var(--phosphor))] transition-all font-mono text-xs uppercase"
+              >
+                Our Story
+              </a>
+            </motion.div>
           </motion.div>
+
+          {/* Bottom footer text (Left side) */}
+          <div className="text-[0.625rem] font-mono text-[hsl(var(--graphite))] tracking-wider">
+            DEVELOPING INNOVATIVE SOLUTIONS FOR THE NEXT GENERATION
+          </div>
         </motion.div>
 
-        {/* Bottom footer text (Left side) */}
-        <div className="text-[0.625rem] font-mono text-[hsl(var(--graphite))] tracking-wider">
-          DEVELOPING INNOVATIVE SOLUTIONS FOR THE NEXT GENERATION
-        </div>
-      </motion.div>
+        {/* RIGHT COLUMN CONTENT */}
+        <motion.div
+          style={{ y: rightY }}
+          className="w-full md:w-[35%] min-h-[40vh] md:min-h-screen flex flex-col justify-between p-8 sm:p-12 lg:p-16 relative pointer-events-auto"
+        >
+          {/* Top metadata */}
+          <div className="flex items-center justify-between w-full">
+            <span className="font-mono text-xs tracking-widest text-[hsl(var(--graphite))]">
+              EST. 2021 — KARUNYA
+            </span>
+          </div>
 
-      {/* RIGHT COLUMN - Pitch Black Background */}
-      <motion.div
-        style={{ y: rightY }}
-        className="w-full md:w-[35%] min-h-[40vh] md:min-h-screen bg-[#0a0a0a]/90 backdrop-blur-sm flex flex-col justify-between p-8 sm:p-12 lg:p-16 relative z-10"
-      >
-        {/* Top metadata */}
-        <div className="flex items-center justify-between w-full">
-          <span className="font-mono text-xs tracking-widest text-[hsl(var(--graphite))]">
-            EST. 2021 — KARUNYA
-          </span>
-        </div>
+          {/* Centered ATOM Emblem Logo */}
+          <div className="my-auto flex items-center justify-center relative">
+            {/* Subtle logo back-glow */}
+            <div className="absolute w-[200px] h-[200px] bg-[hsl(var(--phosphor))] opacity-[0.06] blur-[60px] rounded-full" />
+            
+            <motion.img
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
+              src={atomLogo}
+              alt="ATOM Emblem"
+              className="w-48 h-48 sm:w-64 sm:h-64 object-contain filter drop-shadow-[0_0_15px_rgba(125,249,228,0.1)] hover:rotate-6 transition-transform duration-700"
+            />
+          </div>
 
-        {/* Centered ATOM Emblem Logo */}
-        <div className="my-auto flex items-center justify-center relative">
-          {/* Subtle logo back-glow */}
-          <div className="absolute w-[200px] h-[200px] bg-[hsl(var(--phosphor))] opacity-[0.06] blur-[60px] rounded-full" />
-          
-          <motion.img
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
-            src={atomLogo}
-            alt="ATOM Emblem"
-            className="w-48 h-48 sm:w-64 sm:h-64 object-contain filter drop-shadow-[0_0_15px_rgba(125,249,228,0.1)] hover:rotate-6 transition-transform duration-700"
-          />
-        </div>
+          {/* Bottom space placeholder for symmetry */}
+          <div className="text-[0.625rem] font-mono text-[hsl(var(--graphite))] tracking-wider text-right uppercase">
+            [ SYSTEM ACTIVE ]
+          </div>
+        </motion.div>
+      </div>
 
-        {/* Bottom space placeholder for symmetry */}
-        <div className="text-[0.625rem] font-mono text-[hsl(var(--graphite))] tracking-wider text-right uppercase">
-          [ SYSTEM ACTIVE ]
-        </div>
-      </motion.div>
-
-      {/* STAGGERED FULLSCREEN MENU OVERLAY */}
+      {/* 5. STAGGERED FULLSCREEN MENU OVERLAY (z-[100]) */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
