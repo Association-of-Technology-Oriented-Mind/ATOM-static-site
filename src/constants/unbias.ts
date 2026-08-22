@@ -1,6 +1,6 @@
 // UnBias Club data and imports
-import Aravind from '@/assets/Aravind.webp';
-import Ronnie from '@/assets/ra1.webp';
+const Aravind = null;
+const Ronnie = null;
 import Aparna from '@/assets/UNBIAS/Aparna.webp';
 import Lebi from '@/assets/UNBIAS/Lebi.webp';
 import Thirupathy from '@/assets/Thirupathi S.webp';

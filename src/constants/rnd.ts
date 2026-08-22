@@ -1,7 +1,7 @@
 // RND Club data and imports
-import Rumitha from '@/assets/Rumitha.webp';
-import Dhruv from '@/assets/Dhruv.webp';
-import Immanuel from '@/assets/Immanuel.webp';
+const Rumitha = null;
+const Dhruv = null;
+const Immanuel = null;
 import { Shield } from "lucide-react";
 
 export const rndClub = {

@@ -1,286 +1,233 @@
-import { useEffect, useRef } from 'react';
-import { motion, useScroll, useTransform, Variants } from 'framer-motion';
+import { useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { motion, useScroll, useTransform, Variants, AnimatePresence } from 'framer-motion';
+import atomLogo from '@/assets/atom-logo.webp';
 
-// ──────────────────────────────────────────────────────────
-// CANVAS PARTICLE FIELD
-// ──────────────────────────────────────────────────────────
-function ParticleCanvas() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    let w = canvas.offsetWidth;
-    let h = canvas.offsetHeight;
-    canvas.width = w;
-    canvas.height = h;
-
-    interface Particle {
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      r: number;
-      alpha: number;
-      da: number;
-      z: number;
-    }
-
-    // Dense starfield
-    const particles: Particle[] = Array.from({ length: 220 }, () => ({
-      x: Math.random() * w,
-      y: Math.random() * h,
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: (Math.random() - 0.5) * 0.3,
-      r: Math.random() * 1.2 + 0.3,
-      alpha: Math.random() * 0.7 + 0.2,
-      da: (Math.random() - 0.5) * 0.01,
-      z: Math.random() * 2.5 + 0.8,
-    }));
-
-    let rafId: number;
-    let frame = 0;
-
-    // Mouse tracking for parallax
-    let mouseX = w / 2;
-    let mouseY = h / 2;
-    let currentOffsetX = 0;
-    let currentOffsetY = 0;
-
-    const onMouseMove = (e: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect();
-      mouseX = e.clientX - rect.left;
-      mouseY = e.clientY - rect.top;
-    };
-    window.addEventListener('mousemove', onMouseMove);
-
-    const draw = () => {
-      frame++;
-      ctx.clearRect(0, 0, w, h);
-
-      // Mouse parallax offset
-      const targetOffsetX = (mouseX - w / 2) * 0.12;
-      const targetOffsetY = (mouseY - h / 2) * 0.12;
-      currentOffsetX += (targetOffsetX - currentOffsetX) * 0.08;
-      currentOffsetY += (targetOffsetY - currentOffsetY) * 0.08;
-
-      for (const p of particles) {
-        // Natural drift
-        p.x += p.vx;
-        p.y += p.vy;
-        p.alpha += p.da;
-        if (p.x < 0) p.x = w;
-        if (p.x > w) p.x = 0;
-        if (p.y < 0) p.y = h;
-        if (p.y > h) p.y = 0;
-        if (p.alpha < 0.05 || p.alpha > 0.75) p.da *= -1;
-
-        // Apply depth-based parallax offset
-        const drawX = p.x + currentOffsetX * p.z;
-        const drawY = p.y + currentOffsetY * p.z;
-
-        ctx.beginPath();
-        ctx.arc(drawX, drawY, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha})`;
-        ctx.fill();
-      }
-
-      // Connecting lines between close particles
-      if (frame % 2 === 0) {
-        for (let i = 0; i < particles.length; i++) {
-          for (let j = i + 1; j < particles.length; j++) {
-            const p1X = particles[i].x + currentOffsetX * particles[i].z;
-            const p1Y = particles[i].y + currentOffsetX * particles[i].z;
-            const p2X = particles[j].x + currentOffsetX * particles[j].z;
-            const p2Y = particles[j].y + currentOffsetX * particles[j].z;
-
-            const dx = p1X - p2X;
-            const dy = p1Y - p2Y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-
-            if (dist < 100) {
-              ctx.beginPath();
-              ctx.moveTo(p1X, p1Y);
-              ctx.lineTo(p2X, p2Y);
-              ctx.strokeStyle = `rgba(255, 255, 255, ${(1 - dist / 100) * 0.1})`;
-              ctx.lineWidth = 0.5;
-              ctx.stroke();
-            }
-          }
-        }
-      }
-
-      rafId = requestAnimationFrame(draw);
-    };
-
-    const onResize = () => {
-      if (!canvas) return;
-      w = canvas.offsetWidth;
-      h = canvas.offsetHeight;
-      canvas.width = w;
-      canvas.height = h;
-    };
-    window.addEventListener('resize', onResize);
-    rafId = requestAnimationFrame(draw);
-
-    return () => {
-      cancelAnimationFrame(rafId);
-      window.removeEventListener('resize', onResize);
-      window.removeEventListener('mousemove', onMouseMove);
-    };
-  }, []);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 w-full h-full pointer-events-none opacity-40"
-    />
-  );
-}
-
-// ──────────────────────────────────────────────────────────
-// STAGGERED WORD REVEAL
-// ──────────────────────────────────────────────────────────
-const wordVariants: Variants = {
-  hidden: { opacity: 0, y: 50, skewY: 3, filter: 'blur(8px)' },
-  visible: { opacity: 1, y: 0, skewY: 0, filter: 'blur(0px)' },
-};
-
-function SplitText({ text, className }: { text: string; className?: string }) {
-  const words = text.split(' ');
-  return (
-    <span className={`inline-block overflow-visible ${className ?? ''}`} style={{ display: 'block' }}>
-      {words.map((word, i) => (
-        <motion.span
-          key={i}
-          variants={wordVariants}
-          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-          className="inline-block mr-[0.2em]"
-        >
-          {word}
-        </motion.span>
-      ))}
-    </span>
-  );
-}
-
-// ──────────────────────────────────────────────────────────
-// HERO COMPONENT
-// ──────────────────────────────────────────────────────────
 export const Hero = () => {
   const containerRef = useRef<HTMLElement>(null);
   const { scrollY } = useScroll();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   // Parallax transform on scroll
-  const textY = useTransform(scrollY, [0, 800], [0, -120]);
+  const leftY = useTransform(scrollY, [0, 800], [0, -50]);
+  const rightY = useTransform(scrollY, [0, 800], [0, 30]);
 
   const containerVariants: Variants = {
     hidden: {},
     visible: { transition: { staggerChildren: 0.12, delayChildren: 0.15 } },
   };
 
+  const itemVariants: Variants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } },
+  };
+
+  const menuVariants = {
+    closed: {
+      clipPath: 'circle(0px at calc(100% - 40px) 40px)',
+      transition: {
+        type: 'spring' as const,
+        stiffness: 400,
+        damping: 40,
+      }
+    },
+    open: {
+      clipPath: 'circle(200% at calc(100% - 40px) 40px)',
+      transition: {
+        type: 'spring' as const,
+        stiffness: 100,
+        damping: 30,
+      }
+    }
+  };
+
   return (
     <section
       ref={containerRef}
       id="hero"
-      className="relative min-h-screen flex flex-col items-center justify-start pt-28 overflow-x-hidden bg-[hsl(var(--ink))]"
+      className="relative min-h-screen w-full overflow-hidden flex flex-col md:flex-row bg-[#0a0a0a]"
       aria-label="ATOM — Association of Technical Oriented Minds"
     >
-      {/* Particle field background */}
-      <ParticleCanvas />
+      {/* LEFT COLUMN - Dark Grey Background */}
+      <motion.div
+        style={{ y: leftY }}
+        className="w-full md:w-[65%] min-h-[60vh] md:min-h-screen bg-[#121212] flex flex-col justify-between p-8 sm:p-12 lg:p-16 border-b md:border-b-0 md:border-r border-[hsl(var(--rule))] relative z-10"
+      >
+        {/* Top brand header */}
+        <div className="flex items-center justify-between md:justify-start gap-4">
+          <span className="font-mono text-xl sm:text-2xl font-black tracking-tighter text-[hsl(var(--chalk))]">
+            ATOM
+          </span>
+          <span className="mono-label text-[0.625rem] text-[hsl(var(--graphite))] tracking-widest hidden sm:inline">
+            // KARUNYA'S PREMIER TECHNICAL ASSOCIATION
+          </span>
+        </div>
 
-      {/* Lighting / Vignette */}
-      <div className="absolute inset-0 pointer-events-none z-0">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[hsl(var(--phosphor))] opacity-[0.015] blur-[120px] rounded-full" />
-      </div>
-
-      {/* Bottom fade transition */}
-      <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[hsl(var(--ink))] to-transparent pointer-events-none z-20" />
-
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 flex flex-col items-center text-center">
-        
-        {/* Main headline — staggered word reveal */}
+        {/* Center content */}
         <motion.div
-          style={{ y: textY }}
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="mb-8 mt-12"
+          className="my-auto py-12 md:py-0 max-w-2xl"
         >
-          <div className="text-[12vw] md:text-[8.5rem] lg:text-[10rem] font-black leading-[0.88] tracking-[-0.04em] flex flex-col items-center pb-4 select-none">
-            <SplitText text="Where" className="text-[hsl(var(--chalk))]" />
-            <SplitText text="Technical" className="text-[hsl(var(--chalk))]" />
-            <SplitText text="Minds Build" className="text-[hsl(var(--chalk))]" />
-            <SplitText text="What Comes" className="text-[hsl(var(--chalk))]" />
-            <span className="block overflow-hidden">
-              {['Next.'].map((word) => (
-                <motion.span
-                  key={word}
-                  variants={wordVariants}
-                  transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                  className="inline-block text-[hsl(var(--phosphor))]"
-                >
-                  {word}
-                </motion.span>
-              ))}
-            </span>
-          </div>
+          <motion.h1
+            variants={itemVariants}
+            className="text-[12vw] md:text-[6.5rem] lg:text-[7.5rem] font-black leading-[0.85] tracking-[-0.04em] uppercase text-[hsl(var(--chalk))]"
+          >
+            ATOM.
+          </motion.h1>
+          
+          <motion.p
+            variants={itemVariants}
+            className="text-[4vw] md:text-[2rem] lg:text-[2.25rem] font-semibold text-[hsl(var(--phosphor))] leading-tight mt-4 mb-8"
+          >
+            Association of Technology Oriented Minds
+          </motion.p>
+
+          <motion.p
+            variants={itemVariants}
+            className="text-sm sm:text-base leading-relaxed text-[hsl(var(--chalk)/0.7)] mb-10 max-w-lg"
+          >
+            Karunya's premier student-driven technical collective — four specialized clubs,
+            hundreds of builders, and one shared mission: design and engineer what comes next.
+          </motion.p>
+
+          {/* Action buttons */}
+          <motion.div
+            variants={itemVariants}
+            className="flex flex-wrap gap-4 z-30"
+          >
+            <a
+              href="#clubs-section"
+              className="btn-tech flex items-center gap-2 border border-[hsl(var(--rule))] px-8 py-3.5 bg-black hover:border-[hsl(var(--phosphor))] hover:text-[hsl(var(--phosphor))] transition-all font-mono text-xs uppercase"
+            >
+              Explore Clubs
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                <path d="M1 6h10M6 1l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </a>
+            <a
+              href="#about"
+              className="btn-tech border border-[hsl(var(--rule))] px-8 py-3.5 hover:border-[hsl(var(--phosphor))] hover:text-[hsl(var(--phosphor))] transition-all font-mono text-xs uppercase"
+            >
+              Our Story
+            </a>
+          </motion.div>
         </motion.div>
 
-        {/* Sub copy */}
-        <motion.p
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.85, ease: [0.16, 1, 0.3, 1] }}
-          className="editorial-body max-w-2xl mb-12 text-[hsl(var(--chalk)/0.7)] px-4"
-        >
-          ATOM is Karunya's premier technical association — four specialized clubs,
-          hundreds of builders, and one shared mission: create technology that matters.
-        </motion.p>
-
-        {/* CTAs */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1 }}
-          className="flex flex-wrap items-center justify-center gap-4 z-30"
-        >
-          <a
-            href="#clubs-section"
-            className="btn-tech flex items-center gap-2 border border-[hsl(var(--rule))] px-8 py-3.5 hover:border-[hsl(var(--phosphor))] hover:text-[hsl(var(--phosphor))]"
-          >
-            Explore Clubs
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-              <path d="M1 6h10M6 1l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </a>
-          <a
-            href="#about"
-            className="btn-tech border border-[hsl(var(--rule))] px-8 py-3.5 hover:border-[hsl(var(--phosphor))] hover:text-[hsl(var(--phosphor))]"
-          >
-            Our Story
-          </a>
-        </motion.div>
-
-      </div>
-
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.6 }}
-        transition={{ delay: 1.5, duration: 0.8 }}
-        className="mt-auto mb-8 flex flex-col items-center gap-2.5 z-20"
-      >
-        <span className="mono-label text-[0.625rem] text-[hsl(var(--graphite))]">Scroll</span>
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-          className="w-px h-10 bg-gradient-to-b from-[hsl(var(--graphite))] to-transparent"
-        />
+        {/* Bottom footer text (Left side) */}
+        <div className="text-[0.625rem] font-mono text-[hsl(var(--graphite))] tracking-wider">
+          DEVELOPING INNOVATIVE SOLUTIONS FOR THE NEXT GENERATION
+        </div>
       </motion.div>
+
+      {/* RIGHT COLUMN - Pitch Black Background */}
+      <motion.div
+        style={{ y: rightY }}
+        className="w-full md:w-[35%] min-h-[40vh] md:min-h-screen bg-[#0a0a0a] flex flex-col justify-between p-8 sm:p-12 lg:p-16 relative z-10"
+      >
+        {/* Top metadata & Hamburger icon */}
+        <div className="flex items-center justify-between w-full">
+          <span className="font-mono text-xs tracking-widest text-[hsl(var(--graphite))]">
+            EST. 2021 — KARUNYA
+          </span>
+          <button 
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="group relative z-[110] flex flex-col gap-1.5 focus:outline-none p-2"
+            aria-label="Toggle Menu"
+          >
+            <motion.span 
+              animate={menuOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
+              style={{ originX: 0.5 }}
+              className="w-6 h-0.5 bg-[hsl(var(--chalk))] group-hover:bg-[hsl(var(--phosphor))] transition-colors origin-center" 
+            />
+            <motion.span 
+              animate={menuOpen ? { opacity: 0 } : { opacity: 1 }}
+              className="w-6 h-0.5 bg-[hsl(var(--chalk))] group-hover:bg-[hsl(var(--phosphor))] transition-colors" 
+            />
+            <motion.span 
+              animate={menuOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
+              style={{ originX: 0.5 }}
+              className="w-6 h-0.5 bg-[hsl(var(--chalk))] group-hover:bg-[hsl(var(--phosphor))] transition-colors origin-center" 
+            />
+          </button>
+        </div>
+
+        {/* Centered ATOM Emblem Logo */}
+        <div className="my-auto flex items-center justify-center relative">
+          {/* Subtle logo back-glow */}
+          <div className="absolute w-[200px] h-[200px] bg-[hsl(var(--phosphor))] opacity-[0.06] blur-[60px] rounded-full" />
+          
+          <motion.img
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
+            src={atomLogo}
+            alt="ATOM Emblem"
+            className="w-48 h-48 sm:w-64 sm:h-64 object-contain filter drop-shadow-[0_0_15px_rgba(125,249,228,0.1)] hover:rotate-6 transition-transform duration-700"
+          />
+        </div>
+
+        {/* Bottom space placeholder for symmetry */}
+        <div className="text-[0.625rem] font-mono text-[hsl(var(--graphite))] tracking-wider text-right uppercase">
+          [ SYSTEM ACTIVE ]
+        </div>
+      </motion.div>
+
+      {/* STAGGERED FULLSCREEN MENU OVERLAY */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial="closed"
+            animate="open"
+            exit="closed"
+            variants={menuVariants}
+            className="fixed inset-0 z-[100] bg-[#121212] flex flex-col justify-center items-center p-8 sm:p-16"
+          >
+            {/* Background elements */}
+            <div className="absolute inset-0 pointer-events-none" style={{
+              backgroundImage: 'linear-gradient(to right, hsl(var(--rule)) 1px, transparent 1px), linear-gradient(to bottom, hsl(var(--rule)) 1px, transparent 1px)',
+              backgroundSize: '60px 60px',
+              maskImage: 'radial-gradient(circle at calc(100% - 40px) 40px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.1) 100%)',
+              WebkitMaskImage: 'radial-gradient(circle at calc(100% - 40px) 40px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.1) 100%)',
+              opacity: 0.15,
+            }} />
+
+            <div className="flex flex-col gap-6 max-w-xl w-full text-center relative z-10">
+              <span className="mono-label text-[0.625rem] text-[hsl(var(--phosphor))] tracking-widest uppercase mb-4">
+                [ NAVIGATION MENU ]
+              </span>
+              {[
+                { label: 'Home', path: '/' },
+                { label: 'Events Archive', path: '/events' },
+                { label: 'Core Team', path: '/core' },
+                { label: 'Photo Gallery', path: '/full-gallery' }
+              ].map((item, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.1, duration: 0.5 }}
+                >
+                  <Link
+                    to={item.path}
+                    onClick={() => setMenuOpen(false)}
+                    className="display-m block text-[hsl(var(--chalk))] hover:text-[hsl(var(--phosphor))] uppercase tracking-tight py-3 border-b border-[hsl(var(--rule))/0.3] transition-colors"
+                  >
+                    {item.label}
+                  </Link>
+                </motion.div>
+              ))}
+
+              <div className="mt-8 flex justify-center gap-6">
+                <a href="https://github.com" target="_blank" className="mono-label text-xs text-[hsl(var(--graphite))] hover:text-[hsl(var(--phosphor))]">GITHUB</a>
+                <span className="text-[hsl(var(--rule))]">/</span>
+                <a href="https://linkedin.com" target="_blank" className="mono-label text-xs text-[hsl(var(--graphite))] hover:text-[hsl(var(--phosphor))]">LINKEDIN</a>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };

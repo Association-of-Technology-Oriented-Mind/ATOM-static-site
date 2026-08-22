@@ -1,10 +1,10 @@
 // DotDev Club data and imports
-import Danish from '@/assets/Danish.webp';
-import Jola from '@/assets/Jola.webp';
-import Darshan from '@/assets/Dharshan_KumarJ.webp';
-import Manisha from '@/assets/Manisha.webp';
+const Danish = null;
+const Jola = null;
+const Darshan = null;
+const Manisha = null;
 
-import Varsha from '@/assets/Varsha.webp';
+const Varsha = null;
 import Dot1 from "@/assets/DOTDEV/Dot1.webp"; 
 import Dot2 from "@/assets/DOTDEV/Dot2.webp"; 
 import Dot3 from "@/assets/DOTDEV/Dot3.webp"; 

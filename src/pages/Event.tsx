@@ -5,7 +5,7 @@ import { ArrowUpRight, Search, X } from 'lucide-react';
 import { type Event as EventType } from '@/constants/events';
 import { useEvents } from '@/hooks/useContent';
 import { generateSlug } from '@/utils/slug';
-import atomLogo from '@/assets/atom-logo-white.png';
+import atomLogo from '@/assets/atom-logo.webp';
 import { useLenis } from '@/hooks/useLenis';
 import Footer from '@/components/Footer';
 import OrbitalCanvas from '@/components/OrbitalCanvas';

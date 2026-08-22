@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import atomLogo from '@/assets/atom-logo-white.png';
+import atomLogo from '@/assets/atom-logo.webp';
 
 // ── Navigation ─────────────────────────────────────────────────────────────────
 // Refined for orbital hero cohesion. Transparent → solid on scroll.
