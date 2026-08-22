@@ -1,8 +1,193 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useScroll, useTransform, Variants, AnimatePresence } from 'framer-motion';
 import atomLogo from '@/assets/atom-logo.webp';
 
+// ──────────────────────────────────────────────────────────
+// DIGITAL CIRCUITRY GRAPH CANVAS ANIMATION
+// ──────────────────────────────────────────────────────────
+function CircuitryCanvas() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let w = canvas.offsetWidth;
+    let h = canvas.offsetHeight;
+    canvas.width = w;
+    canvas.height = h;
+
+    interface PathNode {
+      x: number;
+      y: number;
+    }
+
+    interface CircuitPath {
+      points: PathNode[];
+      currentX: number;
+      currentY: number;
+      targetX: number;
+      targetY: number;
+      speed: number;
+      color: string;
+      life: number;
+      maxLife: number;
+      pulseOffset: number;
+    }
+
+    let paths: CircuitPath[] = [];
+
+    // Target coordinates (ATOM Logo center on the right side)
+    const getTargetCoords = () => {
+      const isMobile = window.innerWidth < 768;
+      if (isMobile) {
+        return { x: w * 0.5, y: h * 0.75 };
+      }
+      return { x: w * 0.825, y: h * 0.5 };
+    };
+
+    const spawnPath = (): CircuitPath => {
+      const startX = Math.random() * (w * 0.3);
+      const startY = Math.random() * h;
+      const target = getTargetCoords();
+      
+      return {
+        points: [{ x: startX, y: startY }],
+        currentX: startX,
+        currentY: startY,
+        targetX: target.x,
+        targetY: target.y,
+        speed: Math.random() * 1.2 + 0.6,
+        color: `rgba(255, 255, 255, ${Math.random() * 0.12 + 0.04})`,
+        life: 0,
+        maxLife: Math.random() * 180 + 90,
+        pulseOffset: Math.random() * Math.PI * 2,
+      };
+    };
+
+    // Initialize paths
+    for (let i = 0; i < 20; i++) {
+      paths.push(spawnPath());
+    }
+
+    let rafId: number;
+
+    const updateAndDraw = () => {
+      ctx.clearRect(0, 0, w, h);
+
+      // Draw subtle grid lines
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.012)';
+      ctx.lineWidth = 1;
+      const gridSize = 48;
+      for (let x = 0; x < w; x += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, h);
+        ctx.stroke();
+      }
+      for (let y = 0; y < h; y += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+      }
+
+      paths.forEach((p, idx) => {
+        p.life++;
+
+        // Calculate vector to target
+        const dx = p.targetX - p.currentX;
+        const dy = p.targetY - p.currentY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        // Advance tip
+        if (dist > 25 && p.life < p.maxLife) {
+          const angleToTarget = Math.atan2(dy, dx);
+          
+          // Snap angle to 0, 45, -45, 90, -90 degrees
+          const snappedAngle = Math.round(angleToTarget / (Math.PI / 4)) * (Math.PI / 4);
+          
+          p.currentX += Math.cos(snappedAngle) * p.speed;
+          p.currentY += Math.sin(snappedAngle) * p.speed;
+
+          // Corner nodes
+          if (Math.random() < 0.015 && p.points.length < 6) {
+            p.points.push({ x: p.currentX, y: p.currentY });
+          }
+        }
+
+        // Draw path line
+        ctx.beginPath();
+        ctx.moveTo(p.points[0].x, p.points[0].y);
+        for (let i = 1; i < p.points.length; i++) {
+          ctx.lineTo(p.points[i].x, p.points[i].y);
+        }
+        ctx.lineTo(p.currentX, p.currentY);
+        ctx.strokeStyle = p.color;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Corner junctions
+        p.points.forEach((pt) => {
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+          ctx.fillRect(pt.x - 1.5, pt.y - 1.5, 3, 3);
+        });
+
+        // Glowing phosphor tip
+        const pulse = Math.sin(p.life * 0.08 + p.pulseOffset) * 0.3 + 0.7;
+        ctx.fillStyle = `rgba(125, 249, 228, ${pulse * 0.35})`; // phosphor glow
+        ctx.fillRect(p.currentX - 2.5, p.currentY - 2.5, 5, 5);
+
+        ctx.strokeStyle = `rgba(125, 249, 228, ${pulse * 0.15})`;
+        ctx.strokeRect(p.currentX - 4.5, p.currentY - 4.5, 9, 9);
+
+        // Respawn if life expired or reached target
+        if (p.life >= p.maxLife || dist <= 25) {
+          paths[idx] = spawnPath();
+        }
+      });
+
+      // Target ambient aura
+      const target = getTargetCoords();
+      ctx.fillStyle = 'rgba(125, 249, 228, 0.02)';
+      ctx.beginPath();
+      ctx.arc(target.x, target.y, 160, 0, Math.PI * 2);
+      ctx.fill();
+
+      rafId = requestAnimationFrame(updateAndDraw);
+    };
+
+    const handleResize = () => {
+      if (!canvas) return;
+      w = canvas.offsetWidth;
+      h = canvas.offsetHeight;
+      canvas.width = w;
+      canvas.height = h;
+    };
+
+    window.addEventListener('resize', handleResize);
+    rafId = requestAnimationFrame(updateAndDraw);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 w-full h-full pointer-events-none opacity-45 z-0"
+    />
+  );
+}
+
+// ──────────────────────────────────────────────────────────
+// HERO COMPONENT
+// ──────────────────────────────────────────────────────────
 export const Hero = () => {
   const containerRef = useRef<HTMLElement>(null);
   const { scrollY } = useScroll();
@@ -48,10 +233,37 @@ export const Hero = () => {
       className="relative min-h-screen w-full overflow-hidden flex flex-col md:flex-row bg-[#0a0a0a]"
       aria-label="ATOM — Association of Technical Oriented Minds"
     >
+      {/* Circuitry Graph Animation Background */}
+      <CircuitryCanvas />
+
+      {/* FIXED MENU TOGGLE BUTTON (top-right, z-[110] so it is clickable above the overlay) */}
+      <div className="fixed top-6 right-8 z-[110] flex items-center gap-6">
+        <button 
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="group flex flex-col gap-1.5 focus:outline-none p-2"
+          aria-label="Toggle Menu"
+        >
+          <motion.span 
+            animate={menuOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
+            style={{ originX: 0.5 }}
+            className="w-6 h-0.5 bg-[hsl(var(--chalk))] group-hover:bg-[hsl(var(--phosphor))] transition-colors" 
+          />
+          <motion.span 
+            animate={menuOpen ? { opacity: 0 } : { opacity: 1 }}
+            className="w-6 h-0.5 bg-[hsl(var(--chalk))] group-hover:bg-[hsl(var(--phosphor))] transition-colors" 
+          />
+          <motion.span 
+            animate={menuOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
+            style={{ originX: 0.5 }}
+            className="w-6 h-0.5 bg-[hsl(var(--chalk))] group-hover:bg-[hsl(var(--phosphor))] transition-colors" 
+          />
+        </button>
+      </div>
+
       {/* LEFT COLUMN - Dark Grey Background */}
       <motion.div
         style={{ y: leftY }}
-        className="w-full md:w-[65%] min-h-[60vh] md:min-h-screen bg-[#121212] flex flex-col justify-between p-8 sm:p-12 lg:p-16 border-b md:border-b-0 md:border-r border-[hsl(var(--rule))] relative z-10"
+        className="w-full md:w-[65%] min-h-[60vh] md:min-h-screen bg-[#121212]/90 backdrop-blur-sm flex flex-col justify-between p-8 sm:p-12 lg:p-16 border-b md:border-b-0 md:border-r border-[hsl(var(--rule))] relative z-10"
       >
         {/* Top brand header */}
         <div className="flex items-center justify-between md:justify-start gap-4">
@@ -124,33 +336,13 @@ export const Hero = () => {
       {/* RIGHT COLUMN - Pitch Black Background */}
       <motion.div
         style={{ y: rightY }}
-        className="w-full md:w-[35%] min-h-[40vh] md:min-h-screen bg-[#0a0a0a] flex flex-col justify-between p-8 sm:p-12 lg:p-16 relative z-10"
+        className="w-full md:w-[35%] min-h-[40vh] md:min-h-screen bg-[#0a0a0a]/90 backdrop-blur-sm flex flex-col justify-between p-8 sm:p-12 lg:p-16 relative z-10"
       >
-        {/* Top metadata & Hamburger icon */}
+        {/* Top metadata */}
         <div className="flex items-center justify-between w-full">
           <span className="font-mono text-xs tracking-widest text-[hsl(var(--graphite))]">
             EST. 2021 — KARUNYA
           </span>
-          <button 
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="group relative z-[110] flex flex-col gap-1.5 focus:outline-none p-2"
-            aria-label="Toggle Menu"
-          >
-            <motion.span 
-              animate={menuOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
-              style={{ originX: 0.5 }}
-              className="w-6 h-0.5 bg-[hsl(var(--chalk))] group-hover:bg-[hsl(var(--phosphor))] transition-colors origin-center" 
-            />
-            <motion.span 
-              animate={menuOpen ? { opacity: 0 } : { opacity: 1 }}
-              className="w-6 h-0.5 bg-[hsl(var(--chalk))] group-hover:bg-[hsl(var(--phosphor))] transition-colors" 
-            />
-            <motion.span 
-              animate={menuOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
-              style={{ originX: 0.5 }}
-              className="w-6 h-0.5 bg-[hsl(var(--chalk))] group-hover:bg-[hsl(var(--phosphor))] transition-colors origin-center" 
-            />
-          </button>
         </div>
 
         {/* Centered ATOM Emblem Logo */}
@@ -199,30 +391,48 @@ export const Hero = () => {
               </span>
               {[
                 { label: 'Home', path: '/' },
+                { label: 'Sub-Clubs', path: '/#clubs-section' },
                 { label: 'Events Archive', path: '/events' },
                 { label: 'Core Team', path: '/core' },
                 { label: 'Photo Gallery', path: '/full-gallery' }
-              ].map((item, idx) => (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.1, duration: 0.5 }}
-                >
-                  <Link
-                    to={item.path}
-                    onClick={() => setMenuOpen(false)}
-                    className="display-m block text-[hsl(var(--chalk))] hover:text-[hsl(var(--phosphor))] uppercase tracking-tight py-3 border-b border-[hsl(var(--rule))/0.3] transition-colors"
+              ].map((item, idx) => {
+                const isHash = item.path.startsWith('/#');
+                return (
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.08, duration: 0.5 }}
                   >
-                    {item.label}
-                  </Link>
-                </motion.div>
-              ))}
+                    {isHash ? (
+                      <a
+                        href={item.path.substring(1)}
+                        onClick={() => {
+                          setMenuOpen(false);
+                          const el = document.getElementById('clubs-section');
+                          if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 300);
+                        }}
+                        className="display-m block text-[hsl(var(--chalk))] hover:text-[hsl(var(--phosphor))] uppercase tracking-tight py-3 border-b border-[hsl(var(--rule))/0.3] transition-colors"
+                      >
+                        {item.label}
+                      </a>
+                    ) : (
+                      <Link
+                        to={item.path}
+                        onClick={() => setMenuOpen(false)}
+                        className="display-m block text-[hsl(var(--chalk))] hover:text-[hsl(var(--phosphor))] uppercase tracking-tight py-3 border-b border-[hsl(var(--rule))/0.3] transition-colors"
+                      >
+                        {item.label}
+                      </Link>
+                    )}
+                  </motion.div>
+                );
+              })}
 
               <div className="mt-8 flex justify-center gap-6">
-                <a href="https://github.com" target="_blank" className="mono-label text-xs text-[hsl(var(--graphite))] hover:text-[hsl(var(--phosphor))]">GITHUB</a>
+                <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="mono-label text-xs text-[hsl(var(--graphite))] hover:text-[hsl(var(--phosphor))]">GITHUB</a>
                 <span className="text-[hsl(var(--rule))]">/</span>
-                <a href="https://linkedin.com" target="_blank" className="mono-label text-xs text-[hsl(var(--graphite))] hover:text-[hsl(var(--phosphor))]">LINKEDIN</a>
+                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="mono-label text-xs text-[hsl(var(--graphite))] hover:text-[hsl(var(--phosphor))]">LINKEDIN</a>
               </div>
             </div>
           </motion.div>
