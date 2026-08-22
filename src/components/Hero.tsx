@@ -4,7 +4,8 @@ import { motion, useScroll, useTransform, Variants, AnimatePresence } from 'fram
 import atomLogo from '@/assets/atom-logo.webp';
 
 // ──────────────────────────────────────────────────────────
-// DIGITAL CIRCUITRY — DENSE MULTI-COLOR DISSOLVING TRACES
+// MATRIX-STYLE DIGITAL CIRCUITRY CANVAS
+// Straight grid-locked lines with corner junction nodes
 // ──────────────────────────────────────────────────────────
 function CircuitryCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -20,33 +21,34 @@ function CircuitryCanvas() {
     canvas.width = w;
     canvas.height = h;
 
-    // Color palette
+    // Multi-color palette
     const PALETTE = [
-      { r: 125, g: 249, b: 228 }, // phosphor cyan
-      { r: 255, g: 255, b: 255 }, // white
-      { r: 130, g: 180, b: 255 }, // soft blue
-      { r: 160, g: 240, b: 180 }, // pale green
-      { r: 140, g: 140, b: 140 }, // dim grey
+      { r: 125, g: 249, b: 228, glow: true },  // phosphor cyan
+      { r: 255, g: 255, b: 255, glow: false },  // white
+      { r: 130, g: 180, b: 255, glow: true },   // soft blue
+      { r: 160, g: 240, b: 180, glow: false },   // pale green
+      { r: 160, g: 160, b: 160, glow: false },   // grey
     ];
 
-    interface CircuitPath {
+    interface CornerNode {
       x: number;
       y: number;
-      prevX: number;
-      prevY: number;
-      angle: number;
+    }
+
+    interface CircuitPath {
+      nodes: CornerNode[];    // All corner points forming the path
+      tipX: number;           // Current advancing tip
+      tipY: number;
       speed: number;
       thickness: number;
       colorIdx: number;
       baseOpacity: number;
-      opacityShift: number;
-      opacityShiftSpeed: number;
+      pulseOffset: number;
       life: number;
       maxLife: number;
-      jitterStrength: number;
-      turnChance: number;
-      trail: { x: number; y: number }[];
-      trailMax: number;
+      segmentLength: number;  // Distance before next turn
+      segmentProgress: number;
+      currentAngle: number;   // Current snapped direction
     }
 
     let paths: CircuitPath[] = [];
@@ -57,44 +59,40 @@ function CircuitryCanvas() {
       return { x: w * 0.825, y: h * 0.5 };
     };
 
-    const FADE_RADIUS = 150; // dissolve zone radius around logo
+    const FADE_RADIUS = 160;
+
+    const snapAngle = (angle: number) => {
+      return Math.round(angle / (Math.PI / 4)) * (Math.PI / 4);
+    };
 
     const spawnPath = (): CircuitPath => {
-      const startX = Math.random() * w * 0.4;
+      const startX = Math.random() * w * 0.45;
       const startY = Math.random() * h;
       const target = getTargetCoords();
-      const angle = Math.atan2(target.y - startY, target.x - startX);
+      const angleToTarget = Math.atan2(target.y - startY, target.x - startX);
+      const snapped = snapAngle(angleToTarget);
 
       return {
-        x: startX,
-        y: startY,
-        prevX: startX,
-        prevY: startY,
-        angle,
-        speed: Math.random() * 1.8 + 0.4,
-        thickness: Math.random() * 1.6 + 0.4,
+        nodes: [{ x: startX, y: startY }],
+        tipX: startX,
+        tipY: startY,
+        speed: Math.random() * 1.4 + 0.5,
+        thickness: Math.random() * 1.4 + 0.5,
         colorIdx: Math.floor(Math.random() * PALETTE.length),
-        baseOpacity: Math.random() * 0.3 + 0.15,
-        opacityShift: 0,
-        opacityShiftSpeed: Math.random() * 0.03 + 0.005,
+        baseOpacity: Math.random() * 0.22 + 0.1,
+        pulseOffset: Math.random() * Math.PI * 2,
         life: 0,
-        maxLife: Math.random() * 300 + 100,
-        jitterStrength: Math.random() * 0.06,
-        turnChance: Math.random() * 0.025 + 0.005,
-        trail: [],
-        trailMax: Math.floor(Math.random() * 120 + 60),
+        maxLife: Math.random() * 350 + 150,
+        segmentLength: Math.random() * 120 + 40,
+        segmentProgress: 0,
+        currentAngle: snapped,
       };
     };
 
-    // Initialize 110 paths
-    const PATH_COUNT = 110;
+    // Initialize 100 paths
+    const PATH_COUNT = 100;
     for (let i = 0; i < PATH_COUNT; i++) {
-      const p = spawnPath();
-      // Stagger initial life so they don't all start together
-      p.life = Math.floor(Math.random() * p.maxLife * 0.6);
-      p.x += Math.cos(p.angle) * p.speed * p.life;
-      p.y += Math.sin(p.angle) * p.speed * p.life;
-      paths.push(p);
+      paths.push(spawnPath());
     }
 
     let rafId: number;
@@ -125,88 +123,98 @@ function CircuitryCanvas() {
         const p = paths[i];
         p.life++;
 
-        // Shift opacity over time for shimmer
-        p.opacityShift = Math.sin(p.life * p.opacityShiftSpeed) * 0.12;
-
-        // Distance to target logo center
-        const dx = target.x - p.x;
-        const dy = target.y - p.y;
+        // Distance from tip to target
+        const dx = target.x - p.tipX;
+        const dy = target.y - p.tipY;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
-        // Calculate fade factor (dissolve in last FADE_RADIUS px)
+        // Fade factor — dissolve in last FADE_RADIUS px
         let fadeFactor = 1;
         if (dist < FADE_RADIUS) {
           fadeFactor = dist / FADE_RADIUS;
-          fadeFactor = fadeFactor * fadeFactor; // quadratic ease for smoother dissolve
+          fadeFactor = fadeFactor * fadeFactor;
         }
 
-        // Respawn if dissolved, expired, or out of bounds
-        if (fadeFactor < 0.02 || p.life >= p.maxLife || p.x < -50 || p.x > w + 50 || p.y < -50 || p.y > h + 50) {
+        // Respawn if dissolved, expired, or way out of bounds
+        if (fadeFactor < 0.03 || p.life >= p.maxLife || p.tipX < -80 || p.tipX > w + 80 || p.tipY < -80 || p.tipY > h + 80) {
           paths[i] = spawnPath();
           continue;
         }
 
-        // Store previous position
-        p.prevX = p.x;
-        p.prevY = p.y;
+        // Advance the tip along the current straight angle
+        p.tipX += Math.cos(p.currentAngle) * p.speed;
+        p.tipY += Math.sin(p.currentAngle) * p.speed;
+        p.segmentProgress += p.speed;
 
-        // Recalculate angle towards target with jitter
-        const angleToTarget = Math.atan2(dy, dx);
+        // Check if it's time to make a turn (corner node)
+        if (p.segmentProgress >= p.segmentLength) {
+          // Place a corner node at current tip position
+          p.nodes.push({ x: p.tipX, y: p.tipY });
 
-        // Random sharp 90° turns
-        if (Math.random() < p.turnChance) {
-          const turnDir = Math.random() > 0.5 ? 1 : -1;
-          p.angle = Math.round(angleToTarget / (Math.PI / 4)) * (Math.PI / 4) + turnDir * (Math.PI / 2);
-        } else {
-          // Snap to grid angles but drift back towards target
-          const snapped = Math.round(angleToTarget / (Math.PI / 4)) * (Math.PI / 4);
-          p.angle += (snapped - p.angle) * 0.08;
+          // Recalculate angle towards target and snap to grid
+          const newAngleToTarget = Math.atan2(target.y - p.tipY, target.x - p.tipX);
+          const snapped = snapAngle(newAngleToTarget);
+
+          // Occasionally take a perpendicular detour for visual variety
+          if (Math.random() < 0.3) {
+            const turnDir = Math.random() > 0.5 ? 1 : -1;
+            p.currentAngle = snapped + turnDir * (Math.PI / 4);
+          } else {
+            p.currentAngle = snapped;
+          }
+
+          p.segmentProgress = 0;
+          p.segmentLength = Math.random() * 120 + 40;
         }
 
-        // Apply jitter
-        p.angle += (Math.random() - 0.5) * p.jitterStrength;
+        // Cap nodes to prevent memory buildup
+        if (p.nodes.length > 12) {
+          p.nodes.shift();
+        }
 
-        // Move
-        p.x += Math.cos(p.angle) * p.speed;
-        p.y += Math.sin(p.angle) * p.speed;
-
-        // Push every position into trail for full polyline rendering
-        p.trail.push({ x: p.x, y: p.y });
-        if (p.trail.length > p.trailMax) p.trail.shift();
-
-        // Calculate final opacity
-        const opacity = Math.max(0, (p.baseOpacity + p.opacityShift) * fadeFactor);
+        // Compute opacity with subtle pulse
+        const pulse = Math.sin(p.life * 0.04 + p.pulseOffset) * 0.06;
+        const opacity = Math.max(0, (p.baseOpacity + pulse) * fadeFactor);
         const col = PALETTE[p.colorIdx];
-        const isCyan = p.colorIdx === 0;
 
-        // Glow for cyan traces
-        if (isCyan && opacity > 0.08) {
-          ctx.shadowBlur = 8;
-          ctx.shadowColor = `rgba(${col.r}, ${col.g}, ${col.b}, ${opacity * 0.6})`;
+        // Glow for cyan/blue traces
+        if (col.glow && opacity > 0.06) {
+          ctx.shadowBlur = 6;
+          ctx.shadowColor = `rgba(${col.r}, ${col.g}, ${col.b}, ${opacity * 0.5})`;
         } else {
           ctx.shadowBlur = 0;
         }
 
-        // Draw full trail polyline
-        if (p.trail.length > 1) {
-          ctx.beginPath();
-          ctx.moveTo(p.trail[0].x, p.trail[0].y);
-          for (let t = 1; t < p.trail.length; t++) {
-            ctx.lineTo(p.trail[t].x, p.trail[t].y);
-          }
-          ctx.strokeStyle = `rgba(${col.r}, ${col.g}, ${col.b}, ${opacity})`;
-          ctx.lineWidth = p.thickness * fadeFactor;
-          ctx.stroke();
+        // Draw the full path: nodes → tip
+        ctx.beginPath();
+        ctx.moveTo(p.nodes[0].x, p.nodes[0].y);
+        for (let n = 1; n < p.nodes.length; n++) {
+          ctx.lineTo(p.nodes[n].x, p.nodes[n].y);
+        }
+        ctx.lineTo(p.tipX, p.tipY);
+        ctx.strokeStyle = `rgba(${col.r}, ${col.g}, ${col.b}, ${opacity})`;
+        ctx.lineWidth = p.thickness * fadeFactor;
+        ctx.stroke();
+
+        // Corner junction squares
+        ctx.shadowBlur = 0;
+        for (let n = 0; n < p.nodes.length; n++) {
+          const nodeOpacity = opacity * 0.7;
+          ctx.fillStyle = `rgba(${col.r}, ${col.g}, ${col.b}, ${nodeOpacity})`;
+          ctx.fillRect(p.nodes[n].x - 1.5, p.nodes[n].y - 1.5, 3, 3);
         }
 
-        // Reset shadow for nodes
-        ctx.shadowBlur = 0;
+        // Glowing tip
+        const tipPulse = Math.sin(p.life * 0.08 + p.pulseOffset) * 0.3 + 0.7;
+        const tipOpacity = Math.min(opacity * tipPulse * 1.5, 0.8) * fadeFactor;
+        ctx.fillStyle = `rgba(${col.r}, ${col.g}, ${col.b}, ${tipOpacity})`;
+        ctx.fillRect(p.tipX - 2.5, p.tipY - 2.5, 5, 5);
 
-        // Tip dot
-        const tipOpacity = opacity * 1.3;
-        ctx.fillStyle = `rgba(${col.r}, ${col.g}, ${col.b}, ${Math.min(tipOpacity, 0.8) * fadeFactor})`;
-        const tipSize = (p.thickness + 1.5) * fadeFactor;
-        ctx.fillRect(p.x - tipSize / 2, p.y - tipSize / 2, tipSize, tipSize);
+        // Outer tip glow ring for cyan/blue
+        if (col.glow) {
+          ctx.strokeStyle = `rgba(${col.r}, ${col.g}, ${col.b}, ${tipOpacity * 0.4})`;
+          ctx.strokeRect(p.tipX - 4, p.tipY - 4, 8, 8);
+        }
       }
 
       // Subtle ambient glow at the target
@@ -241,7 +249,7 @@ function CircuitryCanvas() {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 w-full h-full pointer-events-none opacity-90 z-10"
+      className="absolute inset-0 w-full h-full pointer-events-none opacity-80 z-10"
     />
   );
 }
