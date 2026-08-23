@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 
@@ -7,6 +7,16 @@ export const CoreTeaser = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [absMousePos, setAbsMousePos] = useState({ x: 0, y: 0 });
+
+  // Scroll kinetics setup
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "center center"]
+  });
+
+  // Slide left/right based on scroll progress
+  const textX1 = useTransform(scrollYProgress, [0, 0.85], ["-35%", "0%"]);
+  const textX2 = useTransform(scrollYProgress, [0, 0.85], ["35%", "0%"]);
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!containerRef.current) return;
@@ -85,7 +95,7 @@ export const CoreTeaser = () => {
           </span>
         </motion.div>
 
-        {/* 2. Main Title - The Eclipse Reveal */}
+        {/* 2. Main Title - Scroll Linked Slide Kinetics */}
         <h2 
           className="w-full flex flex-col items-center mb-8 sm:mb-12 relative z-20"
           style={{ ...textShadowStyle, fontFamily: 'var(--font-display)' }}
@@ -93,10 +103,7 @@ export const CoreTeaser = () => {
           {/* THE MINDS */}
           <div className="overflow-hidden relative w-full flex justify-center pb-1">
             <motion.div
-              initial={{ y: "100%", opacity: 0 }}
-              whileInView={{ y: "0%", opacity: 1 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+              style={{ x: textX1 }}
               className="text-[clamp(3.5rem,8vw,10rem)] text-white whitespace-nowrap leading-[0.85] tracking-tighter uppercase drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]"
             >
               THE MINDS
@@ -106,10 +113,7 @@ export const CoreTeaser = () => {
           {/* BEHIND ATOM */}
           <div className="overflow-hidden relative w-full flex justify-center pt-1">
             <motion.div
-              initial={{ y: "-100%", opacity: 0 }}
-              whileInView={{ y: "0%", opacity: 1 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+              style={{ x: textX2 }}
               className="text-[clamp(3.5rem,8vw,10rem)] text-[hsl(var(--phosphor))] whitespace-nowrap leading-[0.85] tracking-tighter uppercase"
             >
               BEHIND ATOM
@@ -122,28 +126,61 @@ export const CoreTeaser = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+          transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
           className="editorial-body text-[hsl(var(--chalk)/0.7)] text-lg sm:text-xl lg:text-2xl mb-12 sm:mb-16 max-w-2xl leading-relaxed mx-auto"
         >
           Twelve people. Six portfolios.<br/>
           One community driving what's next.
         </motion.p>
 
-        {/* 4. Button */}
+        {/* 4. Button - Auto-Pulsing & Glow Shimmer */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
+          transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
         >
-          <Link
-            to="/core"
-            className="group/btn relative inline-flex items-center justify-center gap-4 px-8 sm:px-12 py-4 sm:py-5 bg-transparent border border-[hsl(var(--chalk)/0.3)] hover:border-[hsl(var(--phosphor))] text-[hsl(var(--chalk))] overflow-hidden transition-all duration-300"
+          <motion.div
+            animate={{
+              scale: [1, 1.025, 1],
+              boxShadow: [
+                "0 0 0 0 rgba(125, 249, 228, 0)",
+                "0 0 15px 2px rgba(125, 249, 228, 0.15)",
+                "0 0 0 0 rgba(125, 249, 228, 0)"
+              ]
+            }}
+            transition={{
+              repeat: Infinity,
+              duration: 3,
+              ease: "easeInOut"
+            }}
+            className="inline-block"
           >
-            <div className="absolute inset-0 bg-[hsl(var(--phosphor))] translate-y-[101%] group-hover/btn:translate-y-0 transition-transform duration-300 ease-[cubic-bezier(0.2,1,0.2,1)]" />
-            <span className="relative z-10 mono-label tracking-widest group-hover/btn:text-black transition-colors duration-300">MEET THE CORE</span>
-            <ArrowRight className="relative z-10 w-4 h-4 sm:w-5 sm:h-5 group-hover/btn:text-black group-hover/btn:translate-x-1 transition-all duration-300" />
-          </Link>
+            <Link
+              to="/core"
+              className="group/btn relative inline-flex items-center justify-center gap-4 px-8 sm:px-12 py-4 sm:py-5 bg-transparent border border-[hsl(var(--phosphor)/0.4)] hover:border-[hsl(var(--phosphor))] text-[hsl(var(--chalk))] overflow-hidden transition-all duration-300 shadow-[0_0_20px_rgba(0,0,0,0.4)]"
+            >
+              {/* Auto Shimmer Swipe Background */}
+              <motion.div
+                animate={{
+                  x: ["-100%", "200%"]
+                }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 3.5,
+                  ease: "linear",
+                  repeatDelay: 1.5
+                }}
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-[hsl(var(--phosphor)/0.15)] to-transparent pointer-events-none"
+              />
+
+              {/* Hover sweep background */}
+              <div className="absolute inset-0 bg-[hsl(var(--phosphor))] translate-y-[101%] group-hover/btn:translate-y-0 transition-transform duration-300 ease-[cubic-bezier(0.2,1,0.2,1)] pointer-events-none" />
+              
+              <span className="relative z-10 mono-label tracking-widest group-hover/btn:text-black transition-colors duration-300">MEET THE CORE</span>
+              <ArrowRight className="relative z-10 w-4 h-4 sm:w-5 sm:h-5 group-hover/btn:text-black group-hover/btn:translate-x-1 transition-all duration-300" />
+            </Link>
+          </motion.div>
         </motion.div>
 
       </div>
