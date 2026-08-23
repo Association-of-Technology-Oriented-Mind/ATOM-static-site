@@ -418,7 +418,7 @@ const ClubScene = ({
             {/* Portrait Coordinator Cards & Profiles Stack */}
             <div 
               ref={membersRef}
-              className="relative w-64 h-[440px] sm:w-72 sm:h-[480px] md:w-80 md:h-[520px] mx-auto md:mr-0"
+              className="relative w-full max-w-sm h-[520px] sm:h-[600px] md:h-[660px] mx-auto md:mr-0"
               style={{ willChange: 'opacity' }}
             >
               {club.coordinators.map((coord, i) => {
@@ -427,11 +427,11 @@ const ClubScene = ({
                 return (
                   <div 
                     key={i}
-                    className="absolute inset-0 w-full h-full flex flex-col items-center text-center"
+                    className="absolute inset-0 w-full h-full flex flex-col items-center text-center justify-center"
                     style={{ willChange: 'transform' }}
                   >
                     {/* 1. Image Portrait Card */}
-                    <div className="relative w-44 h-56 sm:w-48 sm:h-64 aspect-[3/4] rounded-2xl border border-[hsl(var(--phosphor)/0.2)] bg-black shadow-[0_20px_40px_rgba(0,0,0,0.6)] overflow-hidden group">
+                    <div className="relative w-56 h-72 sm:w-64 sm:h-80 md:w-72 md:h-96 rounded-2xl border border-[hsl(var(--phosphor)/0.25)] bg-black shadow-[0_30px_60px_rgba(0,0,0,0.8)] overflow-hidden group">
                       {/* Subtle hover overlay glow */}
                       <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--phosphor)/0.15)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none rounded-2xl" />
 
@@ -443,8 +443,8 @@ const ClubScene = ({
                       {isTBA ? (
                         /* TBA Portrait State */
                         <div className="absolute inset-0 flex items-center justify-center bg-black">
-                          <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[6rem] sm:text-[8rem] font-black text-white/5 select-none z-0 tracking-tighter" style={{ fontFamily: 'var(--font-display)' }}>TBA</span>
-                          <span className="relative z-10 text-xs text-[hsl(var(--graphite))] font-mono uppercase tracking-[0.15em]">// OPEN SEAT</span>
+                          <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[8rem] sm:text-[10rem] font-black text-white/5 select-none z-0 tracking-tighter" style={{ fontFamily: 'var(--font-display)' }}>TBA</span>
+                          <span className="relative z-10 text-sm text-[hsl(var(--graphite))] font-mono uppercase tracking-[0.2em]">// OPEN SEAT</span>
                         </div>
                       ) : (
                         /* Filled Portrait State */
@@ -454,28 +454,28 @@ const ClubScene = ({
                             alt={coord.name} 
                             className="absolute inset-0 w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-700" 
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent opacity-85 group-hover:opacity-100 transition-opacity duration-500" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500" />
                         </>
                       )}
                     </div>
 
                     {/* 2. Text Metadata Section */}
-                    <div className="mt-6 flex flex-col items-center max-w-[280px]">
+                    <div className="mt-6 flex flex-col items-center max-w-[340px]">
                       {/* Role Label */}
-                      <span className="mono-label text-[10px] text-[hsl(var(--phosphor))] uppercase tracking-[0.2em] font-semibold">
+                      <span className="mono-label text-[10px] sm:text-xs text-[hsl(var(--phosphor))] uppercase tracking-[0.2em] font-semibold">
                         {coord.role}
                       </span>
 
                       {/* Name */}
-                      <h4 className="text-lg sm:text-xl font-bold text-white uppercase mt-1 leading-tight tracking-wide">
+                      <h4 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white uppercase mt-2 leading-tight tracking-wide" style={{ fontFamily: 'var(--font-display)' }}>
                         {coord.name}
                       </h4>
 
                       {/* Accent separator line */}
-                      <div className="w-8 h-[2px] bg-[hsl(var(--phosphor)/0.4)] my-3" />
+                      <div className="w-9 h-[2px] bg-[hsl(var(--phosphor)/0.5)] my-3" />
 
                       {/* Bio brief */}
-                      <p className="text-xs leading-relaxed text-[hsl(var(--graphite))] text-center px-4 font-normal">
+                      <p className="text-xs sm:text-sm leading-relaxed text-[hsl(var(--graphite))] text-center px-4 font-normal">
                         {coord.bio}
                       </p>
 
@@ -486,9 +486,9 @@ const ClubScene = ({
                           target="_blank"
                           rel="noopener noreferrer"
                           aria-label={`${coord.name} on LinkedIn`}
-                          className="focus-phosphor mono-label mt-4 inline-flex items-center gap-1.5 text-[hsl(var(--chalk))] hover:text-[hsl(var(--phosphor))] transition-colors duration-200 text-[10px] tracking-widest"
+                          className="focus-phosphor mono-label mt-4 inline-flex items-center gap-2 text-[hsl(var(--chalk))] hover:text-[hsl(var(--phosphor))] transition-colors duration-200 text-xs tracking-widest"
                         >
-                          <Linkedin className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                          <Linkedin className="h-4 w-4 shrink-0" aria-hidden="true" />
                           <span>CONNECT</span>
                         </a>
                       )}
