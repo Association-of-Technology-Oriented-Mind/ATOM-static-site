@@ -89,7 +89,13 @@ const Navigation: React.FC = () => {
           <div className="flex items-center gap-4 sm:gap-6 relative z-10">
             {location.pathname !== '/' && (
               <button
-                onClick={() => navigate(-1)}
+                onClick={() => {
+                  if (window.history.length > 1) {
+                    navigate(-1);
+                  } else {
+                    navigate('/');
+                  }
+                }}
                 className="focus-phosphor flex items-center gap-2 text-[hsl(var(--graphite))] hover:text-[hsl(var(--phosphor))] transition-colors duration-200 mono-label text-xs uppercase tracking-widest"
                 aria-label="Go back"
               >

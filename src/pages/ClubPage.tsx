@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ExternalLink, Github, Linkedin, Target, Users, Code, Image as ImageIcon } from 'lucide-react';
 import Navigation from '@/components/Navigation';
@@ -43,6 +43,7 @@ const ClubPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const club = getClubData(slug);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -57,10 +58,19 @@ const ClubPage = () => {
           <p className="editorial-body text-[hsl(var(--chalk)/0.6)] mb-8">
             The club dossier you are looking for does not exist or has been relocated.
           </p>
-          <Link to="/#clubs-section" className="btn-tech inline-flex items-center gap-2">
+          <button 
+            onClick={() => {
+              if (window.history.length > 1) {
+                navigate(-1);
+              } else {
+                navigate('/#clubs-section');
+              }
+            }} 
+            className="btn-tech inline-flex items-center gap-2"
+          >
             <ArrowLeft className="w-4 h-4" />
             <span>Return to Clubs</span>
-          </Link>
+          </button>
         </main>
         <Footer />
       </div>
@@ -83,13 +93,19 @@ const ClubPage = () => {
         />
 
         <div className="max-w-[var(--container-xl)] mx-auto px-6 sm:px-10 lg:px-16 relative z-10">
-          <Link
-            to="/#clubs-section"
+          <button
+            onClick={() => {
+              if (window.history.length > 1) {
+                navigate(-1);
+              } else {
+                navigate('/#clubs-section');
+              }
+            }}
             className="inline-flex items-center gap-2 mono-label text-[hsl(var(--graphite))] hover:text-[hsl(var(--phosphor))] transition-colors mb-8"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>BACK TO SUB-CLUBS</span>
-          </Link>
+          </button>
 
           <motion.div
             initial={{ opacity: 0, y: 15 }}

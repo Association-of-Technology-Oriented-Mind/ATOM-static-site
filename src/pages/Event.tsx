@@ -140,39 +140,49 @@ const Event: React.FC = () => {
             padding: '0 var(--space-6)',
           }}
         >
-          <button
-            onClick={() => navigate('/')}
-            className="focus-phosphor flex items-center gap-2.5 group"
-            aria-label="Return to homepage"
-          >
-            <img
-              src={atomLogo}
-              alt="ATOM"
-              className="w-7 h-7 opacity-90 transition-transform duration-500 group-hover:rotate-90"
-            />
-            <span
-              className="hidden sm:inline text-[hsl(var(--chalk))] tracking-[-0.03em]"
-              style={{ fontFamily: 'var(--font-display)', fontSize: '0.9375rem' }}
+          {/* Logo & Back Button - Left aligned */}
+          <div className="flex items-center gap-4 sm:gap-6">
+            <button
+              onClick={() => {
+                if (window.history.length > 1) {
+                  navigate(-1);
+                } else {
+                  navigate('/');
+                }
+              }}
+              className="focus-phosphor flex items-center gap-1.5 text-[hsl(var(--graphite))] hover:text-[hsl(var(--chalk))] transition-colors uppercase tracking-[0.15em] group"
+              style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem' }}
             >
-              ATOM
-            </span>
-          </button>
+              <ArrowLeft className="w-3 h-3 transition-transform group-hover:-translate-x-1" />
+              <span>Back</span>
+            </button>
+
+            <button
+              onClick={() => navigate('/')}
+              className="focus-phosphor flex items-center gap-2.5 group"
+              aria-label="Return to homepage"
+            >
+              <img
+                src={atomLogo}
+                alt="ATOM"
+                className="w-7 h-7 opacity-90 transition-transform duration-500 group-hover:rotate-90"
+              />
+              <span
+                className="hidden sm:inline text-[hsl(var(--chalk))] tracking-[-0.03em]"
+                style={{ fontFamily: 'var(--font-display)', fontSize: '0.9375rem' }}
+              >
+                ATOM
+              </span>
+            </button>
+          </div>
 
           <div className="flex items-center gap-6">
             <span
-              className="text-[hsl(var(--chalk))] hidden md:inline uppercase tracking-[0.15em]"
+              className="text-[hsl(var(--chalk))] uppercase tracking-[0.15em]"
               style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem' }}
             >
               Events Archive
             </span>
-            <button
-              onClick={() => navigate('/')}
-              className="focus-phosphor text-[hsl(var(--graphite))] hover:text-[hsl(var(--chalk))] transition-colors flex items-center gap-1.5 uppercase tracking-[0.15em] group"
-              style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem' }}
-            >
-              <ArrowLeft className="w-3 h-3 transition-transform group-hover:-translate-x-1" />
-              Back to Home
-            </button>
           </div>
         </div>
       </motion.nav>

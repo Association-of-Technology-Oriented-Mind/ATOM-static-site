@@ -22,20 +22,38 @@ const Index = () => {
   });
 
   useEffect(() => {
-    // If there is a hash, let the browser scroll to it
-    if (window.location.hash) {
+    // Save scroll position when scroll event occurs
+    const handleScroll = () => {
+      if (window.scrollY > 0) {
+        sessionStorage.setItem('homepage_scroll_pos', String(window.scrollY));
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    // Restore scroll position
+    const savedPos = sessionStorage.getItem('homepage_scroll_pos');
+    if (savedPos && !window.location.hash) {
+      const scrollPos = parseInt(savedPos, 10);
+      // Wait a tiny bit for pinned scroll height layout to settle
+      setTimeout(() => {
+        window.scrollTo({ top: scrollPos, behavior: 'instant' as ScrollBehavior });
+      }, 100);
+    } else if (window.location.hash) {
       const id = window.location.hash.replace('#', '');
       const el = document.getElementById(id);
       if (el) {
-        setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 100);
+        setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 150);
       }
     } else {
       window.scrollTo(0, 0);
     }
+
     // Enable native CSS snap scrolling on mount
     document.documentElement.classList.add('snap-enabled');
+    
     return () => {
-      // Clean up on unmount so other pages behave normally
+      window.removeEventListener('scroll', handleScroll);
       document.documentElement.classList.remove('snap-enabled');
     };
   }, []);
