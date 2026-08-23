@@ -1,17 +1,21 @@
 import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Hero } from '@/components/Hero';
 import { About } from '@/components/About';
 import EventsSection from '@/components/EventsSection';
 import { Clubs } from '@/components/Clubs';
 import { CoreTeaser } from '@/components/CoreTeaser';
+import CoreMembers from '@/components/CoreMembers';
 import PhotoGallerySection from '@/components/PhotoGallerySection';
 import Footer from '@/components/Footer';
 import { useImageProtection } from '@/hooks/useImageProtection';
 
 // Homepage section order:
-// Hero → About+Numbers → Events → Clubs → Core Teaser → Gallery → Footer
+// Hero → About+Numbers → Events → Clubs → Core Teaser → Core Members → Gallery → Footer
 
 const Index = () => {
+  const location = useLocation();
+
   useImageProtection({
     disableRightClick: true,
     disableDrag: true,
@@ -58,6 +62,17 @@ const Index = () => {
     };
   }, []);
 
+  // Listen to hash changes for smooth navigation within the home page
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.replace('#', '');
+      const el = document.getElementById(id);
+      if (el) {
+        setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 100);
+      }
+    }
+  }, [location.hash]);
+
   return (
     <>
       <main
@@ -69,6 +84,7 @@ const Index = () => {
         <div className="snap-section--auto-height"><EventsSection /></div>
         <div className="snap-start"><Clubs /></div>
         <div className="snap-section--auto-height"><CoreTeaser /></div>
+        <div className="snap-start" id="core-members"><CoreMembers /></div>
         <div className="snap-section--auto-height"><PhotoGallerySection /></div>
         <div style={{ scrollSnapAlign: 'end' }}>
           <Footer />

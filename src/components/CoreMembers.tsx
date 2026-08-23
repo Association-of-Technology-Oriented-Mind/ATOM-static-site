@@ -490,12 +490,13 @@ const MemberColumn = ({
 
   if (isMobile) {
     if (isLeft) {
-      memberRange = [0.38, 0.52];
-      detailRange = [0.48, 0.60];
-      exitRange = [0.62, 0.70];
+      memberRange = [0.26, 0.34];
+      detailRange = [0.32, 0.40];
+      exitRange = [0.58, 0.66];
     } else {
-      memberRange = [0.72, 0.86];
-      detailRange = [0.82, 0.94];
+      memberRange = [0.64, 0.72];
+      detailRange = [0.70, 0.78];
+      exitRange = [0.94, 1.00];
     }
   }
 
@@ -1005,7 +1006,7 @@ const CoreMembers = () => {
           return (
             <ScrollScene
               key={portfolio}
-              heightVh={300}
+              heightVh={380}
             >
               {progress => (
                 <div

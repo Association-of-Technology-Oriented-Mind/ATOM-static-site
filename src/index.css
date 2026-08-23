@@ -348,9 +348,11 @@
   }
 
   /* ─── Snap Scrolling ─── */
-  html.snap-enabled {
-    scroll-snap-type: y proximity;
-    scroll-behavior: smooth;
+  @media (min-width: 1024px) {
+    html.snap-enabled {
+      scroll-snap-type: y proximity;
+      scroll-behavior: smooth;
+    }
   }
   
   .snap-section {
@@ -517,6 +519,12 @@
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
+    }
+  }
+  /* Scale down club coordinators container on shorter screens to prevent navbar clipping */
+  @media (max-height: 740px) and (max-width: 1024px) {
+    .club-members-container {
+      transform: scale(0.82) !important;
     }
   }
 }

@@ -183,17 +183,20 @@ const ClubScene = ({
   index,
   progress,
   reducedMotion,
+  isMobile,
 }: {
   club: ClubDef;
   index: number;
   progress: number;
   reducedMotion: boolean;
+  isMobile: boolean;
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const headlineRef = useRef<HTMLDivElement>(null);
   const membersRef = useRef<HTMLDivElement>(null);
   const detailsRef = useRef<HTMLDivElement>(null);
   const watermarkRef = useRef<HTMLDivElement>(null);
+  const rightColRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const headline = headlineRef.current;
@@ -211,125 +214,216 @@ const ClubScene = ({
       watermark.style.transform = reducedMotion ? 'none' : `scale(${1 + t.intro * 0.1}) translate3d(0, ${(1 - t.intro) * 100}px, 0)`;
     }
 
-    // Headline (Part 1: Left Side)
-    let leftOpacity = 0;
-    let leftTranslateX = -40;
+    if (isMobile) {
+      /* ------------------ MOBILE SEQUENCED ANIMATIONS ------------------ */
 
-    if (progress <= 0.15) {
-      const p = progress / 0.15; // 0 to 1
-      leftOpacity = p;
-      leftTranslateX = -40 * (1 - p);
-    } else if (progress > 0.15 && progress <= 0.85) {
-      leftOpacity = 1;
-      leftTranslateX = 0;
-    } else {
-      // fade out as we exit the scene
-      const p = Math.max(0, (1 - progress) / 0.15); // 1 to 0
-      leftOpacity = p;
-      leftTranslateX = -30 * (1 - p);
-    }
+      // 1. Left Column (Club Info) is always visible in the scene
+      let leftOpacity = 0;
+      let leftTY = 20;
 
-    headline.style.opacity = String(leftOpacity);
-    headline.style.transform = reducedMotion ? 'none' : `translate3d(${leftTranslateX}px, 0, 0)`;
-
-    // Right Side - Cards Sequence Animation
-    const card1 = members.children[0] as HTMLElement;
-    const card2 = members.children[1] as HTMLElement;
-
-    if (card1) {
-      let opacity = 0;
-      let tx = 100;
-      let scale = 0.95;
-      let rot = 3;
-
-      if (progress < 0.1) {
-        opacity = 0;
-        tx = 100;
-      } else if (progress >= 0.1 && progress < 0.25) {
-        // Slide in
-        const p = (progress - 0.1) / 0.15; // 0 to 1
-        opacity = p;
-        tx = 100 * (1 - p);
-        scale = 0.95 + 0.05 * p;
-        rot = 3 * (1 - p);
-      } else if (progress >= 0.25 && progress < 0.5) {
-        // Active
-        opacity = 1;
-        tx = 0;
-        scale = 1;
-        rot = 0;
-      } else if (progress >= 0.5 && progress < 0.65) {
-        // Slide out to the left
-        const p = (progress - 0.5) / 0.15; // 0 to 1
-        opacity = 1 - p;
-        tx = -120 * p;
-        scale = 1 - 0.05 * p;
-        rot = -3 * p;
-      } else {
-        opacity = 0;
+      if (progress >= 0.0 && progress <= 0.08) {
+        const p = progress / 0.08;
+        leftOpacity = p;
+        leftTY = 20 * (1 - p);
+      } else if (progress > 0.08 && progress <= 0.92) {
+        leftOpacity = 1;
+        leftTY = 0;
+      } else if (progress > 0.92 && progress <= 1.0) {
+        const p = (1.0 - progress) / 0.08;
+        leftOpacity = p;
+        leftTY = -20 * (1 - p);
       }
 
-      card1.style.opacity = String(opacity);
-      card1.style.transform = reducedMotion ? 'none' : `translate3d(${tx}px, 0, 0) scale(${scale}) rotate(${rot}deg)`;
-      card1.style.pointerEvents = opacity > 0.5 ? 'auto' : 'none';
-    }
+      headline.style.opacity = String(leftOpacity);
+      headline.style.transform = reducedMotion ? 'none' : `translate3d(0, ${leftTY}px, 0)`;
+      headline.style.pointerEvents = leftOpacity > 0.5 ? 'auto' : 'none';
 
-    if (card2) {
-      let opacity = 0;
-      let tx = 120;
-      let scale = 0.95;
-      let rot = 3;
+      details.style.opacity = String(leftOpacity);
+      details.style.transform = 'none';
+      details.style.pointerEvents = leftOpacity > 0.5 ? 'auto' : 'none';
 
-      if (progress < 0.45) {
-        opacity = 0;
-        tx = 120;
-      } else if (progress >= 0.45 && progress < 0.6) {
-        // Slide in from the right
-        const p = (progress - 0.45) / 0.15; // 0 to 1
-        opacity = p;
-        tx = 120 * (1 - p);
-        scale = 0.95 + 0.05 * p;
-        rot = 3 * (1 - p);
-      } else if (progress >= 0.6 && progress < 0.8) {
-        // Active
-        opacity = 1;
-        tx = 0;
-        scale = 1;
-        rot = 0;
-      } else if (progress >= 0.8 && progress < 0.95) {
-        // Slide out to the left
-        const p = (progress - 0.8) / 0.15; // 0 to 1
-        opacity = 1 - p;
-        tx = -100 * p;
-        scale = 1 - 0.05 * p;
-        rot = -3 * p;
-      } else {
-        opacity = 0;
+      // 2. Right Column (Cards Sequence)
+      const card1 = members.children[0] as HTMLElement;
+      const card2 = members.children[1] as HTMLElement;
+
+      // Card 1
+      if (card1) {
+        let opacity = 0;
+        let ty = 24;
+        let scale = 0.95;
+
+        if (progress >= 0.08 && progress < 0.18) {
+          const p = (progress - 0.08) / 0.10;
+          opacity = p;
+          ty = 24 * (1 - p);
+          scale = 0.95 + 0.05 * p;
+        } else if (progress >= 0.18 && progress < 0.48) {
+          opacity = 1;
+          ty = 0;
+          scale = 1;
+        } else if (progress >= 0.48 && progress < 0.58) {
+          const p = (0.58 - progress) / 0.10;
+          opacity = p;
+          ty = -24 * (1 - p);
+          scale = 1 - 0.05 * (1 - p);
+        }
+
+        card1.style.opacity = String(opacity);
+        card1.style.transform = reducedMotion ? 'none' : `translate3d(0, ${ty}px, 0) scale(${scale})`;
+        card1.style.pointerEvents = opacity > 0.5 ? 'auto' : 'none';
       }
 
-      card2.style.opacity = String(opacity);
-      card2.style.transform = reducedMotion ? 'none' : `translate3d(${tx}px, 0, 0) scale(${scale}) rotate(${rot}deg)`;
-      card2.style.pointerEvents = opacity > 0.5 ? 'auto' : 'none';
-    }
+      // Card 2
+      if (card2) {
+        let opacity = 0;
+        let ty = 24;
+        let scale = 0.95;
 
-    // Detail button / CTA
-    let detailOpacity = 0;
-    let detailTranslateY = 30;
-    if (progress >= 0.25 && progress < 0.85) {
-      detailOpacity = 1;
-      detailTranslateY = 0;
-    } else if (progress < 0.25) {
-      const p = (progress) / 0.25;
-      detailOpacity = p;
-      detailTranslateY = 30 * (1 - p);
+        if (progress >= 0.48 && progress < 0.58) {
+          const p = (progress - 0.48) / 0.10;
+          opacity = p;
+          ty = 24 * (1 - p);
+          scale = 0.95 + 0.05 * p;
+        } else if (progress >= 0.58 && progress < 0.88) {
+          opacity = 1;
+          ty = 0;
+          scale = 1;
+        } else if (progress >= 0.88 && progress <= 0.95) {
+          const p = (0.95 - progress) / 0.07;
+          opacity = p;
+          ty = -24 * (1 - p);
+          scale = 1 - 0.05 * (1 - p);
+        }
+
+        card2.style.opacity = String(opacity);
+        card2.style.transform = reducedMotion ? 'none' : `translate3d(0, ${ty}px, 0) scale(${scale})`;
+        card2.style.pointerEvents = opacity > 0.5 ? 'auto' : 'none';
+      }
+
     } else {
-      const p = Math.max(0, (1 - progress) / 0.15);
-      detailOpacity = p;
-      detailTranslateY = 20 * (1 - p);
+      /* ------------------ DESKTOP SIDE-BY-SIDE ANIMATIONS ------------------ */
+      // Headline (Part 1: Left Side)
+      let leftOpacity = 0;
+      let leftTranslateX = -40;
+
+      if (progress <= 0.15) {
+        const p = progress / 0.15; // 0 to 1
+        leftOpacity = p;
+        leftTranslateX = -40 * (1 - p);
+      } else if (progress > 0.15 && progress <= 0.85) {
+        leftOpacity = 1;
+        leftTranslateX = 0;
+      } else {
+        // fade out as we exit the scene
+        const p = Math.max(0, (1 - progress) / 0.15); // 1 to 0
+        leftOpacity = p;
+        leftTranslateX = -30 * (1 - p);
+      }
+
+      headline.style.opacity = String(leftOpacity);
+      headline.style.transform = reducedMotion ? 'none' : `translate3d(${leftTranslateX}px, 0, 0)`;
+      headline.style.pointerEvents = leftOpacity > 0.5 ? 'auto' : 'none';
+
+      // Right Side - Cards Sequence Animation
+      const card1 = members.children[0] as HTMLElement;
+      const card2 = members.children[1] as HTMLElement;
+
+      if (card1) {
+        let opacity = 0;
+        let tx = 100;
+        let scale = 0.95;
+        let rot = 3;
+
+        if (progress < 0.1) {
+          opacity = 0;
+          tx = 100;
+        } else if (progress >= 0.1 && progress < 0.22) {
+          // Slide in
+          const p = (progress - 0.1) / 0.12; // 0 to 1
+          opacity = p;
+          tx = 100 * (1 - p);
+          scale = 0.95 + 0.05 * p;
+          rot = 3 * (1 - p);
+        } else if (progress >= 0.22 && progress < 0.54) {
+          // Active
+          opacity = 1;
+          tx = 0;
+          scale = 1;
+          rot = 0;
+        } else if (progress >= 0.54 && progress < 0.66) {
+          // Slide out to the left
+          const p = (progress - 0.54) / 0.12; // 0 to 1
+          opacity = 1 - p;
+          tx = -120 * p;
+          scale = 1 - 0.05 * p;
+          rot = -3 * p;
+        } else {
+          opacity = 0;
+        }
+
+        card1.style.opacity = String(opacity);
+        card1.style.transform = reducedMotion ? 'none' : `translate3d(${tx}px, 0, 0) scale(${scale}) rotate(${rot}deg)`;
+        card1.style.pointerEvents = opacity > 0.5 ? 'auto' : 'none';
+      }
+
+      if (card2) {
+        let opacity = 0;
+        let tx = 120;
+        let scale = 0.95;
+        let rot = 3;
+
+        if (progress < 0.54) {
+          opacity = 0;
+          tx = 120;
+        } else if (progress >= 0.54 && progress < 0.66) {
+          // Slide in from the right
+          const p = (progress - 0.54) / 0.12; // 0 to 1
+          opacity = p;
+          tx = 120 * (1 - p);
+          scale = 0.95 + 0.05 * p;
+          rot = 3 * (1 - p);
+        } else if (progress >= 0.66 && progress < 0.88) {
+          // Active
+          opacity = 1;
+          tx = 0;
+          scale = 1;
+          rot = 0;
+        } else if (progress >= 0.88 && progress < 0.98) {
+          // Slide out to the left
+          const p = (progress - 0.88) / 0.10; // 0 to 1
+          opacity = 1 - p;
+          tx = -100 * p;
+          scale = 1 - 0.05 * p;
+          rot = -3 * p;
+        } else {
+          opacity = 0;
+        }
+
+        card2.style.opacity = String(opacity);
+        card2.style.transform = reducedMotion ? 'none' : `translate3d(${tx}px, 0, 0) scale(${scale}) rotate(${rot}deg)`;
+        card2.style.pointerEvents = opacity > 0.5 ? 'auto' : 'none';
+      }
+
+      // Detail button / CTA
+      let detailOpacity = 0;
+      let detailTranslateY = 30;
+      if (progress >= 0.25 && progress < 0.85) {
+        detailOpacity = 1;
+        detailTranslateY = 0;
+      } else if (progress < 0.25) {
+        const p = (progress) / 0.25;
+        detailOpacity = p;
+        detailTranslateY = 30 * (1 - p);
+      } else {
+        const p = Math.max(0, (1 - progress) / 0.15);
+        detailOpacity = p;
+        detailTranslateY = 20 * (1 - p);
+      }
+      details.style.opacity = String(detailOpacity);
+      details.style.transform = reducedMotion ? 'none' : `translate3d(0, ${detailTranslateY}px, 0)`;
+      details.style.pointerEvents = detailOpacity > 0.65 ? 'auto' : 'none';
     }
-    details.style.opacity = String(detailOpacity);
-    details.style.transform = reducedMotion ? 'none' : `translate3d(0, ${detailTranslateY}px, 0)`;
-  }, [progress, reducedMotion]);
+  }, [progress, reducedMotion, isMobile]);
 
   return (
     <div className="relative h-full w-full overflow-hidden lattice bg-transparent" ref={containerRef}>
@@ -353,12 +447,12 @@ const ClubScene = ({
         {/* Left: Club Info */}
         <div
           ref={headlineRef}
-          className="flex-1 flex flex-col justify-center px-8 md:px-16 py-12 md:py-0 relative z-20"
+          className={`flex flex-col justify-center px-8 md:px-16 py-6 md:py-0 relative z-20 ${isMobile ? 'h-[35vh] justify-end' : 'flex-1'}`}
           style={{ willChange: 'opacity, transform' }}
         >
           <div className="w-full max-w-lg mx-auto md:mr-auto md:ml-0">
             {/* Meta Tags */}
-            <div className="mb-8 sm:mb-12 flex items-center gap-4">
+            <div className="mb-4 sm:mb-12 flex items-center gap-4">
               <span className="mono-label px-3 py-1 bg-[hsl(var(--phosphor)/0.15)] border border-[hsl(var(--phosphor)/0.3)] rounded text-[hsl(var(--phosphor))] shadow-[0_0_10px_hsl(var(--phosphor)/0.2)]">
                 0{index + 1} / 0{CLUBS.length}
               </span>
@@ -367,9 +461,9 @@ const ClubScene = ({
             </div>
 
             {/* Title & Logo */}
-            <div className="flex items-center gap-6 mb-8 relative">
+            <div className="flex items-center gap-6 mb-4 sm:mb-8 relative">
               {club.logo && (
-                <div className="relative w-16 h-16 sm:w-20 sm:h-20 shrink-0">
+                <div className="relative w-12 h-12 sm:w-20 sm:h-20 shrink-0">
                   <div className="absolute inset-0 bg-[hsl(var(--phosphor))] blur-xl opacity-20 animate-pulse" />
                   <img
                     src={club.logo}
@@ -379,7 +473,7 @@ const ClubScene = ({
                 </div>
               )}
               <h3
-                className="text-5xl sm:text-7xl text-white font-bold leading-none tracking-tighter uppercase drop-shadow-2xl"
+                className="text-3xl sm:text-7xl text-white font-bold leading-none tracking-tighter uppercase drop-shadow-2xl"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
                 {club.name}
@@ -387,7 +481,7 @@ const ClubScene = ({
             </div>
 
             {/* Description */}
-            <p className="text-base sm:text-lg leading-relaxed text-[hsl(var(--chalk)/0.75)] p-6 bg-black/20 border-l-2 border-[hsl(var(--phosphor)/0.5)] rounded-r-lg backdrop-blur-sm mb-10">
+            <p className="text-xs sm:text-lg leading-relaxed text-[hsl(var(--chalk)/0.75)] p-4 sm:p-6 bg-black/20 border-l-2 border-[hsl(var(--phosphor)/0.5)] rounded-r-lg backdrop-blur-sm mb-4 sm:mb-10">
               {club.description}
             </p>
 
@@ -399,14 +493,14 @@ const ClubScene = ({
             >
               <Link
                 to={`/clubs/${club.slug}`}
-                className="group relative inline-flex items-center justify-between gap-6 bg-black/60 border border-[hsl(var(--phosphor)/0.4)] hover:border-[hsl(var(--phosphor))] px-8 py-5 w-full md:w-auto overflow-hidden transition-all duration-300 rounded shadow-[0_0_20px_rgba(0,0,0,0.5)] hover:shadow-[0_0_30px_hsl(var(--phosphor)/0.2)]"
+                className="group relative inline-flex items-center justify-between gap-4 bg-black/60 border border-[hsl(var(--phosphor)/0.4)] hover:border-[hsl(var(--phosphor))] px-5 py-3 sm:px-8 sm:py-5 w-full md:w-auto overflow-hidden transition-all duration-300 rounded shadow-[0_0_20px_rgba(0,0,0,0.5)] hover:shadow-[0_0_30px_hsl(var(--phosphor)/0.2)]"
               >
                 {/* Swipe Glow */}
                 <div className="absolute inset-0 bg-[hsl(var(--phosphor)/0.1)] translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-out" />
 
                 <div className="relative z-10 flex items-center gap-3">
                   <span className="w-2 h-2 bg-[hsl(var(--phosphor))] rounded-full animate-pulse shadow-[0_0_8px_hsl(var(--phosphor))]" />
-                  <span className="mono-label text-[hsl(var(--chalk))] group-hover:text-white transition-colors uppercase tracking-[0.2em] text-xs">Initiate Handshake</span>
+                  <span className="mono-label text-[hsl(var(--chalk))] group-hover:text-white transition-colors uppercase tracking-[0.2em] text-[10px] sm:text-xs">Initiate Handshake</span>
                 </div>
 
                 <svg className="w-4 h-4 text-[hsl(var(--graphite))] group-hover:text-[hsl(var(--phosphor))] transition-colors relative z-10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
@@ -418,13 +512,16 @@ const ClubScene = ({
         </div>
 
         {/* Right: Coordinators Detailed Profiles */}
-        <div className="flex-1 flex flex-col justify-center px-8 md:px-16 py-12 md:py-0 relative z-20">
+        <div 
+          ref={rightColRef}
+          className={`flex flex-col justify-center px-8 md:px-16 py-6 md:py-0 relative z-20 ${isMobile ? 'h-[65vh] justify-start pt-4' : 'flex-1'}`}
+        >
           <div className="w-full max-w-lg mx-auto md:ml-auto md:mr-0 flex flex-col items-center">
 
             {/* Portrait Coordinator Cards & Profiles Stack */}
             <div
               ref={membersRef}
-              className="relative w-full max-w-sm h-[560px] sm:h-[640px] md:h-[700px] mx-auto md:mr-0"
+              className="club-members-container relative w-full max-w-sm h-[460px] sm:h-[500px] md:h-[700px] mx-auto md:mr-0"
               style={{ willChange: 'opacity' }}
             >
               {club.coordinators.map((coord, i) => {
@@ -437,7 +534,7 @@ const ClubScene = ({
                     style={{ willChange: 'transform' }}
                   >
                     {/* 1. Image Portrait Card */}
-                    <div className="relative w-64 h-80 sm:w-72 sm:h-96 md:w-80 md:h-[400px] border border-[hsl(var(--phosphor)/0.25)] bg-black shadow-[0_30px_60px_rgba(0,0,0,0.8)] overflow-hidden group">
+                    <div className="relative w-56 h-72 md:w-80 md:h-[400px] border border-[hsl(var(--phosphor)/0.25)] bg-black shadow-[0_30px_60px_rgba(0,0,0,0.8)] overflow-hidden group">
                       {/* Subtle hover overlay glow */}
                       <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--phosphor)/0.15)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none" />
 
@@ -466,22 +563,22 @@ const ClubScene = ({
                     </div>
 
                     {/* 2. Text Metadata Section */}
-                    <div className="mt-6 flex flex-col items-center max-w-[340px]">
+                    <div className="mt-3 sm:mt-6 flex flex-col items-center max-w-[340px]">
                       {/* Role Label */}
                       <span className="mono-label text-[10px] sm:text-xs text-[hsl(var(--phosphor))] uppercase tracking-[0.2em] font-semibold">
                         {coord.role}
                       </span>
 
                       {/* Name */}
-                      <h4 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white uppercase mt-2 leading-tight tracking-wide" style={{ fontFamily: 'var(--font-display)' }}>
+                      <h4 className="text-xl sm:text-3xl md:text-4xl font-bold text-white uppercase mt-1.5 leading-tight tracking-wide" style={{ fontFamily: 'var(--font-display)' }}>
                         {coord.name}
                       </h4>
 
                       {/* Accent separator line */}
-                      <div className="w-9 h-[2px] bg-[hsl(var(--phosphor)/0.5)] my-3" />
+                      <div className="w-8 h-[2px] bg-[hsl(var(--phosphor)/0.5)] my-2.5 sm:my-3" />
 
                       {/* Bio brief */}
-                      <p className="text-xs sm:text-sm leading-relaxed text-[hsl(var(--graphite))] text-center px-4 font-normal">
+                      <p className="text-xs sm:text-sm leading-relaxed text-[hsl(var(--graphite))] text-center px-4 font-normal max-w-[290px]">
                         {coord.bio}
                       </p>
 
@@ -492,7 +589,7 @@ const ClubScene = ({
                           target="_blank"
                           rel="noopener noreferrer"
                           aria-label={`${coord.name} on LinkedIn`}
-                          className="focus-phosphor mono-label mt-4 inline-flex items-center gap-2 text-[hsl(var(--chalk))] hover:text-[hsl(var(--phosphor))] transition-colors duration-200 text-xs tracking-widest"
+                          className="focus-phosphor mono-label mt-2.5 sm:mt-4 inline-flex items-center gap-2 text-[hsl(var(--chalk))] hover:text-[hsl(var(--phosphor))] transition-colors duration-200 text-xs tracking-widest"
                         >
                           <Linkedin className="h-4 w-4 shrink-0" aria-hidden="true" />
                           <span>CONNECT</span>
@@ -512,6 +609,16 @@ const ClubScene = ({
 
 export const Clubs = () => {
   const reducedMotion = useReducedMotion();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // For kinetic typography
   const introRef = useRef<HTMLDivElement>(null);
@@ -603,9 +710,9 @@ export const Clubs = () => {
       {/* One ScrollScene per club */}
       {CLUBS.map((club, index) => (
         <div id={`scene-${club.id}`} key={club.id}>
-          <ScrollScene heightVh={280}>
+          <ScrollScene heightVh={360}>
             {(progress) => (
-              <ClubScene club={club} index={index} progress={progress} reducedMotion={reducedMotion} />
+              <ClubScene club={club} index={index} progress={progress} reducedMotion={reducedMotion} isMobile={isMobile} />
             )}
           </ScrollScene>
         </div>

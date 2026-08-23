@@ -1,7 +1,5 @@
 import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
 import ScrollScene from '@/components/scroll/ScrollScene';
 import { easeInOut, prog } from '@/utils/scrollMath';
 
@@ -128,55 +126,10 @@ export const CoreTeaser = () => {
                 </h2>
 
                 {/* 3. Description */}
-                <p className="editorial-body text-[hsl(var(--chalk)/0.7)] text-lg sm:text-xl lg:text-2xl mb-12 sm:mb-16 max-w-2xl leading-relaxed mx-auto">
+                <p className="editorial-body text-[hsl(var(--chalk)/0.7)] text-lg sm:text-xl lg:text-2xl mb-0 max-w-2xl leading-relaxed mx-auto">
                   Twelve people. Six portfolios.<br/>
                   One community driving what's next.
                 </p>
-
-                {/* 4. Button - Auto-Pulsing & Glow Shimmer */}
-                <div className="inline-block">
-                  <motion.div
-                    animate={{
-                      scale: [1, 1.025, 1],
-                      boxShadow: [
-                        "0 0 0 0 rgba(125, 249, 228, 0)",
-                        "0 0 15px 2px rgba(125, 249, 228, 0.15)",
-                        "0 0 0 0 rgba(125, 249, 228, 0)"
-                      ]
-                    }}
-                    transition={{
-                      repeat: Infinity,
-                      duration: 3,
-                      ease: "easeInOut"
-                    }}
-                    className="inline-block"
-                  >
-                    <Link
-                      to="/core"
-                      className="group/btn relative inline-flex items-center justify-center gap-4 px-8 sm:px-12 py-4 sm:py-5 bg-transparent border border-[hsl(var(--phosphor)/0.4)] hover:border-[hsl(var(--phosphor))] text-[hsl(var(--chalk))] overflow-hidden transition-all duration-300 shadow-[0_0_20px_rgba(0,0,0,0.4)]"
-                    >
-                      {/* Auto Shimmer Swipe Background */}
-                      <motion.div
-                        animate={{
-                          x: ["-100%", "200%"]
-                        }}
-                        transition={{
-                          repeat: Infinity,
-                          duration: 3.5,
-                          ease: "linear",
-                          repeatDelay: 1.5
-                        }}
-                        className="absolute inset-0 bg-gradient-to-r from-transparent via-[hsl(var(--phosphor)/0.15)] to-transparent pointer-events-none"
-                      />
-
-                      {/* Hover sweep background */}
-                      <div className="absolute inset-0 bg-[hsl(var(--phosphor))] translate-y-[101%] group-hover/btn:translate-y-0 transition-transform duration-300 ease-out pointer-events-none" />
-                      
-                      <span className="relative z-10 mono-label tracking-widest group-hover/btn:text-black transition-colors duration-300">MEET THE CORE</span>
-                      <ArrowRight className="relative z-10 w-4 h-4 sm:w-5 sm:h-5 group-hover/btn:text-black group-hover/btn:translate-x-1 transition-all duration-300" />
-                    </Link>
-                  </motion.div>
-                </div>
 
               </div>
             </div>

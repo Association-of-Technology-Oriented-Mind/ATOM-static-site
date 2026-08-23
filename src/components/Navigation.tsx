@@ -12,7 +12,7 @@ import atomLogo from '@/assets/atom-logo.webp';
 const NAV_LINKS = [
   { path: '/', label: 'Home' },
   { path: '/events', label: 'Events' },
-  { path: '/core', label: 'Team' },
+  { path: '/#core-members', label: 'Team' },
   { path: '/full-gallery', label: 'Gallery' },
 ];
 
@@ -55,7 +55,10 @@ const Navigation: React.FC = () => {
   }, [mobileOpen]);
 
   const isActive = (path: string) => {
-    if (path === '/') return location.pathname === '/';
+    if (path === '/') return location.pathname === '/' && !location.hash;
+    if (path.startsWith('/#')) {
+      return location.pathname === '/' && location.hash === path.substring(1);
+    }
     return location.pathname.startsWith(path);
   };
 
