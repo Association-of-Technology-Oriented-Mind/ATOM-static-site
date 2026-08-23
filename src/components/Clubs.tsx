@@ -418,7 +418,7 @@ const ClubScene = ({
             {/* Portrait Coordinator Cards & Profiles Stack */}
             <div 
               ref={membersRef}
-              className="relative w-full max-w-sm h-[520px] sm:h-[600px] md:h-[660px] mx-auto md:mr-0"
+              className="relative w-full max-w-sm h-[560px] sm:h-[640px] md:h-[700px] mx-auto md:mr-0"
               style={{ willChange: 'opacity' }}
             >
               {club.coordinators.map((coord, i) => {
@@ -431,15 +431,15 @@ const ClubScene = ({
                     style={{ willChange: 'transform' }}
                   >
                     {/* 1. Image Portrait Card */}
-                    <div className="relative w-56 h-72 sm:w-64 sm:h-80 md:w-72 md:h-96 rounded-2xl border border-[hsl(var(--phosphor)/0.25)] bg-black shadow-[0_30px_60px_rgba(0,0,0,0.8)] overflow-hidden group">
+                    <div className="relative w-64 h-80 sm:w-72 sm:h-96 md:w-80 md:h-[400px] border border-[hsl(var(--phosphor)/0.25)] bg-black shadow-[0_30px_60px_rgba(0,0,0,0.8)] overflow-hidden group">
                       {/* Subtle hover overlay glow */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--phosphor)/0.15)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none rounded-2xl" />
-
+                      <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--phosphor)/0.15)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none" />
+ 
                       {/* Holographic Glare */}
-                      <div className="absolute inset-0 z-20 pointer-events-none overflow-hidden rounded-2xl">
+                      <div className="absolute inset-0 z-20 pointer-events-none overflow-hidden">
                         <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out translate-x-[-100%] group-hover:translate-x-[100%]" />
                       </div>
-
+ 
                       {isTBA ? (
                         /* TBA Portrait State */
                         <div className="absolute inset-0 flex items-center justify-center bg-black">
