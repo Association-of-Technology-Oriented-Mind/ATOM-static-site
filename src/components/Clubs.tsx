@@ -1,24 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { Linkedin } from 'lucide-react';
 import ScrollScene from '@/components/scroll/ScrollScene';
 import { easeInOut, prog } from '@/utils/scrollMath';
 
-// Import real club icons (the .ico files will be replaced with WebP — see GOAL.md)
+// Import real club icons & logos
 import { DotIcon, BiasIcon, HackIcon } from '@/constants/clubs';
 import qyroLogo from '@/assets/qyro.webp';
-
-// ── Club data ────────────────────────────────────────────────────────────────
-// 4 clubs per GOAL.md: HackHive, DotDev, UnBias, Qyro.
-// RND and Career Guidance are removed from this component (their constant files
-// can be cleaned up separately once nothing else imports them).
-//
-// Qyro content marked [DATA REQUIRED] — see GOAL.md / "Waiting on Lebi".
+import sanjayImg from '@/assets/HACKHIVE/Sanjay.webp';
+import jayeshImg from '@/assets/HACKHIVE/Jayesh.webp';
 
 interface CoordinatorDef {
   name: string;
   role: string;
   image: string | null;
+  bio: string;
+  linkedin: string;
 }
 
 interface ClubDef {
@@ -41,8 +39,20 @@ const CLUBS: ClubDef[] = [
     description:
       'A student-driven club that brings together passionate individuals to explore, learn, and innovate in the field of information security. Hands-on CTFs, ethical hacking workshops, and security competitions.',
     coordinators: [
-      { name: 'Sanjay S', role: 'Coordinator', image: null },
-      { name: 'Jayesh V Prakash Naidu', role: 'Joint Coordinator', image: null },
+      {
+        name: 'Sanjay S',
+        role: 'Coordinator',
+        image: sanjayImg,
+        bio: 'As Coordinator of Hack Hive, Sanjay S is a finalist in the Cyberthon and was awarded the Best Idea Award at the TN-Police Hackathon.',
+        linkedin: 'https://linkedin.com/in/sanjay-s-699585345'
+      },
+      {
+        name: 'Jayesh V Prakash Naidu',
+        role: 'Joint Coordinator',
+        image: jayeshImg,
+        bio: 'As Junior Coordinator of Hack Hive, Jayesh is passionate about digital forensics and created a Wi-Fi pentesting device to learn networking. He is also the founder of BlackSpotAI.',
+        linkedin: 'https://linkedin.com/in/jayesh-v-prakash-naidu'
+      },
     ],
     logo: HackIcon,
     logoAlt: 'Hack Hive icon',
@@ -55,8 +65,20 @@ const CLUBS: ClubDef[] = [
     description:
       'A student community for aspiring software engineers focused on full-stack development. Hackathons, code sprints, mentorship sessions and collaborative projects — from frontend to backend to deployment.',
     coordinators: [
-      { name: 'Dharshan Kumar J', role: 'Coordinator', image: null },
-      { name: 'Danish Prabhu K V', role: 'Joint Coordinator', image: null },
+      {
+        name: 'Dharshan Kumar J',
+        role: 'Coordinator',
+        image: null,
+        bio: 'As Coordinator of DotDev, Dharshan Kumar J is a Finalist of the NEXUS hackathon and a Software Developer skilled in developing Web and Mobile Applications. He is also a co-founder of VelsyMedia and TurpleSpace.',
+        linkedin: 'https://linkedin.com/in/j-dharshan-kumar'
+      },
+      {
+        name: 'Danish Prabhu K V',
+        role: 'Joint Coordinator',
+        image: null,
+        bio: 'As Junior Coordinator of DotDev, Danish Prabhu K V is a Finalist of the NEXUS Hackathon and is passionate about AI and software engineering. He is currently an intern at GMS.',
+        linkedin: 'https://linkedin.com/in/danish-prabhu-0a1691293'
+      },
     ],
     logo: DotIcon,
     logoAlt: 'DotDev icon',
@@ -69,8 +91,20 @@ const CLUBS: ClubDef[] = [
     description:
       'Exploring AI, ML, Deep Learning, NLP, Generative AI and Agents. Weekly sessions, research paper discussions, and hands-on model building — with a focus on department-relevant applications.',
     coordinators: [
-      { name: 'Aravindan M', role: 'Coordinator', image: null },
-      { name: 'Ronnie A Jeffrey', role: 'Joint Coordinator', image: null },
+      {
+        name: 'Aravindan M',
+        role: 'Coordinator',
+        image: null,
+        bio: "As Coordinator of Unbias, Aravindan M is a Silver Medalist in the International Taekwondo Championship and a finalist at IIT Bombay's Eureka 2024. He is specialized in Generative AI.",
+        linkedin: 'https://linkedin.com/in/aravindan-arru'
+      },
+      {
+        name: 'Ronnie A Jeffrey',
+        role: 'Joint Coordinator',
+        image: null,
+        bio: "As Junior Coordinator of Unbias, Ronnie A Jeffrey is a winner in NEXUS 2024 and was awarded a special mention at Cyberthon '25. He is passionate about AI and Full Stack development.",
+        linkedin: 'https://linkedin.com/in/ronnie-a-jeffrey'
+      },
     ],
     logo: BiasIcon,
     logoAlt: 'Unbiased club icon',
@@ -79,22 +113,32 @@ const CLUBS: ClubDef[] = [
     id: 'qyro',
     slug: 'qyro',
     name: 'Qyro',
-    tag: 'NEW CLUB',               // [DATA REQUIRED] — actual tag/focus unknown
+    tag: 'NEW CLUB',
     description:
-      '[DATA REQUIRED] — Club description, objectives and focus area for Qyro are pending. Please supply this content.',
+      'Club description, objectives and focus area for Qyro are pending. Please supply this content.',
     coordinators: [
-      { name: '[DATA REQUIRED]', role: 'Coordinator', image: null },
-      { name: '[DATA REQUIRED]', role: 'Joint Coordinator', image: null },
+      {
+        name: 'TBA',
+        role: 'Coordinator',
+        image: null,
+        bio: 'A short intro will appear once this position is filled.',
+        linkedin: ''
+      },
+      {
+        name: 'TBA',
+        role: 'Joint Coordinator',
+        image: null,
+        bio: 'A short intro will appear once this position is filled.',
+        linkedin: ''
+      },
     ],
     logo: qyroLogo,
     logoAlt: 'Qyro club logo',
   },
 ];
 
-// ── Helpers ───────────────────────────────────────────────────────────────
 const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
 
-// ── Scene timing ─────────────────────────────────────────────────────────────
 const INTRO_IN: [number, number] = [0.0, 0.15];
 const COORD_IN: [number, number] = [0.15, 0.4];
 const JOINT_IN: [number, number] = [0.35, 0.6];
@@ -127,8 +171,6 @@ const useReducedMotion = () => {
 
   return reducedMotion;
 };
-
-// ── Sub-components ────────────────────────────────────────────────────────────
 
 const ClubScene = ({
   club,
@@ -192,7 +234,7 @@ const ClubScene = ({
       let opacity = 0;
       let tx = 100;
       let scale = 0.95;
-      let rot = 5;
+      let rot = 3;
 
       if (progress < 0.1) {
         opacity = 0;
@@ -203,7 +245,7 @@ const ClubScene = ({
         opacity = p;
         tx = 100 * (1 - p);
         scale = 0.95 + 0.05 * p;
-        rot = 5 * (1 - p);
+        rot = 3 * (1 - p);
       } else if (progress >= 0.25 && progress < 0.5) {
         // Active
         opacity = 1;
@@ -216,7 +258,7 @@ const ClubScene = ({
         opacity = 1 - p;
         tx = -120 * p;
         scale = 1 - 0.05 * p;
-        rot = -5 * p;
+        rot = -3 * p;
       } else {
         opacity = 0;
       }
@@ -230,7 +272,7 @@ const ClubScene = ({
       let opacity = 0;
       let tx = 120;
       let scale = 0.95;
-      let rot = 5;
+      let rot = 3;
 
       if (progress < 0.45) {
         opacity = 0;
@@ -241,7 +283,7 @@ const ClubScene = ({
         opacity = p;
         tx = 120 * (1 - p);
         scale = 0.95 + 0.05 * p;
-        rot = 5 * (1 - p);
+        rot = 3 * (1 - p);
       } else if (progress >= 0.6 && progress < 0.8) {
         // Active
         opacity = 1;
@@ -254,7 +296,7 @@ const ClubScene = ({
         opacity = 1 - p;
         tx = -100 * p;
         scale = 1 - 0.05 * p;
-        rot = -5 * p;
+        rot = -3 * p;
       } else {
         opacity = 0;
       }
@@ -339,74 +381,14 @@ const ClubScene = ({
             </div>
             
             {/* Description */}
-            <p className="text-base sm:text-lg leading-relaxed text-[hsl(var(--chalk)/0.75)] p-6 bg-black/20 border-l-2 border-[hsl(var(--phosphor)/0.5)] rounded-r-lg backdrop-blur-sm">
+            <p className="text-base sm:text-lg leading-relaxed text-[hsl(var(--chalk)/0.75)] p-6 bg-black/20 border-l-2 border-[hsl(var(--phosphor)/0.5)] rounded-r-lg backdrop-blur-sm mb-10">
               {club.description}
             </p>
-          </div>
-        </div>
 
-        {/* Right: Coordinators & Explore */}
-        <div className="flex-1 flex flex-col justify-center px-8 md:px-16 py-12 md:py-0 relative z-20">
-          <div className="w-full max-w-lg mx-auto md:ml-auto md:mr-0 flex flex-col items-start md:items-end">
-            
-            {/* Portrait Coordinator Cards */}
-            <div 
-              ref={membersRef}
-              className="relative w-48 sm:w-56 md:w-64 aspect-[3/4] mx-auto md:mr-0 h-[256px] sm:h-[298px] md:h-[340px]"
-              style={{ willChange: 'opacity' }}
-            >
-              {club.coordinators.map((coord, i) => {
-                const isTBA = !coord.image || coord.name === '[DATA REQUIRED]';
-                
-                return (
-                  <div 
-                    key={i}
-                    className="absolute inset-0 w-full h-full flex flex-col rounded-3xl border border-[hsl(var(--phosphor)/0.2)] bg-black backdrop-blur-md shadow-[0_30px_60px_rgba(0,0,0,0.8)] transition-all overflow-hidden group"
-                    style={{ willChange: 'transform' }}
-                  >
-                    {/* Subtle inner card glow for hover effect */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--phosphor)/0.15)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none rounded-3xl" />
-
-                    {/* Holographic Glare */}
-                    <div className="absolute inset-0 z-20 pointer-events-none overflow-hidden rounded-3xl">
-                      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out translate-x-[-100%] group-hover:translate-x-[100%]" />
-                    </div>
-
-                    {isTBA ? (
-                      /* ── TBA STATE ── */
-                      <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-black rounded-3xl">
-                        {/* Giant Background TBA */}
-                        <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[8rem] sm:text-[10rem] md:text-[12rem] font-black text-white/5 select-none z-0 tracking-tighter" style={{ fontFamily: 'var(--font-display)' }}>TBA</span>
-                        
-                        <div className="relative z-10 flex flex-col items-center">
-                          <span className="text-[9px] sm:text-[10px] md:text-[11px] text-[hsl(var(--graphite))] uppercase tracking-[0.2em] mb-4 leading-tight">{coord.role}</span>
-                          <h4 className="text-base sm:text-lg md:text-xl font-black text-[hsl(var(--chalk))] uppercase tracking-wider mb-4 leading-tight drop-shadow-md">POSITION<br/>OPEN</h4>
-                          <div className="w-12 h-[2px] bg-[hsl(var(--phosphor))] mb-4 opacity-70" />
-                          <p className="text-[9px] sm:text-[10px] md:text-[11px] text-[hsl(var(--graphite))] italic max-w-[90%] leading-relaxed">
-                            A short intro will appear once this position is filled.
-                          </p>
-                        </div>
-                      </div>
-                    ) : (
-                      /* ── FILLED STATE ── */
-                      <>
-                        <img src={coord.image!} alt={coord.name} className="absolute inset-0 w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-700" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500" />
-                        <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5 flex flex-col z-10 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-                          <span className="text-[9px] sm:text-[10px] text-[hsl(var(--phosphor))] uppercase tracking-widest mb-1.5">{coord.role}</span>
-                          <h4 className="text-sm sm:text-lg font-bold text-white uppercase leading-tight">{coord.name}</h4>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Glowing Terminal CTA */}
+            {/* MOVED INITIATE HANDSHAKE CTA HERE */}
             <div
               ref={detailsRef}
-              className="mt-12 w-full md:w-auto"
+              className="w-full md:w-auto"
               style={{ willChange: 'opacity, transform' }}
             >
               <Link
@@ -428,12 +410,99 @@ const ClubScene = ({
             </div>
           </div>
         </div>
+
+        {/* Right: Coordinators Detailed Profiles */}
+        <div className="flex-1 flex flex-col justify-center px-8 md:px-16 py-12 md:py-0 relative z-20">
+          <div className="w-full max-w-lg mx-auto md:ml-auto md:mr-0 flex flex-col items-center">
+            
+            {/* Portrait Coordinator Cards & Profiles Stack */}
+            <div 
+              ref={membersRef}
+              className="relative w-64 h-[440px] sm:w-72 sm:h-[480px] md:w-80 md:h-[520px] mx-auto md:mr-0"
+              style={{ willChange: 'opacity' }}
+            >
+              {club.coordinators.map((coord, i) => {
+                const isTBA = !coord.image || coord.name === 'TBA';
+                
+                return (
+                  <div 
+                    key={i}
+                    className="absolute inset-0 w-full h-full flex flex-col items-center text-center"
+                    style={{ willChange: 'transform' }}
+                  >
+                    {/* 1. Image Portrait Card */}
+                    <div className="relative w-44 h-56 sm:w-48 sm:h-64 aspect-[3/4] rounded-2xl border border-[hsl(var(--phosphor)/0.2)] bg-black shadow-[0_20px_40px_rgba(0,0,0,0.6)] overflow-hidden group">
+                      {/* Subtle hover overlay glow */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--phosphor)/0.15)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none rounded-2xl" />
+
+                      {/* Holographic Glare */}
+                      <div className="absolute inset-0 z-20 pointer-events-none overflow-hidden rounded-2xl">
+                        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out translate-x-[-100%] group-hover:translate-x-[100%]" />
+                      </div>
+
+                      {isTBA ? (
+                        /* TBA Portrait State */
+                        <div className="absolute inset-0 flex items-center justify-center bg-black">
+                          <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[6rem] sm:text-[8rem] font-black text-white/5 select-none z-0 tracking-tighter" style={{ fontFamily: 'var(--font-display)' }}>TBA</span>
+                          <span className="relative z-10 text-xs text-[hsl(var(--graphite))] font-mono uppercase tracking-[0.15em]">// OPEN SEAT</span>
+                        </div>
+                      ) : (
+                        /* Filled Portrait State */
+                        <>
+                          <img 
+                            src={coord.image!} 
+                            alt={coord.name} 
+                            className="absolute inset-0 w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-700" 
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent opacity-85 group-hover:opacity-100 transition-opacity duration-500" />
+                        </>
+                      )}
+                    </div>
+
+                    {/* 2. Text Metadata Section */}
+                    <div className="mt-6 flex flex-col items-center max-w-[280px]">
+                      {/* Role Label */}
+                      <span className="mono-label text-[10px] text-[hsl(var(--phosphor))] uppercase tracking-[0.2em] font-semibold">
+                        {coord.role}
+                      </span>
+
+                      {/* Name */}
+                      <h4 className="text-lg sm:text-xl font-bold text-white uppercase mt-1 leading-tight tracking-wide">
+                        {coord.name}
+                      </h4>
+
+                      {/* Accent separator line */}
+                      <div className="w-8 h-[2px] bg-[hsl(var(--phosphor)/0.4)] my-3" />
+
+                      {/* Bio brief */}
+                      <p className="text-xs leading-relaxed text-[hsl(var(--graphite))] text-center px-4 font-normal">
+                        {coord.bio}
+                      </p>
+
+                      {/* LinkedIn URL Link */}
+                      {!isTBA && coord.linkedin && (
+                        <a
+                          href={coord.linkedin}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`${coord.name} on LinkedIn`}
+                          className="focus-phosphor mono-label mt-4 inline-flex items-center gap-1.5 text-[hsl(var(--chalk))] hover:text-[hsl(var(--phosphor))] transition-colors duration-200 text-[10px] tracking-widest"
+                        >
+                          <Linkedin className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                          <span>CONNECT</span>
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
-
-// ── Main component ────────────────────────────────────────────────────────────
 
 export const Clubs = () => {
   const reducedMotion = useReducedMotion();
