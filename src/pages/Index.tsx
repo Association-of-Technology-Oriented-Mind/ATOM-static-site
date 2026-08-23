@@ -1,6 +1,4 @@
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
 import { Hero } from '@/components/Hero';
 import { About } from '@/components/About';
 import EventsSection from '@/components/EventsSection';

@@ -434,7 +434,7 @@ const FullPhotoGallery = () => {
     
     if (direction === 'prev' && selectedImageIndex > 0) {
       setSelectedImageIndex(selectedImageIndex - 1);
-    } else if (direction === 'next' && selectedImageIndex < galleryItems.length - 1) {
+    } else if (direction === 'next' && selectedImageIndex < loadedItems.length - 1) {
       setSelectedImageIndex(selectedImageIndex + 1);
     }
   };

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import ScrollScene from '@/components/scroll/ScrollScene';
 import { easeInOut, prog } from '@/utils/scrollMath';
@@ -164,32 +164,123 @@ const ClubScene = ({
     }
 
     // Headline (Part 1: Left Side)
-    headline.style.opacity = String(t.intro);
-    headline.style.transform = reducedMotion ? 'none' : `translate3d(${(1 - t.intro) * -30}px, 0, 0)`;
-
-    // Members (Part 2: Right Side) - Deck Reveal Animation
-    const topCard = members.children[0] as HTMLElement;
-    const bottomCard = members.children[1] as HTMLElement;
+    let leftOpacity = 0;
+    let leftTranslateX = -40;
     
-    if (topCard) {
-      topCard.style.opacity = String(t.coord);
-      const rot1 = -8 * t.coord;
-      const x1 = -30 * t.coord;
-      const y1 = (1 - t.coord) * 60; 
-      topCard.style.transform = reducedMotion ? 'none' : `translate3d(${x1}px, ${y1}px, 0) rotate(${rot1}deg)`;
+    if (progress <= 0.15) {
+      const p = progress / 0.15; // 0 to 1
+      leftOpacity = p;
+      leftTranslateX = -40 * (1 - p);
+    } else if (progress > 0.15 && progress <= 0.85) {
+      leftOpacity = 1;
+      leftTranslateX = 0;
+    } else {
+      // fade out as we exit the scene
+      const p = Math.max(0, (1 - progress) / 0.15); // 1 to 0
+      leftOpacity = p;
+      leftTranslateX = -30 * (1 - p);
     }
     
-    if (bottomCard) {
-      bottomCard.style.opacity = String(t.joint);
-      const rot2 = 8 * t.joint;
-      const x2 = 30 * t.joint;
-      const y2 = (1 - t.joint) * 60;
-      bottomCard.style.transform = reducedMotion ? 'none' : `translate3d(${x2}px, ${y2}px, 0) rotate(${rot2}deg)`;
+    headline.style.opacity = String(leftOpacity);
+    headline.style.transform = reducedMotion ? 'none' : `translate3d(${leftTranslateX}px, 0, 0)`;
+
+    // Right Side - Cards Sequence Animation
+    const card1 = members.children[0] as HTMLElement;
+    const card2 = members.children[1] as HTMLElement;
+
+    if (card1) {
+      let opacity = 0;
+      let tx = 100;
+      let scale = 0.95;
+      let rot = 5;
+
+      if (progress < 0.1) {
+        opacity = 0;
+        tx = 100;
+      } else if (progress >= 0.1 && progress < 0.25) {
+        // Slide in
+        const p = (progress - 0.1) / 0.15; // 0 to 1
+        opacity = p;
+        tx = 100 * (1 - p);
+        scale = 0.95 + 0.05 * p;
+        rot = 5 * (1 - p);
+      } else if (progress >= 0.25 && progress < 0.5) {
+        // Active
+        opacity = 1;
+        tx = 0;
+        scale = 1;
+        rot = 0;
+      } else if (progress >= 0.5 && progress < 0.65) {
+        // Slide out to the left
+        const p = (progress - 0.5) / 0.15; // 0 to 1
+        opacity = 1 - p;
+        tx = -120 * p;
+        scale = 1 - 0.05 * p;
+        rot = -5 * p;
+      } else {
+        opacity = 0;
+      }
+
+      card1.style.opacity = String(opacity);
+      card1.style.transform = reducedMotion ? 'none' : `translate3d(${tx}px, 0, 0) scale(${scale}) rotate(${rot}deg)`;
+      card1.style.pointerEvents = opacity > 0.5 ? 'auto' : 'none';
     }
 
-    // Details / Explore button
-    details.style.opacity = String(t.details);
-    details.style.transform = reducedMotion ? 'none' : `translate3d(0, ${(1 - t.details) * 30}px, 0)`;
+    if (card2) {
+      let opacity = 0;
+      let tx = 120;
+      let scale = 0.95;
+      let rot = 5;
+
+      if (progress < 0.45) {
+        opacity = 0;
+        tx = 120;
+      } else if (progress >= 0.45 && progress < 0.6) {
+        // Slide in from the right
+        const p = (progress - 0.45) / 0.15; // 0 to 1
+        opacity = p;
+        tx = 120 * (1 - p);
+        scale = 0.95 + 0.05 * p;
+        rot = 5 * (1 - p);
+      } else if (progress >= 0.6 && progress < 0.8) {
+        // Active
+        opacity = 1;
+        tx = 0;
+        scale = 1;
+        rot = 0;
+      } else if (progress >= 0.8 && progress < 0.95) {
+        // Slide out to the left
+        const p = (progress - 0.8) / 0.15; // 0 to 1
+        opacity = 1 - p;
+        tx = -100 * p;
+        scale = 1 - 0.05 * p;
+        rot = -5 * p;
+      } else {
+        opacity = 0;
+      }
+
+      card2.style.opacity = String(opacity);
+      card2.style.transform = reducedMotion ? 'none' : `translate3d(${tx}px, 0, 0) scale(${scale}) rotate(${rot}deg)`;
+      card2.style.pointerEvents = opacity > 0.5 ? 'auto' : 'none';
+    }
+
+    // Detail button / CTA
+    let detailOpacity = 0;
+    let detailTranslateY = 30;
+    if (progress >= 0.25 && progress < 0.85) {
+      detailOpacity = 1;
+      detailTranslateY = 0;
+    } else if (progress < 0.25) {
+      const p = (progress) / 0.25;
+      detailOpacity = p;
+      detailTranslateY = 30 * (1 - p);
+    } else {
+      const p = Math.max(0, (1 - progress) / 0.15);
+      detailOpacity = p;
+      detailTranslateY = 20 * (1 - p);
+    }
+    details.style.opacity = String(detailOpacity);
+    details.style.transform = reducedMotion ? 'none' : `translate3d(0, ${detailTranslateY}px, 0)`;
   }, [progress, reducedMotion]);
 
   return (
@@ -261,7 +352,7 @@ const ClubScene = ({
             {/* Portrait Coordinator Cards */}
             <div 
               ref={membersRef}
-              className="flex flex-row justify-center md:justify-end -space-x-12 md:-space-x-20 w-full"
+              className="relative w-48 sm:w-56 md:w-64 aspect-[3/4] mx-auto md:mr-0 h-[256px] sm:h-[298px] md:h-[340px]"
               style={{ willChange: 'opacity' }}
             >
               {club.coordinators.map((coord, i) => {
@@ -270,7 +361,7 @@ const ClubScene = ({
                 return (
                   <div 
                     key={i}
-                    className={`w-48 sm:w-56 md:w-64 aspect-[3/4] flex flex-col rounded-3xl border border-[hsl(var(--phosphor)/0.2)] bg-black backdrop-blur-md shadow-[0_30px_60px_rgba(0,0,0,0.8)] transition-all relative overflow-hidden group ${i % 2 !== 0 ? 'mt-12 md:mt-16' : ''}`}
+                    className="absolute inset-0 w-full h-full flex flex-col rounded-3xl border border-[hsl(var(--phosphor)/0.2)] bg-black backdrop-blur-md shadow-[0_30px_60px_rgba(0,0,0,0.8)] transition-all overflow-hidden group"
                     style={{ willChange: 'transform' }}
                   >
                     {/* Subtle inner card glow for hover effect */}

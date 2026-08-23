@@ -28,7 +28,7 @@ const PastEventTimeline: React.FC<PastEventTimelineProps> = ({ events, onEventCl
   // Scroll progress for the central line
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start center", "end bottom"]
+    offset: ["start center", "end end"]
   });
 
   const lineHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);

@@ -6,7 +6,6 @@ import {
   easeInOut,
   lerp,
   prog,
-  sceneGradient,
 } from '@/utils/scrollMath';
 import {
   coordinatorsByPortfolio,
