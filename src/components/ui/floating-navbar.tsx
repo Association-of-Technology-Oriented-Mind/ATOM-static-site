@@ -1,21 +1,20 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Home, Calendar, Layers, Users, Image as ImageIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import atomLogo from '@/assets/atom-logo.webp';
 
 export interface NavItem {
   name: string;
   link: string;
-  icon: React.ComponentType<{ className?: string }>;
 }
 
 const navItems: NavItem[] = [
-  { name: 'Home', link: '/', icon: Home },
-  { name: 'Events', link: '/events', icon: Calendar },
-  { name: 'Clubs', link: '/#clubs-section', icon: Layers },
-  { name: 'Team', link: '/core', icon: Users },
-  { name: 'Gallery', link: '/full-gallery', icon: ImageIcon },
+  { name: 'Home', link: '/' },
+  { name: 'Events', link: '/events' },
+  { name: 'Clubs', link: '/#clubs-section' },
+  { name: 'Team', link: '/core' },
+  { name: 'Gallery', link: '/full-gallery' },
 ];
 
 export const FloatingNav = () => {
@@ -49,22 +48,24 @@ export const FloatingNav = () => {
           {/* Brand/Mini-logo */}
           <Link 
             to="/" 
-            className="flex items-center gap-1.5 focus:outline-none pl-1"
+            className="flex items-center focus:outline-none pl-1 group"
             onClick={() => {
               if (location.pathname === '/') {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }
             }}
+            aria-label="ATOM Homepage"
           >
-            <span className="font-mono text-sm font-black tracking-tight text-[hsl(var(--chalk))] hover:text-[hsl(var(--phosphor))] transition-colors">
-              ATOM.
-            </span>
+            <img 
+              src={atomLogo} 
+              alt="ATOM" 
+              className="w-6 h-6 sm:w-7 sm:h-7 object-contain opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-300"
+            />
           </Link>
 
           {/* Navigation Pill Items */}
           <nav className="flex items-center gap-1 relative">
             {navItems.map((item, idx) => {
-              const Icon = item.icon;
               const isHash = item.link.includes('#');
               const isActive = isHash 
                 ? location.pathname === '/' && location.hash === '#clubs-section'
@@ -111,12 +112,11 @@ export const FloatingNav = () => {
                       href={item.link}
                       onClick={handleClick}
                       className={cn(
-                        "relative z-10 flex items-center gap-1.5 focus:outline-none transition-colors duration-200",
+                        "relative z-10 flex items-center focus:outline-none transition-colors duration-200",
                         isActive ? "text-[hsl(var(--phosphor))]" : "text-white/70 hover:text-white"
                       )}
                     >
-                      <Icon className="w-4 h-4" />
-                      <span className="hidden sm:inline font-mono text-[10px] tracking-widest uppercase font-medium">
+                      <span className="font-mono text-[10px] sm:text-xs tracking-widest uppercase font-medium">
                         {item.name}
                       </span>
                     </a>
@@ -124,12 +124,11 @@ export const FloatingNav = () => {
                     <Link
                       to={item.link}
                       className={cn(
-                        "relative z-10 flex items-center gap-1.5 focus:outline-none transition-colors duration-200",
+                        "relative z-10 flex items-center focus:outline-none transition-colors duration-200",
                         isActive ? "text-[hsl(var(--phosphor))]" : "text-white/70 hover:text-white"
                       )}
                     >
-                      <Icon className="w-4 h-4" />
-                      <span className="hidden sm:inline font-mono text-[10px] tracking-widest uppercase font-medium">
+                      <span className="font-mono text-[10px] sm:text-xs tracking-widest uppercase font-medium">
                         {item.name}
                       </span>
                     </Link>

@@ -442,9 +442,15 @@ export const Hero = () => {
           >
             <motion.h1
               variants={itemVariants}
-              className="text-[12vw] md:text-[6.5rem] lg:text-[7.5rem] font-black leading-[0.85] tracking-[-0.04em] uppercase text-[hsl(var(--chalk))]"
+              className="text-[12vw] md:text-[6.5rem] lg:text-[7.5rem] font-black leading-[0.85] tracking-[-0.04em] uppercase text-[hsl(var(--chalk))] flex items-center flex-wrap"
             >
-              ATOM.
+              <span>AT</span>
+              <img 
+                src={atomLogo} 
+                alt="O" 
+                className="inline-block w-[0.72em] h-[0.72em] mx-[0.02em] align-middle object-contain filter drop-shadow-[0_0_16px_rgba(125,249,228,0.25)] transition-transform duration-700 hover:rotate-45" 
+              />
+              <span>M.</span>
             </motion.h1>
             
             <motion.p
