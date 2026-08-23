@@ -2,7 +2,6 @@ import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, useScroll, useTransform, useMotionValue, useSpring } from 'framer-motion';
 import { ArrowLeft, Github, Linkedin, Maximize2, X, Target, Users, Code } from 'lucide-react';
-import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { hackhiveClub } from '@/constants/hackhive';
 import { dotdevClub } from '@/constants/dotdev';
@@ -163,7 +162,6 @@ const ClubPage = () => {
   if (!club) {
     return (
       <div className="min-h-screen bg-[hsl(var(--ink))] flex flex-col">
-        <Navigation />
         <main className="flex-1 flex flex-col justify-center items-center text-center px-6 pt-32 pb-24">
           <h1 className="display-l text-[hsl(var(--chalk))] uppercase mb-4">Club Not Found</h1>
           <p className="editorial-body text-[hsl(var(--chalk)/0.6)] mb-8">
@@ -204,7 +202,6 @@ const ClubPage = () => {
       style={{ '--phosphor': themeColor } as React.CSSProperties}
     >
       <FloatingOrbs color={themeColor} />
-      <Navigation />
 
       {/* ──────────────────────────────────────────────────────────
           PREMIUM CENTERED HERO

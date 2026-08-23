@@ -137,26 +137,6 @@ const EventDetailPage: React.FC = () => {
   return (
     <main className="min-h-screen relative overflow-x-hidden bg-[hsl(var(--ink))]" ref={containerRef}>
       
-      {/* ── Absolute Navigation ────────────────────────────────────────────── */}
-      <nav className="absolute top-0 left-0 w-full z-50 px-6 sm:px-10 lg:px-16 py-6 sm:py-8 flex items-center bg-gradient-to-b from-black/80 to-transparent">
-        <button
-          onClick={() => {
-            if (window.history.length > 1) {
-              navigate(-1);
-            } else {
-              navigate('/events');
-            }
-          }}
-          className="flex items-center gap-2 group text-white/70 hover:text-white transition-colors uppercase tracking-[0.15em]"
-          style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem' }}
-        >
-          <div className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center bg-black/20 backdrop-blur-md group-hover:border-[hsl(var(--phosphor))] group-hover:bg-[hsl(var(--phosphor)/0.2)] transition-all">
-            <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5 group-hover:text-[hsl(var(--phosphor))]" />
-          </div>
-          Return to Events
-        </button>
-      </nav>
-
       {/* ── Cinematic Hero ─────────────────────────────────────────────────── */}
       <div className="relative w-full h-[70vh] lg:h-[80vh] flex flex-col justify-end">
         {/* Parallax Background */}

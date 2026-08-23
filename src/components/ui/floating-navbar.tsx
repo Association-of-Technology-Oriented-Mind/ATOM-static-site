@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Home, Calendar, Layers, Users, Image as ImageIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -19,9 +19,7 @@ const navItems: NavItem[] = [
 ];
 
 export const FloatingNav = () => {
-  const { scrollY } = useScroll();
   const location = useLocation();
-  const [visible, setVisible] = useState(false);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
   // Blacklist navigation on admin, login, and registration pages
@@ -30,66 +28,24 @@ export const FloatingNav = () => {
     location.pathname.startsWith('/login') ||
     location.pathname.startsWith('/registration');
 
-  useMotionValueEvent(scrollY, 'change', (latest) => {
-    if (isExcludedPage) {
-      setVisible(false);
-      return;
-    }
-
-    const previous = scrollY.getPrevious() ?? 0;
-    const isScrollingDown = latest > previous;
-
-    if (location.pathname === '/') {
-      // On the homepage, only show after scrolling past the Hero page (approx 75% of viewport height)
-      const heroThreshold = window.innerHeight * 0.75;
-      if (latest < heroThreshold) {
-        setVisible(false);
-      } else {
-        setVisible(!isScrollingDown); // Hide on scroll down, show on scroll up
-      }
-    } else {
-      // On other pages, show when scrolling up, hide on scroll down
-      if (latest < 50) {
-        setVisible(true); // Always visible at the very top
-      } else {
-        setVisible(!isScrollingDown);
-      }
-    }
-  });
-
-  // Ensure navbar is visible when changing sub-pages initially
-  useEffect(() => {
-    if (isExcludedPage) {
-      setVisible(false);
-      return;
-    }
-    if (location.pathname !== '/') {
-      setVisible(true);
-    } else {
-      // Respect scroll position if returning to homepage
-      setVisible(window.scrollY > window.innerHeight * 0.75);
-    }
-  }, [location.pathname, isExcludedPage]);
-
   if (isExcludedPage) return null;
 
   return (
     <AnimatePresence mode="wait">
-      {visible && (
-        <motion.div
-          initial={{ opacity: 0, y: -100, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -100, scale: 0.95 }}
-          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-          className={cn(
-            "fixed top-6 inset-x-0 mx-auto z-[9999]",
-            "flex items-center justify-between",
-            "w-[90%] max-w-lg px-4 sm:px-6 py-2 rounded-full",
-            // Liquid Glass styling: blur, border opacity, drop shadow, and linear background
-            "bg-black/30 backdrop-blur-xl border border-white/[0.08]",
-            "shadow-[0_8px_32px_0_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.05)]"
-          )}
-        >
+      <motion.div
+        initial={{ opacity: 0, y: -100, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: -100, scale: 0.95 }}
+        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        className={cn(
+          "fixed top-6 inset-x-0 mx-auto z-[9999]",
+          "flex items-center justify-between",
+          "w-[90%] max-w-lg px-4 sm:px-6 py-2 rounded-full",
+          // Liquid Glass styling: blur, border opacity, drop shadow, and linear background
+          "bg-black/30 backdrop-blur-xl border border-white/[0.08]",
+          "shadow-[0_8px_32px_0_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.05)]"
+        )}
+      >
           {/* Brand/Mini-logo */}
           <Link 
             to="/" 
@@ -183,7 +139,6 @@ export const FloatingNav = () => {
             })}
           </nav>
         </motion.div>
-      )}
     </AnimatePresence>
   );
 };

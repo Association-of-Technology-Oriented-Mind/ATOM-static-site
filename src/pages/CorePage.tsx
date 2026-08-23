@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import Navigation from '@/components/Navigation';
 import CoreMembers from '@/components/CoreMembers';
 import Footer from '@/components/Footer';
 
@@ -10,8 +9,7 @@ const CorePage = () => {
 
   return (
     <div className="min-h-screen bg-[hsl(var(--ink))]">
-      <Navigation />
-      <main className="pt-[var(--nav-height)]">
+      <main className="pt-20 sm:pt-24">
         <CoreMembers />
       </main>
       <Footer />
