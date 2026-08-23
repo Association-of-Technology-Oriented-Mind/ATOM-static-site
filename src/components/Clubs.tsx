@@ -452,7 +452,7 @@ const ClubScene = ({
                           <img 
                             src={coord.image!} 
                             alt={coord.name} 
-                            className="absolute inset-0 w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-700" 
+                            className="absolute inset-0 w-full h-full object-cover transition-all duration-700" 
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500" />
                         </>
