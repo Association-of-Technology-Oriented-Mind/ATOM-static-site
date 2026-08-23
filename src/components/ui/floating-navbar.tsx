@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import atomLogo from '@/assets/atom-logo.webp';
 
@@ -18,6 +18,7 @@ const navItems: NavItem[] = [
 ];
 
 export const FloatingNav = () => {
+  const { scrollY } = useScroll();
   const location = useLocation();
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
@@ -27,24 +28,65 @@ export const FloatingNav = () => {
     location.pathname.startsWith('/login') ||
     location.pathname.startsWith('/registration');
 
+  const [visible, setVisible] = useState(() => {
+    if (isExcludedPage) return false;
+    if (location.pathname === '/') return false;
+    return true;
+  });
+
+  const checkVisibility = (y: number) => {
+    if (isExcludedPage) {
+      setVisible(false);
+      return;
+    }
+    if (location.pathname === '/') {
+      const clubsEl = document.getElementById('clubs-section');
+      // Minimum safe threshold (Hero + About height, approx 1.2x viewport height)
+      const minThreshold = window.innerHeight * 1.2;
+      let threshold = minThreshold;
+      
+      if (clubsEl && clubsEl.offsetTop > minThreshold) {
+        threshold = clubsEl.offsetTop - 200;
+      }
+      
+      setVisible(y >= threshold);
+    } else {
+      setVisible(true);
+    }
+  };
+
+  useMotionValueEvent(scrollY, 'change', (latest) => {
+    checkVisibility(latest);
+  });
+
+  useEffect(() => {
+    // Initial check and delayed re-check after layout calculation
+    checkVisibility(window.scrollY);
+    const timer = setTimeout(() => {
+      checkVisibility(window.scrollY);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [location.pathname, isExcludedPage]);
+
   if (isExcludedPage) return null;
 
   return (
     <AnimatePresence mode="wait">
-      <motion.div
-        initial={{ opacity: 0, y: -100, scale: 0.95 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: -100, scale: 0.95 }}
-        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-        className={cn(
-          "fixed top-6 inset-x-0 mx-auto z-[9999]",
-          "flex items-center justify-between",
-          "w-[90%] max-w-lg px-4 sm:px-6 py-2 rounded-full",
-          // Liquid Glass styling: blur, border opacity, drop shadow, and linear background
-          "bg-black/30 backdrop-blur-xl border border-white/[0.08]",
-          "shadow-[0_8px_32px_0_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.05)]"
-        )}
-      >
+      {visible && (
+        <motion.div
+          initial={{ opacity: 0, y: -100, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -100, scale: 0.95 }}
+          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          className={cn(
+            "fixed top-6 inset-x-0 mx-auto z-[9999]",
+            "flex items-center justify-between",
+            "w-[90%] max-w-lg px-4 sm:px-6 py-2 rounded-full",
+            // Liquid Glass styling: blur, border opacity, drop shadow, and linear background
+            "bg-black/30 backdrop-blur-xl border border-white/[0.08]",
+            "shadow-[0_8px_32px_0_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.05)]"
+          )}
+        >
           {/* Brand/Mini-logo */}
           <Link 
             to="/" 
@@ -89,20 +131,16 @@ export const FloatingNav = () => {
                   onMouseLeave={() => setHoveredIdx(null)}
                   className="relative px-2.5 py-1.5 sm:px-3 sm:py-2"
                 >
-                  {/* Sliding Liquid Glass capsule effect */}
-                  {hoveredIdx === idx && (
+                  {/* Sliding Theme-colored Liquid Glass capsule effect */}
+                  {(hoveredIdx === idx || (hoveredIdx === null && isActive)) && (
                     <motion.div
                       layoutId="nav-hover-pill"
-                      className="absolute inset-0 bg-white/[0.05] rounded-full border border-white/[0.03] shadow-inner"
-                      transition={{ type: "spring", stiffness: 350, damping: 25 }}
-                    />
-                  )}
-
-                  {/* Active Indicator Underline */}
-                  {isActive && (
-                    <motion.div
-                      layoutId="nav-active-indicator"
-                      className="absolute bottom-0 inset-x-3 h-[2px] bg-[hsl(var(--phosphor))] shadow-[0_0_8px_hsl(var(--phosphor))]"
+                      className={cn(
+                        "absolute inset-0 rounded-full border transition-colors duration-200",
+                        hoveredIdx === idx
+                          ? "bg-[hsl(var(--phosphor)/0.18)] border-[hsl(var(--phosphor)/0.35)] shadow-[0_0_12px_hsl(var(--phosphor)/0.25)]"
+                          : "bg-[hsl(var(--phosphor)/0.12)] border-[hsl(var(--phosphor)/0.22)]"
+                      )}
                       transition={{ type: "spring", stiffness: 350, damping: 25 }}
                     />
                   )}
@@ -138,6 +176,7 @@ export const FloatingNav = () => {
             })}
           </nav>
         </motion.div>
+      )}
     </AnimatePresence>
   );
 };
