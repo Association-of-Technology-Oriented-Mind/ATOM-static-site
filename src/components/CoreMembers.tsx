@@ -413,7 +413,7 @@ const MemberColumn = ({
               "
               style={{
                 fontFamily:
-                  "'Archivo Black', system-ui, sans-serif",
+                  "var(--font-display)",
                 fontSize:
                   'clamp(3rem, 6vw, 5rem)',
               }}
@@ -448,19 +448,19 @@ const MemberColumn = ({
       >
         {/* Role */}
 
-        <p className="mono-label">
-          <span className="accent">
+        <p className="font-sans text-lg sm:text-xl lg:text-2xl font-light tracking-[0.3em] text-[hsl(var(--chalk))] opacity-90 mb-3">
+          <span className="text-[hsl(var(--phosphor))] uppercase font-medium">
             {member.isLead
-              ? 'Lead'
-              : 'Joint'}
+              ? 'LEAD'
+              : 'JOINT'}
           </span>
 
-          <span aria-hidden="true">
-            {' · '}
+          <span className="opacity-40 mx-4 text-[0.7em] align-middle" aria-hidden="true">
+            {'•'}
           </span>
 
-          <span>
-            {member.role}
+          <span className="uppercase">
+            {member.role.toUpperCase().replace('JOINT ', '')}
           </span>
         </p>
 

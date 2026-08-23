@@ -1,6 +1,6 @@
 // HackHive Club data and imports
-import Sanjay from '@/assets/HACKHIVE/Sanjay.webp';
-import Jayesh from "@/assets/HACKHIVE/Jayesh.webp";
+import Jefferson from '@/assets/HACKHIVE/Jefferson.jpg';
+import Dave from "@/assets/HACKHIVE/Dave.png";
 import Leo from '@/assets/HACKHIVE/Leo.webp';
 const Gre = null;
 import Nithish from "@/assets/Nithishkumar.webp";
@@ -27,20 +27,20 @@ export const hackhiveClub = {
     "Hack Hive hosts weekly learning sessions, invites industry experts for talks, and participates in national cybersecurity competitions. The club has successfully organized multiple CTF events and security workshops that have benefited over 200+ students.",
   coordinators: [
     {
-      name: "Sanjay S",
+      name: "Jefferson Raja",
       role: "Coordinator",
-      image: Sanjay,
+      image: Jefferson,
       isMain: true,
-      bio: "As Coordinator of Hack Hive, Sanjay S is a finalist in the Cyberthon and was awarded the Best Idea Award at the TN-Police Hackathon.",
-      linkedin: "linkedin.com/in/sanjay-s-699585345",
+      bio: "Skilled in Cybersecurity and Software Development, winner of the Smart India Hackathon, Aurelion Hackathon 3rd-place winner, and finalist in Meta × Scalar and Cyberthon.",
+      linkedin: "linkedin.com/in/jefferson-raja/",
     },
     {
-      name: "Jayesh",
-      role: "Joint Coordinator",
-      image: Jayesh,
+      name: "Dave V Shah",
+      role: "Junior Coordinator",
+      image: Dave,
       isMain: false,
-      bio: "As Junior Coordinator of Hack Hive, Jayesh V Prakash Naidu is passionate about DIGITAL FORENSICS and created a Wi-Fi penetration-testing device to learn networking. He is also the founder of BlackSpotAI, a cybersecurity project.",
-      linkedin: "linkedin.com/in/jayesh-v-prakash-naidu",
+      bio: "Skilled in Cybersecurity, with expertise in network attack detection and digital media protection. Winner of Smart India Hackathon 2025, securing 1st place among 500 teams.",
+      linkedin: "",
     },
     {
       name: "Gregory Joe Jeni C",

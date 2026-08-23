@@ -550,9 +550,11 @@ export const Hero = () => {
               })}
 
               <div className="mt-8 flex justify-center gap-6">
-                <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="mono-label text-xs text-[hsl(var(--graphite))] hover:text-[hsl(var(--phosphor))]">GITHUB</a>
+                <a
+                  href="https://github.com/Association-of-Technology-Oriented-Mind" target="_blank" rel="noopener noreferrer" className="mono-label text-xs text-[hsl(var(--graphite))] hover:text-[hsl(var(--phosphor))]">GITHUB</a>
                 <span className="text-[hsl(var(--rule))]">/</span>
-                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="mono-label text-xs text-[hsl(var(--graphite))] hover:text-[hsl(var(--phosphor))]">LINKEDIN</a>
+                <a
+                  href="https://www.linkedin.com/company/atom-dscs/" target="_blank" rel="noopener noreferrer" className="mono-label text-xs text-[hsl(var(--graphite))] hover:text-[hsl(var(--phosphor))]">LINKEDIN</a>
               </div>
             </div>
           </motion.div>

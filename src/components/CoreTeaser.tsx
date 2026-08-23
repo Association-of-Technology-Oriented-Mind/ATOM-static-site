@@ -170,7 +170,7 @@ export const CoreTeaser = () => {
                       />
 
                       {/* Hover sweep background */}
-                      <div className="absolute inset-0 bg-[hsl(var(--phosphor))] translate-y-[101%] group-hover/btn:translate-y-0 transition-transform duration-300 ease-[cubic-bezier(0.2,1,0.2,1)] pointer-events-none" />
+                      <div className="absolute inset-0 bg-[hsl(var(--phosphor))] translate-y-[101%] group-hover/btn:translate-y-0 transition-transform duration-300 ease-out pointer-events-none" />
                       
                       <span className="relative z-10 mono-label tracking-widest group-hover/btn:text-black transition-colors duration-300">MEET THE CORE</span>
                       <ArrowRight className="relative z-10 w-4 h-4 sm:w-5 sm:h-5 group-hover/btn:text-black group-hover/btn:translate-x-1 transition-all duration-300" />

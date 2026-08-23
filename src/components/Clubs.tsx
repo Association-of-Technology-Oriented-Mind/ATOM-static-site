@@ -10,6 +10,14 @@ import { DotIcon, BiasIcon, HackIcon } from '@/constants/clubs';
 import qyroLogo from '@/assets/qyro.webp';
 import sanjayImg from '@/assets/HACKHIVE/Sanjay.webp';
 import jayeshImg from '@/assets/HACKHIVE/Jayesh.webp';
+import lohithImg from '@/assets/UNBIAS/Lohith.jpg';
+import jeffreyImg from '@/assets/UNBIAS/Jeffrey.jpg';
+import allenImg from '@/assets/DOTDEV/Allen.jpg';
+import yakshiniImg from '@/assets/DOTDEV/Yakshini.jpg';
+import jeffersonImg from '@/assets/HACKHIVE/Jefferson.jpg';
+import daveImg from '@/assets/HACKHIVE/Dave.png';
+import alainImg from '@/assets/QYRO/Alain.jpg';
+import ankithaImg from '@/assets/QYRO/Ankitha.jpg';
 
 interface CoordinatorDef {
   name: string;
@@ -32,30 +40,30 @@ interface ClubDef {
 
 const CLUBS: ClubDef[] = [
   {
-    id: 'hackhive',
-    slug: 'hackhive',
-    name: 'Hack Hive',
-    tag: 'CYBERSECURITY',
+    id: 'unbias',
+    slug: 'unbias',
+    name: 'Unbiased',
+    tag: 'AI / ML / NLP',
     description:
-      'A student-driven club that brings together passionate individuals to explore, learn, and innovate in the field of information security. Hands-on CTFs, ethical hacking workshops, and security competitions.',
+      'Exploring AI, ML, Deep Learning, NLP, Generative AI and Agents. Weekly sessions, research paper discussions, and hands-on model building — with a focus on department-relevant applications.',
     coordinators: [
       {
-        name: 'Sanjay S',
+        name: 'KRM Lohith',
         role: 'Coordinator',
-        image: sanjayImg,
-        bio: 'As Coordinator of Hack Hive, Sanjay S is a finalist in the Cyberthon and was awarded the Best Idea Award at the TN-Police Hackathon.',
-        linkedin: 'https://linkedin.com/in/sanjay-s-699585345'
+        image: lohithImg,
+        bio: "AI/ML and Blockchain enthusiast, Makers Day winner and BI3 Hackathon runner-up, with Meta Hackathon finalist experience and a 3-month Full-Stack Development internship.",
+        linkedin: 'https://linkedin.com/in/lohith-krm'
       },
       {
-        name: 'Jayesh V Prakash Naidu',
-        role: 'Joint Coordinator',
-        image: jayeshImg,
-        bio: 'As Junior Coordinator of Hack Hive, Jayesh is passionate about digital forensics and created a Wi-Fi pentesting device to learn networking. He is also the founder of BlackSpotAI.',
-        linkedin: 'https://linkedin.com/in/jayesh-v-prakash-naidu'
+        name: 'Antonio Jeffrey A',
+        role: 'Junior Coordinator',
+        image: jeffreyImg,
+        bio: "Skilled in AI, Computer Vision, IoT, and Full-Stack Development, with multiple product-building projects, startup experience, and recognition for excellence in product development.",
+        linkedin: ''
       },
     ],
-    logo: HackIcon,
-    logoAlt: 'Hack Hive icon',
+    logo: BiasIcon,
+    logoAlt: 'Unbiased club icon',
   },
   {
     id: 'dotdev',
@@ -66,48 +74,48 @@ const CLUBS: ClubDef[] = [
       'A student community for aspiring software engineers focused on full-stack development. Hackathons, code sprints, mentorship sessions and collaborative projects — from frontend to backend to deployment.',
     coordinators: [
       {
-        name: 'Dharshan Kumar J',
+        name: 'Allen John Issac',
         role: 'Coordinator',
-        image: null,
-        bio: 'As Coordinator of DotDev, Dharshan Kumar J is a Finalist of the NEXUS hackathon and a Software Developer skilled in developing Web and Mobile Applications. He is also a co-founder of VelsyMedia and TurpleSpace.',
-        linkedin: 'https://linkedin.com/in/j-dharshan-kumar'
+        image: allenImg,
+        bio: 'Skilled in AI/ML, Data Science, and Full-Stack Development. Led the development of VOX, an assistive voice-first exam platform, and recognized for leadership in technology and NSS initiatives.',
+        linkedin: 'https://linkedin.com/in/allen-john-isac-7b6730363'
       },
       {
-        name: 'Danish Prabhu K V',
-        role: 'Joint Coordinator',
-        image: null,
-        bio: 'As Junior Coordinator of DotDev, Danish Prabhu K V is a Finalist of the NEXUS Hackathon and is passionate about AI and software engineering. He is currently an intern at GMS.',
-        linkedin: 'https://linkedin.com/in/danish-prabhu-0a1691293'
+        name: 'Yakshini S',
+        role: 'Junior Coordinator',
+        image: yakshiniImg,
+        bio: 'Skilled in AI and Full-Stack Development, with 19+ certifications, a 3rd-place finish at Mindkraft Expo 2026, and hands-on internship experience in full-stack development.',
+        linkedin: ''
       },
     ],
     logo: DotIcon,
     logoAlt: 'DotDev icon',
   },
   {
-    id: 'unbias',
-    slug: 'unbias',
-    name: 'Unbiased',
-    tag: 'AI / ML / NLP',
+    id: 'hackhive',
+    slug: 'hackhive',
+    name: 'Hack Hive',
+    tag: 'CYBERSECURITY',
     description:
-      'Exploring AI, ML, Deep Learning, NLP, Generative AI and Agents. Weekly sessions, research paper discussions, and hands-on model building — with a focus on department-relevant applications.',
+      'A student-driven club that brings together passionate individuals to explore, learn, and innovate in the field of information security. Hands-on CTFs, ethical hacking workshops, and security competitions.',
     coordinators: [
       {
-        name: 'Aravindan M',
+        name: 'Jefferson Raja',
         role: 'Coordinator',
-        image: null,
-        bio: "As Coordinator of Unbias, Aravindan M is a Silver Medalist in the International Taekwondo Championship and a finalist at IIT Bombay's Eureka 2024. He is specialized in Generative AI.",
-        linkedin: 'https://linkedin.com/in/aravindan-arru'
+        image: jeffersonImg,
+        bio: 'Skilled in Cybersecurity and Software Development, winner of the Smart India Hackathon, Aurelion Hackathon 3rd-place winner, and finalist in Meta × Scalar and Cyberthon.',
+        linkedin: 'https://linkedin.com/in/jefferson-raja/'
       },
       {
-        name: 'Ronnie A Jeffrey',
-        role: 'Joint Coordinator',
-        image: null,
-        bio: "As Junior Coordinator of Unbias, Ronnie A Jeffrey is a winner in NEXUS 2024 and was awarded a special mention at Cyberthon '25. He is passionate about AI and Full Stack development.",
-        linkedin: 'https://linkedin.com/in/ronnie-a-jeffrey'
+        name: 'Dave V Shah',
+        role: 'Junior Coordinator',
+        image: daveImg,
+        bio: 'Skilled in Cybersecurity, with expertise in network attack detection and digital media protection. Winner of Smart India Hackathon 2025, securing 1st place among 500 teams.',
+        linkedin: ''
       },
     ],
-    logo: BiasIcon,
-    logoAlt: 'Unbiased club icon',
+    logo: HackIcon,
+    logoAlt: 'Hack Hive icon',
   },
   {
     id: 'qyro',
@@ -118,17 +126,17 @@ const CLUBS: ClubDef[] = [
       'Club description, objectives and focus area for Qyro are pending. Please supply this content.',
     coordinators: [
       {
-        name: 'TBA',
+        name: 'Alain Abraham',
         role: 'Coordinator',
-        image: null,
-        bio: 'A short intro will appear once this position is filled.',
-        linkedin: ''
+        image: alainImg,
+        bio: 'Quantum computing enthusiast and Quantum Engineer, with IBM Quantum certifications, a runner-up finish at the Andhra Pradesh Quantum Hackathon, and experience developing VQE-based quantum algorithms.',
+        linkedin: 'https://linkedin.com/in/alain-abraham-b91193304'
       },
       {
-        name: 'TBA',
-        role: 'Joint Coordinator',
-        image: null,
-        bio: 'A short intro will appear once this position is filled.',
+        name: 'Thumma Ankitha Ignatious',
+        role: 'Junior Coordinator',
+        image: ankithaImg,
+        bio: 'Skilled in AI and Machine Learning, with hands-on experience building AI voice control, biometric voting, and heart disease prediction projects.',
         linkedin: ''
       },
     ],
@@ -534,7 +542,7 @@ export const Clubs = () => {
           className="flex whitespace-nowrap text-white" 
           style={{ fontFamily: 'var(--font-display)', fontSize: '15vw', lineHeight: 1 }}
         >
-          HACK HIVE — DOTDEV — UNBIASED — QYRO — HACK HIVE — DOTDEV — UNBIASED — QYRO — HACK HIVE — DOTDEV — UNBIASED — QYRO — 
+          UNBIASED — DOTDEV — HACK HIVE — QYRO — UNBIASED — DOTDEV — HACK HIVE — QYRO — UNBIASED — DOTDEV — HACK HIVE — QYRO — 
         </motion.div>
       </div>
 

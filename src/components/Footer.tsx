@@ -11,7 +11,7 @@ import { motion, useInView } from 'framer-motion';
 //   Address: Karunya Institute of Technology and Sciences, Coimbatore
 //   Live:    https://atom-2026.web.app
 //
-// [DATA REQUIRED]: Instagram URL, LinkedIn URL — placeholders used until supplied.
+//   Live:    https://atom-2026.web.app
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -100,26 +100,24 @@ const Footer = () => {
             {/* Social icons */}
             <div className="footer-social">
               <SocialIcon
-                href="https://github.com/Association-of-Technology-Oriented-Mind/ATOM"
+                href="https://github.com/Association-of-Technology-Oriented-Mind"
                 label="ATOM GitHub repository"
               >
                 <Github className="w-3.5 h-3.5" aria-hidden="true" />
               </SocialIcon>
 
-              {/* [DATA REQUIRED] Instagram — placeholder */}
+              {/* Instagram */}
               <SocialIcon
-                href="#instagram"
-                label="ATOM Instagram [link not yet available]"
-                disabled
+                href="https://instagram.com/atom-dscs"
+                label="ATOM Instagram"
               >
                 <Instagram className="w-3.5 h-3.5" aria-hidden="true" />
               </SocialIcon>
 
-              {/* [DATA REQUIRED] LinkedIn — placeholder */}
+              {/* LinkedIn */}
               <SocialIcon
-                href="#linkedin"
-                label="ATOM LinkedIn [link not yet available]"
-                disabled
+                href="https://www.linkedin.com/company/atom-dscs/"
+                label="ATOM LinkedIn"
               >
                 <Linkedin className="w-3.5 h-3.5" aria-hidden="true" />
               </SocialIcon>

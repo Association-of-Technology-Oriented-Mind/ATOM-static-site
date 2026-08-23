@@ -1,6 +1,6 @@
 // UnBias Club data and imports
-const Aravind = null;
-const Ronnie = null;
+import Lohith from '@/assets/UNBIAS/Lohith.jpg';
+import Jeffrey from '@/assets/UNBIAS/Jeffrey.jpg';
 import Aparna from '@/assets/UNBIAS/Aparna.webp';
 import Lebi from '@/assets/UNBIAS/Lebi.webp';
 import Thirupathy from '@/assets/Thirupathi S.webp';
@@ -31,20 +31,20 @@ export const unbiasClub = {
     "Unbiased Club conducts weekly AI workshops, research paper discussions, and hands-on ML projects. Members have published 10+ research papers and won multiple AI competitions including national-level hackathons.",
   coordinators: [
     {
-      name: "Aravindan",
+      name: "KRM Lohith",
       role: "Coordinator",
-      image: Aravind,
+      image: Lohith,
       isMain: true,
-      bio: "As Coordinator of Unbias, Aravindan M is a Silver Medalist in the International Taekwondo Championship and a finalist at IIT Bombay's Eureka 2024. He is specialized in Generative AI and is the Head of AI at Rapha MedTech.",
-      linkedin: "linkedin.com/in/aravindan-arru",
+      bio: "AI/ML and Blockchain enthusiast, Makers Day winner and BI3 Hackathon runner-up, with Meta Hackathon finalist experience and a 3-month Full-Stack Development internship.",
+      linkedin: "linkedin.com/in/lohith-krm",
     },
     {
-      name: "Ronnie A Jeffrey",
+      name: "Antonio Jeffrey A",
       role: "Junior Coordinator",
-      image: Ronnie,
+      image: Jeffrey,
       isMain: false,
-      bio: "As Junior Coordinator of Unbias, Ronnie A Jeffrey is a winner in NEXUS 2024 and was awarded a special mention at Cyberthon '25. He is passionate about AI and Full Stack development.",
-      linkedin: "linkedin.com/in/ronnie-a-jeffrey",
+      bio: "Skilled in AI, Computer Vision, IoT, and Full-Stack Development, with multiple product-building projects, startup experience, and recognition for excellence in product development.",
+      linkedin: "",
     },
     {
       name: "Aparna",

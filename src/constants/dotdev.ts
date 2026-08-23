@@ -1,9 +1,8 @@
 // DotDev Club data and imports
-const Danish = null;
+import Allen from "@/assets/DOTDEV/Allen.jpg";
+import Yakshini from "@/assets/DOTDEV/Yakshini.jpg";
 const Jola = null;
-const Darshan = null;
 const Manisha = null;
-
 const Varsha = null;
 import Dot1 from "@/assets/DOTDEV/Dot1.webp"; 
 import Dot2 from "@/assets/DOTDEV/Dot2.webp"; 
@@ -35,20 +34,20 @@ export const dotdevClub = {
     "DotDev Club organizes hackathons, code sprints, mentorship sessions, and collaborative projects for members. The club has built over 50+ web applications and mobile apps, with members securing internships at top tech companies.",
   coordinators: [
     {
-      name: "Dharshan Kumar J",
+      name: "Allen John Issac",
       role: "Coordinator",
-      image: Darshan,
+      image: Allen,
       isMain: true,
-      bio: "As Coordinator of DotDev, Dharshan Kumar J is a Finalist of the NEXUS hackathon and a Software Developer skilled in developing Web and Mobile Applications. He is also a co-founder of VelsyMedia and TurpleSpace and has led a Midkraft24 website team.",
-      linkedin: "linkedin.com/in/j-dharshan-kumar",
+      bio: "Skilled in AI/ML, Data Science, and Full-Stack Development. Led the development of VOX, an assistive voice-first exam platform, and recognized for leadership in technology and NSS initiatives.",
+      linkedin: "linkedin.com/in/allen-john-isac-7b6730363",
     },
     {
-      name: "Danish Prabhu K V",
+      name: "Yakshini S",
       role: "Junior Coordinator",
-      image: Danish,
+      image: Yakshini,
       isMain: false,
-      bio: " As Junior Coordinator of DotDev, Danish Prabhu K V is a Finalist of the NEXUS Hackathon and is passionate about AI, and software engineering. He works as a freelancer and is currently an intern at GMS (US Based company) earning a stipend of 10k/month.",
-      linkedin: "linkedin.com/in/danish-prabhu-0a1691293",
+      bio: "Skilled in AI and Full-Stack Development, with 19+ certifications, a 3rd-place finish at Mindkraft Expo 2026, and hands-on internship experience in full-stack development.",
+      linkedin: "",
     },
     {
       name: "Manisha S",

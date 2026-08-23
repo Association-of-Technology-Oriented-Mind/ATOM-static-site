@@ -1,7 +1,6 @@
 // RND Club data and imports
-const Rumitha = null;
-const Dhruv = null;
-const Immanuel = null;
+import Alain from '@/assets/QYRO/Alain.jpg';
+import Ankitha from '@/assets/QYRO/Ankitha.jpg';
 import { Shield } from "lucide-react";
 
 export const rndClub = {
@@ -16,28 +15,20 @@ export const rndClub = {
     "R&D Club has incubated 15+ startup ideas, secured funding for 5 student projects, and established partnerships with 10+ industry leaders. The club organizes innovation challenges and prototype development workshops.",
   coordinators: [
     {
-      name: "Rumitha S",
+      name: "Alain Abraham",
       role: "Coordinator",
-      image: Rumitha,
+      image: Alain,
       isMain: true,
-      bio: " As Coordinator of R & D, Rumitha S is a Runner up in Nexus for the project Library Management System. She has published a research paper and earned a Google certified Data Analytics certificate.",
-      linkedin: "linkedin.com/in/rumitha-s",
+      bio: "Quantum computing enthusiast and Quantum Engineer, with IBM Quantum certifications, a runner-up finish at the Andhra Pradesh Quantum Hackathon, and experience developing VQE-based quantum algorithms.",
+      linkedin: "linkedin.com/in/alain-abraham-b91193304",
     },
     {
-      name: "Dhruv Swamy R",
-      role: "Coordinator",
-      image: Dhruv,
-      isMain: true,
-      bio: "As Coordinator of R & D, Dhruv Swamy R is passionate about AI in marketing and entrepreneurship and is the Founder & Ceo of RUVODRUVTO.",
-      linkedin: "linkedin.com/in/dhuruvr",
-    },
-    {
-      name: "Immanuel Sibu Chandy",
+      name: "Thumma Ankitha Ignatious",
       role: "Junior Coordinator",
-      image: Immanuel,
+      image: Ankitha,
       isMain: false,
-      bio: "As Junior Coordinator of R & D, Immanuel Shibu Chandy participated in the SIH and other hackathons, and even for an ISRO hackathon.",
-      linkedin: "linkedin.com/in/immanuel-shibu-chandy-8a902732",
+      bio: "Skilled in AI and Machine Learning, with hands-on experience building AI voice control, biometric voting, and heart disease prediction projects.",
+      linkedin: "",
     },
   ],
   projects: [
