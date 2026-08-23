@@ -8,8 +8,6 @@ import { easeInOut, prog } from '@/utils/scrollMath';
 // Import real club icons & logos
 import { DotIcon, BiasIcon, HackIcon } from '@/constants/clubs';
 import qyroLogo from '@/assets/qyro.webp';
-import sanjayImg from '@/assets/HACKHIVE/Sanjay.webp';
-import jayeshImg from '@/assets/HACKHIVE/Jayesh.webp';
 import lohithImg from '@/assets/UNBIAS/Lohith.jpg';
 import jeffreyImg from '@/assets/UNBIAS/Jeffrey.jpg';
 import allenImg from '@/assets/DOTDEV/Allen.jpg';

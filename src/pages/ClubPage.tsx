@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, useScroll, useTransform, useMotionValue, useSpring } from 'framer-motion';
-import { ArrowLeft, ExternalLink, Github, Linkedin, Maximize2, X, Target, Users, Code } from 'lucide-react';
+import { ArrowLeft, Github, Linkedin, Maximize2, X, Target, Users, Code } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { hackhiveClub } from '@/constants/hackhive';

@@ -10,6 +10,8 @@ interface UseImageProtectionOptions {
 }
 
 export const useImageProtection = (options: UseImageProtectionOptions = {}) => {
+  const isDev = import.meta.env.DEV;
+
   const {
     disableRightClick = true,
     disableDrag = true,
@@ -19,12 +21,18 @@ export const useImageProtection = (options: UseImageProtectionOptions = {}) => {
     showWarningOnRightClick = true,
   } = options;
 
+  const activeRightClick = isDev ? false : disableRightClick;
+  const activeDrag = isDev ? false : disableDrag;
+  const activeSelect = isDev ? false : disableSelect;
+  const activePrintScreen = isDev ? false : disablePrintScreen;
+  const activeDevTools = isDev ? false : disableDevTools;
+  const activeWarning = isDev ? false : showWarningOnRightClick;
+
   useEffect(() => {
     const handleContextMenu = (e: MouseEvent) => {
-      if (disableRightClick) {
+      if (activeRightClick) {
         e.preventDefault();
-        if (showWarningOnRightClick) {
-          // You could show a toast notification here
+        if (activeWarning) {
           console.warn('Right-click is disabled to protect content');
         }
         return false;
@@ -32,31 +40,28 @@ export const useImageProtection = (options: UseImageProtectionOptions = {}) => {
     };
 
     const handleDragStart = (e: DragEvent) => {
-      if (disableDrag) {
+      if (activeDrag) {
         e.preventDefault();
         return false;
       }
     };
 
     const handleSelectStart = (e: Event) => {
-      if (disableSelect) {
+      if (activeSelect) {
         e.preventDefault();
         return false;
       }
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Disable common screenshot/save shortcuts
-      if (disablePrintScreen) {
+      if (activePrintScreen) {
         if (e.key === 'PrintScreen') {
           e.preventDefault();
           return false;
         }
       }
 
-      // Disable developer tools shortcuts
-      if (disableDevTools) {
-        // F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+      if (activeDevTools) {
         if (
           e.key === 'F12' ||
           (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
@@ -67,8 +72,7 @@ export const useImageProtection = (options: UseImageProtectionOptions = {}) => {
         }
       }
 
-      // Disable save shortcuts
-      if (e.ctrlKey && (e.key === 's' || e.key === 'S')) {
+      if (!isDev && e.ctrlKey && (e.key === 's' || e.key === 'S')) {
         const target = e.target as HTMLElement;
         if (target.tagName === 'IMG' || target.tagName === 'CANVAS') {
           e.preventDefault();
@@ -78,23 +82,25 @@ export const useImageProtection = (options: UseImageProtectionOptions = {}) => {
     };
 
     const handleDrop = (e: DragEvent) => {
-      e.preventDefault();
-      return false;
+      if (!isDev) {
+        e.preventDefault();
+        return false;
+      }
     };
 
-    // Add event listeners
     document.addEventListener('contextmenu', handleContextMenu);
     document.addEventListener('dragstart', handleDragStart);
     document.addEventListener('selectstart', handleSelectStart);
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('drop', handleDrop);
 
-    // Disable drag on images
     const images = document.querySelectorAll('img');
-    images.forEach((img) => {
-      img.draggable = false;
-      img.addEventListener('dragstart', handleDragStart);
-    });
+    if (!isDev) {
+      images.forEach((img) => {
+        img.draggable = false;
+        img.addEventListener('dragstart', handleDragStart);
+      });
+    }
 
     return () => {
       document.removeEventListener('contextmenu', handleContextMenu);
@@ -103,23 +109,23 @@ export const useImageProtection = (options: UseImageProtectionOptions = {}) => {
       document.removeEventListener('keydown', handleKeyDown);
       document.removeEventListener('drop', handleDrop);
 
-      images.forEach((img) => {
-        img.removeEventListener('dragstart', handleDragStart);
-      });
+      if (!isDev) {
+        images.forEach((img) => {
+          img.removeEventListener('dragstart', handleDragStart);
+        });
+      }
     };
-  }, [disableRightClick, disableDrag, disableSelect, disablePrintScreen, disableDevTools, showWarningOnRightClick]);
+  }, [activeRightClick, activeDrag, activeSelect, activePrintScreen, activeDevTools, activeWarning, isDev]);
 
-  // Console warning to deter developers
   useEffect(() => {
-    if (disableDevTools) {
+    if (activeDevTools) {
       console.clear();
       console.warn('🚫 STOP! This is a browser feature intended for developers. Content on this site is protected by copyright. Unauthorized downloading or copying is prohibited.');
       
-      // Detect if DevTools is open
       const devtools = { open: false, orientation: null };
       const threshold = 160;
 
-      setInterval(() => {
+      const interval = setInterval(() => {
         if (
           window.outerHeight - window.innerHeight > threshold ||
           window.outerWidth - window.innerWidth > threshold
@@ -133,16 +139,22 @@ export const useImageProtection = (options: UseImageProtectionOptions = {}) => {
           devtools.open = false;
         }
       }, 500);
+
+      return () => clearInterval(interval);
     }
-  }, [disableDevTools]);
+  }, [activeDevTools]);
 
   return {
     protectedProps: {
-      onContextMenu: (e: React.MouseEvent) => e.preventDefault(),
-      onDragStart: (e: React.DragEvent) => e.preventDefault(),
-      draggable: false,
-      className: 'protected-content no-drag no-context-menu',
-      style: {
+      onContextMenu: (e: React.MouseEvent) => {
+        if (!isDev) e.preventDefault();
+      },
+      onDragStart: (e: React.DragEvent) => {
+        if (!isDev) e.preventDefault();
+      },
+      draggable: !isDev,
+      className: isDev ? '' : 'protected-content no-drag no-context-menu',
+      style: isDev ? {} : {
         userSelect: 'none' as const,
         WebkitUserSelect: 'none' as const,
         MozUserSelect: 'none' as const,
