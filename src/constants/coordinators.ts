@@ -8,6 +8,7 @@ import mallika from '@/assets/Mallika.jpg';
 import nithishk from '@/assets/NithishK.jpg';
 import sona from '@/assets/Sona.jpg';
 import jemimah from '@/assets/Jemimah.png';
+import evans from '@/assets/EVANS T.jpeg';
 
 // Core team for the current academic year.
 //
@@ -133,7 +134,13 @@ export const coordinators: Coordinator[] = [
     bio: 'Academic rank holder skilled in AI, Full-Stack Development, and Data Science, with AWS and Microsoft Azure AI certifications and experience as a Software Engineering Intern.',
     linkedin: 'linkedin.com/in/jemimahpraisy7',
   },
-  seat(12, 'Joint Spiritual Coordinator', 'Spiritual', false),
+  {
+    ...seat(12, 'Joint Spiritual Coordinator', 'Spiritual', false),
+    name: 'Evans T',
+    image: evans,
+    bio: 'Skilled in Artificial Intelligence and Full-Stack Development. Institutional Merit Scholarship holder, SIPCOT Hackathon runner-up, and zonal football gold medalist who actively volunteers in community and spiritual service.',
+    linkedin: '',
+  },
 ];
 
 /** Coordinators grouped into their display panels, preserving order. */
