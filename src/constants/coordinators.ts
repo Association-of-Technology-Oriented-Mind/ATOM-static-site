@@ -1,4 +1,4 @@
-import deepakumar from '@/assets/Deepakumar.webp';
+import deepakumar from '@/assets/UNBIAS/Deepakumar.jpg';
 import thirupathi from '@/assets/Thirupathi S.jpg';
 import lebi from '@/assets/Lebi.jpg';
 import nithishkumar from '@/assets/NithishkumarS.jpg';

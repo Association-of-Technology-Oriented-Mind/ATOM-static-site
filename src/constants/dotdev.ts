@@ -4,18 +4,16 @@ import Yakshini from "@/assets/DOTDEV/Yakshini.jpg";
 const Jola = null;
 const Manisha = null;
 const Varsha = null;
-import Dot1 from "@/assets/DOTDEV/Dot1.webp"; 
-import Dot2 from "@/assets/DOTDEV/Dot2.webp"; 
-import Dot3 from "@/assets/DOTDEV/Dot3.webp"; 
-import Dot4 from "@/assets/DOTDEV/Dot4.webp"; 
-import Dot5 from "@/assets/DOTDEV/Dot5.webp"; 
-import Dot6 from "@/assets/DOTDEV/Dot6.webp"; 
-import Dot7 from "@/assets/DOTDEV/Dot7.webp"; 
-import Dot8 from "@/assets/DOTDEV/Dot8.webp"; 
+import Dot1 from "@/assets/DOTDEV/Dot1.webp";
+import Dot2 from "@/assets/DOTDEV/Dot2.webp";
+import Dot3 from "@/assets/DOTDEV/Dot3.webp";
+import Dot4 from "@/assets/DOTDEV/Dot4.webp";
+import Dot5 from "@/assets/DOTDEV/Dot5.webp";
+import Dot6 from "@/assets/DOTDEV/Dot6.webp";
+import Dot7 from "@/assets/DOTDEV/Dot7.webp";
+import Dot8 from "@/assets/DOTDEV/Dot8.webp";
 import Dot9 from "@/assets/DOTDEV/Dot9.webp";
 import Dot10 from "@/assets/DOTDEV/Dot10.webp";
-import Dot11 from "@/assets/DOTDEV/Dot11.webp";
-import Dot12 from "@/assets/DOTDEV/Dot12.webp";
 import Dot13 from "@/assets/DOTDEV/Dot13.webp";
 import Dot14 from "@/assets/DOTDEV/Dot14.webp";
 import DotIcon from "@/assets/Dot.ico";
@@ -34,7 +32,7 @@ export const dotdevClub = {
     "DotDev Club organizes hackathons, code sprints, mentorship sessions, and collaborative projects for members. The club has built over 50+ web applications and mobile apps, with members securing internships at top tech companies.",
   coordinators: [
     {
-      name: "Allen John Issac",
+      name: "Allen John Isac",
       role: "Coordinator",
       image: Allen,
       isMain: true,
@@ -103,8 +101,6 @@ export const dotdevClub = {
     Dot8,
     Dot9,
     Dot10,
-    Dot11,
-    Dot12,
     Dot13,
     Dot14,
   ]

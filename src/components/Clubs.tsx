@@ -72,7 +72,7 @@ const CLUBS: ClubDef[] = [
       'A student community for aspiring software engineers focused on full-stack development. Hackathons, code sprints, mentorship sessions and collaborative projects — from frontend to backend to deployment.',
     coordinators: [
       {
-        name: 'Allen John Issac',
+        name: 'Allen John Isac',
         role: 'Coordinator',
         image: allenImg,
         bio: 'Skilled in AI/ML, Data Science, and Full-Stack Development. Led the development of VOX, an assistive voice-first exam platform, and recognized for leadership in technology and NSS initiatives.',
@@ -200,21 +200,21 @@ const ClubScene = ({
     const members = membersRef.current;
     const details = detailsRef.current;
     const watermark = watermarkRef.current;
-    
+
     if (!headline || !members || !details) return;
 
     const t = getSceneTimeline(progress, reducedMotion);
 
     // Watermark parallax
     if (watermark) {
-       watermark.style.opacity = String(t.intro * 0.08); // very faint
-       watermark.style.transform = reducedMotion ? 'none' : `scale(${1 + t.intro * 0.1}) translate3d(0, ${(1 - t.intro) * 100}px, 0)`;
+      watermark.style.opacity = String(t.intro * 0.08); // very faint
+      watermark.style.transform = reducedMotion ? 'none' : `scale(${1 + t.intro * 0.1}) translate3d(0, ${(1 - t.intro) * 100}px, 0)`;
     }
 
     // Headline (Part 1: Left Side)
     let leftOpacity = 0;
     let leftTranslateX = -40;
-    
+
     if (progress <= 0.15) {
       const p = progress / 0.15; // 0 to 1
       leftOpacity = p;
@@ -228,7 +228,7 @@ const ClubScene = ({
       leftOpacity = p;
       leftTranslateX = -30 * (1 - p);
     }
-    
+
     headline.style.opacity = String(leftOpacity);
     headline.style.transform = reducedMotion ? 'none' : `translate3d(${leftTranslateX}px, 0, 0)`;
 
@@ -334,13 +334,13 @@ const ClubScene = ({
   return (
     <div className="relative h-full w-full overflow-hidden lattice bg-transparent" ref={containerRef}>
       {/* Massive Background Watermark */}
-      <div 
+      <div
         ref={watermarkRef}
         className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden z-0"
         style={{ willChange: 'opacity, transform' }}
       >
-        <span 
-          className="text-[20vw] font-black text-white whitespace-nowrap uppercase select-none opacity-[0.03]" 
+        <span
+          className="text-[20vw] font-black text-white whitespace-nowrap uppercase select-none opacity-[0.03]"
           style={{ fontFamily: 'var(--font-display)', transform: 'rotate(-5deg) scale(1.2)' }}
         >
           {club.name}
@@ -349,9 +349,9 @@ const ClubScene = ({
 
       {/* Split container */}
       <div className="absolute inset-0 z-10 flex flex-col md:flex-row h-full max-w-[var(--container-xl)] mx-auto">
-        
+
         {/* Left: Club Info */}
-        <div 
+        <div
           ref={headlineRef}
           className="flex-1 flex flex-col justify-center px-8 md:px-16 py-12 md:py-0 relative z-20"
           style={{ willChange: 'opacity, transform' }}
@@ -365,7 +365,7 @@ const ClubScene = ({
               <div className="flex-1 h-px bg-gradient-to-r from-[hsl(var(--phosphor)/0.5)] to-transparent" aria-hidden="true" />
               <span className="mono-label tracking-widest text-[hsl(var(--chalk))] uppercase">{club.tag}</span>
             </div>
-            
+
             {/* Title & Logo */}
             <div className="flex items-center gap-6 mb-8 relative">
               {club.logo && (
@@ -385,7 +385,7 @@ const ClubScene = ({
                 {club.name}
               </h3>
             </div>
-            
+
             {/* Description */}
             <p className="text-base sm:text-lg leading-relaxed text-[hsl(var(--chalk)/0.75)] p-6 bg-black/20 border-l-2 border-[hsl(var(--phosphor)/0.5)] rounded-r-lg backdrop-blur-sm mb-10">
               {club.description}
@@ -403,12 +403,12 @@ const ClubScene = ({
               >
                 {/* Swipe Glow */}
                 <div className="absolute inset-0 bg-[hsl(var(--phosphor)/0.1)] translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-out" />
-                
+
                 <div className="relative z-10 flex items-center gap-3">
                   <span className="w-2 h-2 bg-[hsl(var(--phosphor))] rounded-full animate-pulse shadow-[0_0_8px_hsl(var(--phosphor))]" />
                   <span className="mono-label text-[hsl(var(--chalk))] group-hover:text-white transition-colors uppercase tracking-[0.2em] text-xs">Initiate Handshake</span>
                 </div>
-                
+
                 <svg className="w-4 h-4 text-[hsl(var(--graphite))] group-hover:text-[hsl(var(--phosphor))] transition-colors relative z-10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
                   <path d="M1 6h10M6 1l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
@@ -420,18 +420,18 @@ const ClubScene = ({
         {/* Right: Coordinators Detailed Profiles */}
         <div className="flex-1 flex flex-col justify-center px-8 md:px-16 py-12 md:py-0 relative z-20">
           <div className="w-full max-w-lg mx-auto md:ml-auto md:mr-0 flex flex-col items-center">
-            
+
             {/* Portrait Coordinator Cards & Profiles Stack */}
-            <div 
+            <div
               ref={membersRef}
               className="relative w-full max-w-sm h-[560px] sm:h-[640px] md:h-[700px] mx-auto md:mr-0"
               style={{ willChange: 'opacity' }}
             >
               {club.coordinators.map((coord, i) => {
                 const isTBA = !coord.image || coord.name === 'TBA';
-                
+
                 return (
-                  <div 
+                  <div
                     key={i}
                     className="absolute inset-0 w-full h-full flex flex-col items-center text-center justify-center"
                     style={{ willChange: 'transform' }}
@@ -440,12 +440,12 @@ const ClubScene = ({
                     <div className="relative w-64 h-80 sm:w-72 sm:h-96 md:w-80 md:h-[400px] border border-[hsl(var(--phosphor)/0.25)] bg-black shadow-[0_30px_60px_rgba(0,0,0,0.8)] overflow-hidden group">
                       {/* Subtle hover overlay glow */}
                       <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--phosphor)/0.15)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none" />
- 
+
                       {/* Holographic Glare */}
                       <div className="absolute inset-0 z-20 pointer-events-none overflow-hidden">
                         <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out translate-x-[-100%] group-hover:translate-x-[100%]" />
                       </div>
- 
+
                       {isTBA ? (
                         /* TBA Portrait State */
                         <div className="absolute inset-0 flex items-center justify-center bg-black">
@@ -455,10 +455,10 @@ const ClubScene = ({
                       ) : (
                         /* Filled Portrait State */
                         <>
-                          <img 
-                            src={coord.image!} 
-                            alt={coord.name} 
-                            className="absolute inset-0 w-full h-full object-cover transition-all duration-700" 
+                          <img
+                            src={coord.image!}
+                            alt={coord.name}
+                            className="absolute inset-0 w-full h-full object-cover transition-all duration-700"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500" />
                         </>
@@ -512,7 +512,7 @@ const ClubScene = ({
 
 export const Clubs = () => {
   const reducedMotion = useReducedMotion();
-  
+
   // For kinetic typography
   const introRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -524,31 +524,31 @@ export const Clubs = () => {
   const textX1 = useTransform(scrollYProgress, [0, 0.45], ["-40%", "0%"]);
   // Slide right to center
   const textX2 = useTransform(scrollYProgress, [0, 0.45], ["40%", "0%"]);
-  
+
   // Scale down and fade slightly as it scrolls away
   const opacityOut = useTransform(scrollYProgress, [0.5, 0.8], [1, 0]);
   const scaleOut = useTransform(scrollYProgress, [0.5, 0.8], [1, 0.9]);
 
   return (
     <section id="clubs-section" className="relative lattice overflow-hidden bg-transparent" aria-label="ATOM Sub-Clubs">
-      
+
       {/* ── Ambient Marquee Background ── */}
       <div className="absolute top-0 left-0 w-full overflow-hidden pointer-events-none opacity-[0.02] select-none z-0 pt-40">
-        <motion.div 
-          animate={reducedMotion ? {} : { x: ["0%", "-50%"] }} 
+        <motion.div
+          animate={reducedMotion ? {} : { x: ["0%", "-50%"] }}
           transition={{ repeat: Infinity, ease: "linear", duration: 60 }}
-          className="flex whitespace-nowrap text-white" 
+          className="flex whitespace-nowrap text-white"
           style={{ fontFamily: 'var(--font-display)', fontSize: '15vw', lineHeight: 1 }}
         >
-          UNBIASED — DOTDEV — HACK HIVE — QYRO — UNBIASED — DOTDEV — HACK HIVE — QYRO — UNBIASED — DOTDEV — HACK HIVE — QYRO — 
+          UNBIASED — DOTDEV — HACK HIVE — QYRO — UNBIASED — DOTDEV — HACK HIVE — QYRO — UNBIASED — DOTDEV — HACK HIVE — QYRO —
         </motion.div>
       </div>
 
       {/* ── Massive Kinetic Typography Intro ── */}
       <div ref={introRef} className="relative z-10 w-full min-h-[75vh] flex flex-col justify-center items-center py-32 overflow-hidden">
-        
+
         {/* Subtle Top Label */}
-        <motion.div 
+        <motion.div
           style={{ opacity: opacityOut }}
           className="mb-12 flex items-center gap-4 z-20"
         >
@@ -558,15 +558,15 @@ export const Clubs = () => {
         </motion.div>
 
         {/* Kinetic Text */}
-        <motion.div 
+        <motion.div
           style={{ opacity: opacityOut, scale: scaleOut }}
           className="flex flex-col items-center justify-center w-full relative z-20"
         >
           {/* Spotlight Cursor Effect background */}
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--phosphor)/0.08)_0%,transparent_60%)] blur-3xl pointer-events-none mix-blend-screen" />
-          
+
           <div className="w-full overflow-hidden">
-            <motion.h2 
+            <motion.h2
               style={{ x: reducedMotion ? "0%" : textX1, fontFamily: 'var(--font-display)' }}
               className="text-[clamp(3.5rem,8vw,10rem)] text-[hsl(var(--chalk))] whitespace-nowrap text-center leading-[0.85] tracking-tighter uppercase drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]"
             >
@@ -574,7 +574,7 @@ export const Clubs = () => {
             </motion.h2>
           </div>
           <div className="w-full overflow-hidden relative">
-            <motion.h2 
+            <motion.h2
               style={{ x: reducedMotion ? "0%" : textX2, fontFamily: 'var(--font-display)' }}
               className="text-[clamp(3.5rem,8vw,10rem)] text-[hsl(var(--phosphor))] whitespace-nowrap text-center leading-[0.85] tracking-tighter uppercase"
             >
@@ -590,11 +590,11 @@ export const Clubs = () => {
         >
           <span className="mono-label text-[10px] text-[hsl(var(--graphite))] uppercase tracking-widest">Descend</span>
           <div className="w-px h-16 bg-gradient-to-b from-[hsl(var(--rule))] to-transparent relative overflow-hidden">
-             <motion.div 
-                animate={{ y: ["-100%", "100%"] }}
-                transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
-                className="absolute top-0 left-0 w-full h-1/2 bg-[hsl(var(--phosphor))] shadow-[0_0_10px_hsl(var(--phosphor))]"
-             />
+            <motion.div
+              animate={{ y: ["-100%", "100%"] }}
+              transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+              className="absolute top-0 left-0 w-full h-1/2 bg-[hsl(var(--phosphor))] shadow-[0_0_10px_hsl(var(--phosphor))]"
+            />
           </div>
         </motion.div>
       </div>

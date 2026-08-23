@@ -225,16 +225,23 @@ const ClubPage = () => {
         </motion.button>
 
         {/* Central Logo */}
-        {club.icon && typeof club.icon === 'string' && (
+        {club.icon && (
           <motion.div 
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
             style={{ scale: logoScale, opacity: logoOpacity, y: yParallax }}
-            className="w-40 h-40 md:w-56 md:h-56 lg:w-64 lg:h-64 mb-8 relative z-0"
+            className="w-40 h-40 md:w-56 md:h-56 lg:w-64 lg:h-64 mb-8 relative z-0 flex items-center justify-center"
           >
             <div className="absolute inset-0 bg-[hsl(var(--phosphor))] blur-3xl opacity-20 rounded-full" />
-            <img src={club.icon} alt={club.name} className="w-full h-full object-contain relative z-10 drop-shadow-2xl" />
+            {typeof club.icon === 'string' ? (
+              <img src={club.icon} alt={club.name} className="w-full h-full object-contain relative z-10 drop-shadow-2xl" />
+            ) : (
+              (() => {
+                const IconComponent = club.icon as any;
+                return <IconComponent className="w-2/3 h-2/3 text-[hsl(var(--phosphor))] relative z-10 drop-shadow-2xl" />;
+              })()
+            )}
           </motion.div>
         )}
 
