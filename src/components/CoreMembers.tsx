@@ -109,29 +109,22 @@ const useReducedMotion = () => {
 /* -------------------------------------------------------------------------- */
 
 const SceneBackground = ({
-  progress,
+  portfolio,
 }: {
-  progress: number;
+  portfolio: string;
 }) => {
-  const backgroundRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const element = backgroundRef.current;
-
-    if (!element) return;
-
-    element.style.background = sceneGradient(
-      clamp01(progress),
-      '50%',
-    );
-  }, [progress]);
-
   return (
     <div
-      ref={backgroundRef}
       aria-hidden="true"
-      className="absolute inset-0 z-0"
-    />
+      className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none overflow-hidden"
+    >
+      <span 
+        className="text-[20vw] font-black text-white whitespace-nowrap uppercase select-none opacity-[0.03]" 
+        style={{ fontFamily: 'var(--font-display)', transform: 'rotate(-5deg) scale(1.2)' }}
+      >
+        {portfolio}
+      </span>
+    </div>
   );
 };
 
@@ -366,13 +359,20 @@ const MemberColumn = ({
       <div
         ref={figureRef}
         className="
-          pointer-events-none
+          pointer-events-auto
           flex
-          min-h-0
-          w-full
-          flex-1
-          items-end
-          justify-center
+          h-[35vh]
+          sm:h-[42vh]
+          lg:h-[48vh]
+          mx-auto
+          aspect-[3/4]
+          relative
+          overflow-hidden
+          rounded-2xl
+          border border-[hsl(var(--chalk)/0.15)]
+          bg-[hsl(var(--ink)/0.5)]
+          transition-colors duration-500 hover:border-[hsl(var(--phosphor)/0.5)]
+          group
         "
         style={{
           opacity: 0,
@@ -393,39 +393,37 @@ const MemberColumn = ({
             decoding="async"
             className="
               block
-              max-h-[38vh]
-              max-w-[78vw]
-              w-auto
-              object-contain
-              object-bottom
-
-              sm:max-h-[42vh]
-              sm:max-w-[65vw]
-
-              lg:max-h-[44vh]
-              lg:max-w-full
+              h-full
+              w-full
+              object-cover
+              object-center
+              group-hover:scale-105
+              transition-all
+              duration-700
             "
           />
         ) : (
-          <span
-            aria-hidden="true"
-            className="
-              select-none
-              font-black
-              leading-none
-              text-[hsl(var(--graphite)/0.25)]
-            "
-            style={{
-              fontFamily:
-                "'Archivo Black', system-ui, sans-serif",
-              fontSize:
-                'clamp(3.5rem, 9vw, 8rem)',
-            }}
-          >
-            {hasMember
-              ? initials(member.name)
-              : 'TBA'}
-          </span>
+          <div className="flex flex-col items-center justify-center w-full h-full opacity-20 bg-[hsl(var(--ink)/0.3)]">
+            <span
+              aria-hidden="true"
+              className="
+                select-none
+                font-black
+                leading-none
+                text-[hsl(var(--graphite))]
+              "
+              style={{
+                fontFamily:
+                  "'Archivo Black', system-ui, sans-serif",
+                fontSize:
+                  'clamp(3rem, 6vw, 5rem)',
+              }}
+            >
+              {hasMember
+                ? initials(member.name)
+                : 'TBA'}
+            </span>
+          </div>
         )}
       </div>
 
@@ -654,6 +652,7 @@ const CoreMembers = () => {
       id="core-members"
       className="
         lattice
+        bg-black
         relative
       "
       aria-labelledby="core-members-title"
@@ -748,7 +747,7 @@ const CoreMembers = () => {
                   {/* Background */}
 
                   <SceneBackground
-                    progress={progress}
+                    portfolio={portfolio}
                   />
 
                   {/* ====================================================== */}

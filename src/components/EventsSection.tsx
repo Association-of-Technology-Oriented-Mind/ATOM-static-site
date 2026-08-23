@@ -1,17 +1,15 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Calendar, MapPin, ArrowRight } from 'lucide-react';
 import { useEvents } from '@/hooks/useContent';
 import { generateSlug } from '@/utils/slug';
-
-// ── Events Section — Immersive Cards ─────────────────────────────────────────
-// Asymmetric grid: first card large (spans 2 rows), cards 2-3 stacked.
-// Full-bleed images with overlay text on hover.
+import '@/styles/events.css'; // Make sure to import the CSS
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
 const formatDate = (dateString: string): string => {
+  if (!dateString) return ''; // Safety guard
   const raw = dateString.includes(',') ? dateString.split(',')[0] : dateString;
   const date = new Date(raw);
   return date.toLocaleDateString('en-GB', {
@@ -38,7 +36,6 @@ const EventsSection = () => {
       aria-labelledby="events-heading"
     >
       <div className="events-container">
-
         {/* Header row */}
         <div className="events-header">
           <div>
@@ -48,7 +45,7 @@ const EventsSection = () => {
               animate={isInView ? { opacity: 1 } : {}}
               transition={{ duration: 0.4 }}
             >
-              <span className="events-label__num">03</span>
+              <span className="events-label__num">02</span>
               <span className="events-label__rule" aria-hidden="true" />
               Events &amp; Activities
             </motion.div>
@@ -62,18 +59,6 @@ const EventsSection = () => {
               What we've built
             </motion.h2>
           </div>
-
-          {/* "All events" link — desktop */}
-          <motion.button
-            className="events-view-all focus-phosphor"
-            onClick={() => navigate('/events')}
-            initial={{ opacity: 0 }}
-            animate={isInView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.4, delay: 0.2 }}
-          >
-            All events
-            <ArrowRight className="w-3 h-3" aria-hidden="true" />
-          </motion.button>
         </div>
 
         {previewEvents.length > 0 ? (
@@ -82,43 +67,45 @@ const EventsSection = () => {
               <motion.article
                 key={event.id}
                 className={`events-card ${index === 0 ? 'events-card--featured' : ''}`}
-                onClick={() => navigate(`/events/${generateSlug(event.title)}`)}
                 initial={{ opacity: 0, y: 16 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.15 + index * 0.1, ease }}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/events/${generateSlug(event.title)}`); }}
               >
-                {/* Image */}
-                <div className="events-card__image-wrapper">
-                  <img
-                    src={event.image}
-                    alt={event.title}
-                    className="events-card__image"
-                    loading="lazy"
-                  />
-                  <div className="events-card__overlay" />
-                </div>
+                {/* Replaced manual click handlers with native Link for accessibility/SEO */}
+                <Link 
+                  to={`/events/${generateSlug(event.title)}`} 
+                  className="events-card__link"
+                >
+                  {/* Image */}
+                  <div className="events-card__image-wrapper">
+                    <img
+                      src={event.image}
+                      alt={event.title}
+                      className="events-card__image"
+                      loading="lazy"
+                    />
+                    <div className="events-card__overlay" />
+                  </div>
 
-                {/* Content overlay */}
-                <div className="events-card__content">
-                  <span className="events-card__category">{event.category}</span>
-                  <h3 className="events-card__title">{event.title}</h3>
-                  <div className="events-card__meta">
-                    <div className="events-card__meta-item">
-                      <Calendar className="w-3 h-3" aria-hidden="true" />
-                      <span>{formatDate(event.date)}</span>
+                  {/* Content overlay */}
+                  <div className="events-card__content">
+                    <span className="events-card__category">{event.category}</span>
+                    <h3 className="events-card__title">{event.title}</h3>
+                    <div className="events-card__meta">
+                      <div className="events-card__meta-item">
+                        <Calendar className="w-3 h-3" aria-hidden="true" />
+                        <span>{formatDate(event.date)}</span>
+                      </div>
+                      <div className="events-card__meta-item">
+                        <MapPin className="w-3 h-3" aria-hidden="true" />
+                        <span>{event.location}</span>
+                      </div>
                     </div>
-                    <div className="events-card__meta-item">
-                      <MapPin className="w-3 h-3" aria-hidden="true" />
-                      <span>{event.location}</span>
+                    <div className="events-card__arrow">
+                      <ArrowRight className="w-4 h-4" aria-hidden="true" />
                     </div>
                   </div>
-                  <div className="events-card__arrow">
-                    <ArrowRight className="w-4 h-4" aria-hidden="true" />
-                  </div>
-                </div>
+                </Link>
               </motion.article>
             ))}
           </div>
@@ -143,19 +130,18 @@ const EventsSection = () => {
           </motion.div>
         )}
 
-        {/* Mobile CTA */}
+        {/* Global CTA */}
         <motion.div
-          className="events-mobile-cta"
+          className="events-global-cta mt-12 flex justify-center"
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
           transition={{ duration: 0.4, delay: 0.5 }}
         >
           <button
             className="btn-tech"
-            style={{ width: '100%', justifyContent: 'center' }}
             onClick={() => navigate('/events')}
           >
-            <span>All events</span>
+            <span>View All Events</span>
             <ArrowRight className="w-3 h-3" aria-hidden="true" />
           </button>
         </motion.div>

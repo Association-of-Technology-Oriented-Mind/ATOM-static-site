@@ -1,17 +1,32 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { motion, useInView, useScroll, useSpring } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ArrowUpRight, Search, X } from 'lucide-react';
+import { ArrowLeft, Search, X } from 'lucide-react';
 import { type Event as EventType } from '@/constants/events';
 import { useEvents } from '@/hooks/useContent';
 import { generateSlug } from '@/utils/slug';
 import atomLogo from '@/assets/atom-logo.webp';
 import { useLenis } from '@/hooks/useLenis';
+import { animate, useMotionValue, useTransform } from 'framer-motion';
 import Footer from '@/components/Footer';
 import OrbitalCanvas from '@/components/OrbitalCanvas';
 import PastEventTimeline from '@/components/events/PastEventTimeline';
 
 /* ── Helpers ─────────────────────────────────────────────────────────────── */
+
+const AnimatedCounter = ({ value, inView }: { value: number; inView: boolean }) => {
+  const count = useMotionValue(0);
+  const rounded = useTransform(count, Math.round);
+
+  useEffect(() => {
+    if (inView) {
+      const controls = animate(count, value, { duration: 2, ease: 'easeOut' });
+      return controls.stop;
+    }
+  }, [value, inView, count]);
+
+  return <motion.span>{rounded}</motion.span>;
+};
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -26,6 +41,7 @@ const Event: React.FC = () => {
 
   const [activeFilter, setActiveFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   // Smooth scrolling
   useLenis();
@@ -106,9 +122,8 @@ const Event: React.FC = () => {
 
       {/* ── Sticky Nav ──────────────────────────────────────────────────── */}
       <motion.nav
-        className="fixed top-0 left-0 w-full z-40 flex items-center justify-between"
+        className="fixed top-0 left-0 w-full z-40"
         style={{
-          padding: '0 var(--space-6)',
           height: 'var(--nav-height)',
           backgroundColor: 'hsla(var(--ink), 0.85)',
           backdropFilter: 'blur(16px)',
@@ -118,39 +133,47 @@ const Event: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
       >
-        <button
-          onClick={() => navigate('/')}
-          className="focus-phosphor flex items-center gap-2.5 group"
-          aria-label="Return to homepage"
+        <div
+          className="mx-auto flex items-center justify-between h-full"
+          style={{
+            maxWidth: 'var(--container-xl)',
+            padding: '0 var(--space-6)',
+          }}
         >
-          <img
-            src={atomLogo}
-            alt="ATOM"
-            className="w-7 h-7 opacity-90 transition-transform duration-500 group-hover:rotate-90"
-          />
-          <span
-            className="hidden sm:inline text-[hsl(var(--chalk))] tracking-[-0.03em]"
-            style={{ fontFamily: 'var(--font-display)', fontSize: '0.9375rem' }}
-          >
-            ATOM
-          </span>
-        </button>
-
-        <div className="flex items-center gap-6">
-          <span
-            className="text-[hsl(var(--chalk))] hidden md:inline uppercase tracking-[0.15em]"
-            style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem' }}
-          >
-            Events Archive
-          </span>
           <button
             onClick={() => navigate('/')}
-            className="focus-phosphor text-[hsl(var(--graphite))] hover:text-[hsl(var(--chalk))] transition-colors flex items-center gap-1.5 uppercase tracking-[0.15em]"
-            style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem' }}
+            className="focus-phosphor flex items-center gap-2.5 group"
+            aria-label="Return to homepage"
           >
-            Home
-            <ArrowUpRight className="w-3 h-3" />
+            <img
+              src={atomLogo}
+              alt="ATOM"
+              className="w-7 h-7 opacity-90 transition-transform duration-500 group-hover:rotate-90"
+            />
+            <span
+              className="hidden sm:inline text-[hsl(var(--chalk))] tracking-[-0.03em]"
+              style={{ fontFamily: 'var(--font-display)', fontSize: '0.9375rem' }}
+            >
+              ATOM
+            </span>
           </button>
+
+          <div className="flex items-center gap-6">
+            <span
+              className="text-[hsl(var(--chalk))] hidden md:inline uppercase tracking-[0.15em]"
+              style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem' }}
+            >
+              Events Archive
+            </span>
+            <button
+              onClick={() => navigate('/')}
+              className="focus-phosphor text-[hsl(var(--graphite))] hover:text-[hsl(var(--chalk))] transition-colors flex items-center gap-1.5 uppercase tracking-[0.15em] group"
+              style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem' }}
+            >
+              <ArrowLeft className="w-3 h-3 transition-transform group-hover:-translate-x-1" />
+              Back to Home
+            </button>
+          </div>
         </div>
       </motion.nav>
 
@@ -201,7 +224,7 @@ const Event: React.FC = () => {
               <span
                 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.5rem, 3vw, 2.5rem)', lineHeight: 1 }}
               >
-                {totalEvents}
+                <AnimatedCounter value={totalEvents} inView={heroInView} />
               </span>
               <span
                 className="uppercase tracking-[0.15em]"
@@ -217,7 +240,7 @@ const Event: React.FC = () => {
               <span
                 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.5rem, 3vw, 2.5rem)', lineHeight: 1 }}
               >
-                {totalCategories}
+                <AnimatedCounter value={totalCategories} inView={heroInView} />
               </span>
               <span
                 className="uppercase tracking-[0.15em]"
@@ -246,75 +269,86 @@ const Event: React.FC = () => {
 
       {/* ── Filter + Search Bar ─────────────────────────────────────────── */}
       <section
-        className="relative z-20 sticky top-[var(--nav-height)] border-y border-[hsl(var(--rule))]"
-        style={{ backgroundColor: 'hsla(var(--ink), 0.95)', backdropFilter: 'blur(12px)' }}
+        className="relative z-30 sticky top-[calc(var(--nav-height)+24px)] flex justify-center px-4 pointer-events-none mb-12"
       >
-        <div className="max-w-[var(--container-xl)] w-full mx-auto px-6 sm:px-10 lg:px-16 py-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-
-            {/* Category pills */}
-            <div className="flex items-center gap-2 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
-              {categories.map((cat, idx) => (
-                <motion.button
-                  key={cat}
-                  onClick={() => setActiveFilter(cat)}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, delay: 0.4 + idx * 0.05, ease }}
-                  className="focus-phosphor uppercase tracking-[0.15em] whitespace-nowrap px-4 py-2 rounded-full transition-colors duration-200 border"
-                  style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.625rem',
-                    borderColor: activeFilter === cat ? 'hsl(var(--phosphor))' : 'hsl(var(--rule))',
-                    backgroundColor: activeFilter === cat ? 'hsl(var(--phosphor)/0.1)' : 'transparent',
-                    color: activeFilter === cat ? 'hsl(var(--phosphor))' : 'hsl(var(--chalk)/0.6)',
-                  }}
-                >
-                  {cat}
-                </motion.button>
-              ))}
-            </div>
-
-            {/* Search */}
-            <motion.div
-              className="relative min-w-[240px]"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.4, delay: 0.6 }}
-            >
-              <div
-                className="flex items-center px-4 py-2 border rounded-full transition-colors"
+        <motion.div
+          className="pointer-events-auto flex items-center justify-between gap-4 px-2 py-2 rounded-full border border-[hsl(var(--rule))] shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)] max-w-full overflow-hidden"
+          style={{ backgroundColor: 'hsla(var(--ink-raised), 0.75)', backdropFilter: 'blur(20px)' }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+        >
+          {/* Category pills */}
+          <div className="flex items-center gap-1 overflow-x-auto px-2" style={{ scrollbarWidth: 'none' }}>
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveFilter(cat)}
+                className="uppercase tracking-[0.15em] whitespace-nowrap px-4 py-2 rounded-full transition-all duration-300 border"
                 style={{
-                  backgroundColor: 'hsl(var(--ink-raised))',
-                  borderColor: 'hsl(var(--rule))',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.625rem',
+                  borderColor: activeFilter === cat ? 'hsl(var(--phosphor))' : 'transparent',
+                  backgroundColor: activeFilter === cat ? 'hsl(var(--phosphor)/0.1)' : 'transparent',
+                  color: activeFilter === cat ? 'hsl(var(--phosphor))' : 'hsl(var(--chalk)/0.6)',
                 }}
               >
-                <Search className="w-3.5 h-3.5 mr-2" style={{ color: 'hsl(var(--graphite))' }} />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search events..."
-                  className="bg-transparent border-none outline-none w-full"
-                  style={{
-                    fontFamily: 'var(--font-body)',
-                    fontSize: '0.8125rem',
-                    color: 'hsl(var(--chalk))',
-                  }}
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery('')}
-                    className="ml-2 focus-phosphor"
-                    style={{ color: 'hsl(var(--graphite))' }}
-                  >
-                    <X className="w-3.5 h-3.5 hover:text-white transition-colors" />
-                  </button>
-                )}
-              </div>
-            </motion.div>
+                {cat}
+              </button>
+            ))}
           </div>
-        </div>
+
+          {/* Search */}
+          <motion.div
+            className="relative flex items-center shrink-0"
+            initial={false}
+            animate={{ width: isSearchExpanded ? 240 : 40 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          >
+            <div
+              className="flex items-center w-full h-10 rounded-full transition-colors overflow-hidden"
+              style={{
+                backgroundColor: isSearchExpanded ? 'hsl(var(--ink))' : 'transparent',
+                border: isSearchExpanded ? '1px solid hsl(var(--rule))' : '1px solid transparent',
+              }}
+            >
+              <button
+                onClick={() => setIsSearchExpanded(true)}
+                className="flex items-center justify-center w-10 h-10 shrink-0 text-[hsl(var(--graphite))] hover:text-[hsl(var(--chalk))] transition-colors focus-phosphor"
+                aria-label="Search events"
+              >
+                <Search className="w-4 h-4" />
+              </button>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search..."
+                className="bg-transparent border-none outline-none w-full h-full pr-8"
+                style={{
+                  fontFamily: 'var(--font-body)',
+                  fontSize: '0.8125rem',
+                  color: 'hsl(var(--chalk))',
+                  display: isSearchExpanded ? 'block' : 'none'
+                }}
+                onBlur={(e) => {
+                  if (!e.target.value) setIsSearchExpanded(false);
+                }}
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => {
+                    setSearchQuery('');
+                    setIsSearchExpanded(false);
+                  }}
+                  className="absolute right-2 text-[hsl(var(--graphite))] hover:text-white transition-colors"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+          </motion.div>
+        </motion.div>
       </section>
 
       {/* ── Events Timeline ─────────────────────────────────────────────── */}

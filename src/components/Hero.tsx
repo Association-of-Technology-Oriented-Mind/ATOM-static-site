@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useScroll, useTransform, Variants, AnimatePresence } from 'framer-motion';
+import { motion, useScroll, useTransform, Variants, AnimatePresence, useSpring, useMotionValue } from 'framer-motion';
 import atomLogo from '@/assets/atom-logo.webp';
 
 // ──────────────────────────────────────────────────────────
@@ -255,6 +255,270 @@ function CircuitryCanvas() {
 }
 
 // ──────────────────────────────────────────────────────────
+// MINIMAL PARALLAX STARFIELD
+// ──────────────────────────────────────────────────────────
+function SpaceCanvas() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d', { alpha: false });
+    if (!ctx) return;
+
+    let w = canvas.offsetWidth;
+    let h = canvas.offsetHeight;
+    canvas.width = w;
+    canvas.height = h;
+
+    interface Star {
+      x: number;
+      y: number;
+      size: number;
+      baseOpacity: number;
+      layer: number; // 1 (back) to 3 (front)
+      twinkleSpeed: number;
+      twinklePhase: number;
+    }
+
+    const stars: Star[] = [];
+    const numStars = 300;
+
+    for (let i = 0; i < numStars; i++) {
+      // Skew distribution so most stars are in the background (layer 1)
+      const layerRandom = Math.random();
+      let layer = 1;
+      if (layerRandom > 0.9) layer = 3;
+      else if (layerRandom > 0.6) layer = 2;
+
+      stars.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        size: layer * (Math.random() * 0.5 + 0.5), // bigger if closer
+        baseOpacity: layer === 1 ? Math.random() * 0.3 + 0.1 : Math.random() * 0.5 + 0.4,
+        layer: layer,
+        twinkleSpeed: Math.random() * 0.02 + 0.005,
+        twinklePhase: Math.random() * Math.PI * 2,
+      });
+    }
+
+    // Target offsets for parallax based on mouse
+    let targetOffsetX = 0;
+    let targetOffsetY = 0;
+    
+    // Current smoothed offsets
+    let currentOffsetX = 0;
+    let currentOffsetY = 0;
+    
+    // Constant space drift
+    let driftX = 0;
+    let driftY = 0;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      // Track mouse across the entire window for better parallax
+      const wWidth = window.innerWidth;
+      const wHeight = window.innerHeight;
+      
+      // Calculate offset from center (-1 to 1)
+      const xPct = (e.clientX / wWidth) * 2 - 1;
+      const yPct = (e.clientY / wHeight) * 2 - 1;
+
+      // Max pixels to move the front layer - increased for visibility
+      const maxOffset = 150; 
+      targetOffsetX = -xPct * maxOffset;
+      targetOffsetY = -yPct * maxOffset;
+    };
+
+    const handleMouseLeave = () => {
+      targetOffsetX = 0;
+      targetOffsetY = 0;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const wWidth = window.innerWidth;
+      const wHeight = window.innerHeight;
+      
+      const xPct = (e.touches[0].clientX / wWidth) * 2 - 1;
+      const yPct = (e.touches[0].clientY / wHeight) * 2 - 1;
+
+      const maxOffset = 150; 
+      targetOffsetX = -xPct * maxOffset;
+      targetOffsetY = -yPct * maxOffset;
+    };
+
+    const handleTouchEnd = () => {
+      targetOffsetX = 0;
+      targetOffsetY = 0;
+    };
+
+    // Attach to window so it tracks even if hovering over other elements
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseleave', handleMouseLeave);
+    window.addEventListener('touchmove', handleTouchMove);
+    window.addEventListener('touchend', handleTouchEnd);
+    window.addEventListener('touchstart', handleTouchMove);
+
+    let rafId: number;
+
+    const draw = () => {
+      ctx.fillStyle = '#0a0a0a'; 
+      ctx.fillRect(0, 0, w, h);
+
+      // Smoothly approach target offset
+      currentOffsetX += (targetOffsetX - currentOffsetX) * 0.05;
+      currentOffsetY += (targetOffsetY - currentOffsetY) * 0.05;
+      
+      // Add constant slow drift to make it feel alive even when mouse is still
+      driftX += 0.2;
+      driftY += 0.1;
+
+      for (let i = 0; i < numStars; i++) {
+        const star = stars[i];
+        
+        // Twinkle effect
+        star.twinklePhase += star.twinkleSpeed;
+        const twinkle = Math.sin(star.twinklePhase) * 0.3;
+        const opacity = Math.max(0, Math.min(1, star.baseOpacity + twinkle));
+
+        // Parallax offset depends on layer
+        // Layer 1 moves slowest, Layer 3 moves fastest
+        const parallaxX = (currentOffsetX + driftX) * (star.layer * 0.5);
+        const parallaxY = (currentOffsetY + driftY) * (star.layer * 0.5);
+
+        let finalX = star.x + parallaxX;
+        let finalY = star.y + parallaxY;
+
+        // Wrap around logic so we never run out of stars if moving a lot
+        if (finalX < 0) finalX = w - (-finalX % w);
+        if (finalX > w) finalX = finalX % w;
+        if (finalY < 0) finalY = h - (-finalY % h);
+        if (finalY > h) finalY = finalY % h;
+
+        ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+        
+        // Slight cyan tint to layer 3 for depth and matching theme
+        if (star.layer === 3) {
+           ctx.fillStyle = `rgba(125, 249, 228, ${opacity * 0.8})`; 
+        }
+
+        ctx.beginPath();
+        ctx.arc(finalX, finalY, star.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Glow for bright/close stars
+        if (star.layer === 3 && opacity > 0.6) {
+          ctx.shadowBlur = 4;
+          ctx.shadowColor = 'rgba(125, 249, 228, 0.5)';
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        }
+      }
+
+      rafId = requestAnimationFrame(draw);
+    };
+
+    const handleResize = () => {
+      w = canvas.offsetWidth;
+      h = canvas.offsetHeight;
+      canvas.width = w;
+      canvas.height = h;
+    };
+
+    window.addEventListener('resize', handleResize);
+    rafId = requestAnimationFrame(draw);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseleave', handleMouseLeave);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
+      window.removeEventListener('touchstart', handleTouchMove);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 w-full h-full z-0 cursor-default transition-opacity duration-1000"
+      style={{ touchAction: 'none' }}
+    />
+  );
+}
+
+// ──────────────────────────────────────────────────────────
+// RIGHT PANEL COMPONENT (INTERACTIVE)
+// ──────────────────────────────────────────────────────────
+function RightPanel({ rightY }: { rightY: any }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  // framer motion for logo tilt
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const mouseXSpring = useSpring(x, { stiffness: 300, damping: 30 });
+  const mouseYSpring = useSpring(y, { stiffness: 300, damping: 30 });
+
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["15deg", "-15deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-15deg", "15deg"]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    const xPct = mouseX / width - 0.5;
+    const yPct = mouseY / height - 0.5;
+    x.set(xPct);
+    y.set(yPct);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  return (
+    <motion.div
+      style={{ y: rightY }}
+      ref={containerRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className="w-full md:w-[35%] min-h-[40vh] md:min-h-screen flex flex-col justify-between p-8 sm:p-12 lg:p-16 relative pointer-events-auto overflow-hidden group"
+    >
+      <SpaceCanvas />
+      
+      {/* Top metadata */}
+      <div className="relative z-10 flex items-center justify-between w-full pointer-events-none">
+        <span className="font-mono text-xs tracking-widest text-[hsl(var(--graphite))]">
+          EST. 2026 — KARUNYA
+        </span>
+      </div>
+
+      {/* Centered ATOM Emblem Logo */}
+      <div className="relative z-10 my-auto flex items-center justify-center pointer-events-none" style={{ perspective: '1000px' }}>
+        <div className="absolute w-[200px] h-[200px] bg-[hsl(var(--phosphor))] opacity-[0.06] blur-[60px] rounded-full group-hover:opacity-[0.15] transition-opacity duration-700" />
+        
+        <motion.img
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          style={{ rotateX, rotateY }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
+          src={atomLogo}
+          alt="ATOM Emblem"
+          className="w-48 h-48 sm:w-64 sm:h-64 object-contain filter drop-shadow-[0_0_15px_rgba(125,249,228,0.1)] group-hover:drop-shadow-[0_0_25px_rgba(125,249,228,0.4)] transition-all duration-700"
+        />
+      </div>
+
+      
+    </motion.div>
+  );
+}
+
+// ──────────────────────────────────────────────────────────
 // HERO COMPONENT
 // ──────────────────────────────────────────────────────────
 export const Hero = () => {
@@ -412,36 +676,7 @@ export const Hero = () => {
         </motion.div>
 
         {/* RIGHT COLUMN CONTENT */}
-        <motion.div
-          style={{ y: rightY }}
-          className="w-full md:w-[35%] min-h-[40vh] md:min-h-screen flex flex-col justify-between p-8 sm:p-12 lg:p-16 relative pointer-events-auto"
-        >
-          {/* Top metadata */}
-          <div className="flex items-center justify-between w-full">
-            <span className="font-mono text-xs tracking-widest text-[hsl(var(--graphite))]">
-              EST. 2021 — KARUNYA
-            </span>
-          </div>
-
-          {/* Centered ATOM Emblem Logo */}
-          <div className="my-auto flex items-center justify-center relative">
-            <div className="absolute w-[200px] h-[200px] bg-[hsl(var(--phosphor))] opacity-[0.06] blur-[60px] rounded-full" />
-            
-            <motion.img
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
-              src={atomLogo}
-              alt="ATOM Emblem"
-              className="w-48 h-48 sm:w-64 sm:h-64 object-contain filter drop-shadow-[0_0_15px_rgba(125,249,228,0.1)] hover:rotate-6 transition-transform duration-700"
-            />
-          </div>
-
-          {/* Bottom text */}
-          <div className="text-[0.625rem] font-mono text-[hsl(var(--graphite))] tracking-wider text-right uppercase">
-            [ SYSTEM ACTIVE ]
-          </div>
-        </motion.div>
+        <RightPanel rightY={rightY} />
       </div>
 
       {/* 5. FULLSCREEN MENU OVERLAY (z-[100]) */}

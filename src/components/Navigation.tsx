@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowLeft } from 'lucide-react';
 import atomLogo from '@/assets/atom-logo.webp';
 
 // ── Navigation ─────────────────────────────────────────────────────────────────
@@ -17,6 +18,7 @@ const NAV_LINKS = [
 
 const Navigation: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [showNavbar, setShowNavbar] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
@@ -83,28 +85,41 @@ const Navigation: React.FC = () => {
             height: 'var(--nav-height)',
           }}
         >
-          {/* Logo - Left aligned */}
-          <Link
-            to="/"
-            className="focus-phosphor flex items-center gap-2.5 group relative z-10"
-            aria-label="ATOM — return to homepage"
-          >
-            <img
-              src={atomLogo}
-              alt=""
-              className="w-7 h-7 opacity-90 transition-transform duration-500 group-hover:rotate-[60deg]"
-              aria-hidden="true"
-            />
-            <span
-              className="hidden sm:inline text-[hsl(var(--chalk))] tracking-[-0.03em]"
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: '0.9375rem',
-              }}
+          {/* Logo & Back Button - Left aligned */}
+          <div className="flex items-center gap-4 sm:gap-6 relative z-10">
+            {location.pathname !== '/' && (
+              <button
+                onClick={() => navigate(-1)}
+                className="focus-phosphor flex items-center gap-2 text-[hsl(var(--graphite))] hover:text-[hsl(var(--phosphor))] transition-colors duration-200 mono-label text-xs uppercase tracking-widest"
+                aria-label="Go back"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span className="hidden sm:inline">Back</span>
+              </button>
+            )}
+            
+            <Link
+              to="/"
+              className="focus-phosphor flex items-center gap-2.5 group"
+              aria-label="ATOM — return to homepage"
             >
-              ATOM
-            </span>
-          </Link>
+              <img
+                src={atomLogo}
+                alt=""
+                className="w-7 h-7 opacity-90 transition-transform duration-500 group-hover:rotate-[60deg]"
+                aria-hidden="true"
+              />
+              <span
+                className="hidden sm:inline text-[hsl(var(--chalk))] tracking-[-0.03em]"
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: '0.9375rem',
+                }}
+              >
+                ATOM
+              </span>
+            </Link>
+          </div>
 
           {/* Desktop links - Absolutely centered */}
           <div className="hidden md:flex items-center gap-1 absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
