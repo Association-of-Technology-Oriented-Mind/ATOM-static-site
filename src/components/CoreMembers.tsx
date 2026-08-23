@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { Linkedin } from 'lucide-react';
+import { Linkedin, Award, BookOpen, Briefcase, Code, Trophy, User, Check, Copy } from 'lucide-react';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { toast } from 'sonner';
 
 import ScrollScene from '@/components/scroll/ScrollScene';
 import {
@@ -215,6 +217,229 @@ const Headline = ({
   );
 };
 
+const MemberDetailModal = ({
+  member,
+  isOpen,
+  onClose,
+}: {
+  member: Coordinator;
+  isOpen: boolean;
+  onClose: () => void;
+}) => {
+  const [copied, setCopied] = useState(false);
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    toast.success('Copied k-mail to clipboard!');
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const hasAchievements = member.achievements && member.achievements.length > 0;
+  const hasExpertise = member.expertise && member.expertise.length > 0;
+  const hasProjects = member.projects && member.projects.length > 0;
+
+  return (
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-3xl w-[90vw] max-h-[85vh] overflow-y-auto bg-black/90 border border-white/[0.08] backdrop-blur-2xl text-white rounded-2xl shadow-2xl p-6 md:p-8 select-none">
+        
+        {/* Header Block */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 items-start">
+          
+          {/* Portrait Image */}
+          <div className="md:col-span-4 aspect-[3/4] w-full max-w-[200px] mx-auto md:max-w-none rounded-xl overflow-hidden border border-white/10 bg-white/5 shadow-inner">
+            {member.image ? (
+              <img
+                src={member.image}
+                alt={`${member.name} portrait`}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-white/5 text-white/30 text-3xl font-black">
+                {member.name ? initials(member.name) : 'TBA'}
+              </div>
+            )}
+          </div>
+
+          {/* Name and Basic details */}
+          <div className="md:col-span-8 flex flex-col justify-between h-full">
+            <div>
+              <div className="flex items-center gap-3">
+                <span className="px-2.5 py-1 text-xs font-mono font-medium rounded-full bg-white/10 border border-white/5 text-[hsl(var(--phosphor))] tracking-wider uppercase">
+                  {member.isLead ? 'LEAD' : 'JOINT'}
+                </span>
+                <span className="text-white/40 text-xs font-mono tracking-wider uppercase">
+                  {member.portfolio}
+                </span>
+              </div>
+
+              <h3 className="text-2xl md:text-3xl font-bold font-display mt-3 text-white">
+                {member.name}
+              </h3>
+              
+              <p className="text-sm md:text-base text-[hsl(var(--phosphor))] font-mono tracking-wider mt-1 uppercase">
+                {member.role}
+              </p>
+
+              {/* Year and Register Number */}
+              <div className="grid grid-cols-2 gap-4 mt-6 border-t border-white/5 pt-4 text-xs font-mono text-white/60">
+                <div>
+                  <span className="block text-white/40 mb-0.5">REGISTER NUMBER</span>
+                  <span className="text-white font-medium">{member.regNo || 'N/A'}</span>
+                </div>
+                <div>
+                  <span className="block text-white/40 mb-0.5">YEAR OF STUDY</span>
+                  <span className="text-white font-medium">{member.year || 'N/A'}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Contact Details */}
+            <div className="mt-6 flex flex-wrap gap-3">
+              {member.kmail && (
+                <button
+                  onClick={() => copyToClipboard(member.kmail!)}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/10 transition text-xs font-mono text-white/80"
+                >
+                  {copied ? <Check className="h-3.5 w-3.5 text-green-400" /> : <Copy className="h-3.5 w-3.5 text-white/60" />}
+                  <span>{member.kmail}</span>
+                </button>
+              )}
+
+              {member.linkedin && (
+                <a
+                  href={normalizeLinkedInUrl(member.linkedin) || '#'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[hsl(var(--phosphor))/0.1] border border-[hsl(var(--phosphor))/0.2] hover:bg-[hsl(var(--phosphor))/0.2] transition text-xs font-mono text-[hsl(var(--phosphor))]"
+                >
+                  <Linkedin className="h-3.5 w-3.5" />
+                  <span>LinkedIn Profile</span>
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Bio segment */}
+        {member.bio && (
+          <div className="mt-8 border-t border-white/5 pt-6">
+            <p className="text-sm md:text-base leading-relaxed text-white/70">
+              {member.bio}
+            </p>
+          </div>
+        )}
+
+        {/* Fields of Expertise / Chips */}
+        {hasExpertise && (
+          <div className="mt-8">
+            <h4 className="text-xs font-mono text-white/40 tracking-wider uppercase mb-3">FIELDS OF EXPERTISE</h4>
+            <div className="flex flex-wrap gap-2">
+              {member.expertise?.map((skill, idx) => (
+                <span key={idx} className="px-3 py-1 rounded-md bg-white/[0.03] border border-white/[0.06] text-xs text-white/80">
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Detailed Sections (Achievements, Projects, Experience, Outreach) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8 border-t border-white/5 pt-6">
+          
+          {/* Achievements Section */}
+          {hasAchievements && (
+            <div>
+              <div className="flex items-center gap-2 text-[hsl(var(--phosphor))] mb-4">
+                <Trophy className="h-4 w-4" />
+                <h4 className="text-xs font-mono tracking-wider uppercase">MAJOR ACHIEVEMENTS</h4>
+              </div>
+              <ul className="space-y-3">
+                {member.achievements?.map((ach, idx) => (
+                  <li key={idx} className="text-xs md:text-sm text-white/70 pl-4 border-l border-white/10 relative">
+                    <span className="absolute left-0 top-1.5 h-1 w-1 bg-[hsl(var(--phosphor))] rounded-full -translate-x-1/2" />
+                    {ach}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Academic & Certifications Section */}
+          {member.academic && member.academic !== 'Nil' && (
+            <div>
+              <div className="flex items-center gap-2 text-[hsl(var(--phosphor))] mb-4">
+                <Award className="h-4 w-4" />
+                <h4 className="text-xs font-mono tracking-wider uppercase">ACADEMIC & CERTIFICATIONS</h4>
+              </div>
+              <p className="text-xs md:text-sm text-white/70 leading-relaxed pl-4 border-l border-white/10">
+                {member.academic}
+              </p>
+            </div>
+          )}
+
+          {/* Internship & Work Experience Section */}
+          {member.experience && (
+            <div>
+              <div className="flex items-center gap-2 text-[hsl(var(--phosphor))] mb-4">
+                <Briefcase className="h-4 w-4" />
+                <h4 className="text-xs font-mono tracking-wider uppercase">INTERNSHIP & EXPERIENCE</h4>
+              </div>
+              <p className="text-xs md:text-sm text-white/70 leading-relaxed pl-4 border-l border-white/10">
+                {member.experience}
+              </p>
+            </div>
+          )}
+
+          {/* Projects Developed Section */}
+          {hasProjects && (
+            <div>
+              <div className="flex items-center gap-2 text-[hsl(var(--phosphor))] mb-4">
+                <Code className="h-4 w-4" />
+                <h4 className="text-xs font-mono tracking-wider uppercase">PROJECTS DEVELOPED</h4>
+              </div>
+              <ul className="space-y-3">
+                {member.projects?.map((proj, idx) => (
+                  <li key={idx} className="text-xs md:text-sm text-white/70 pl-4 border-l border-white/10 relative">
+                    <span className="absolute left-0 top-1.5 h-1 w-1 bg-[hsl(var(--phosphor))] rounded-full -translate-x-1/2" />
+                    {proj}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Extracurriculars Section */}
+          {member.sports && member.sports !== 'Nil' && (
+            <div>
+              <div className="flex items-center gap-2 text-[hsl(var(--phosphor))] mb-4">
+                <BookOpen className="h-4 w-4" />
+                <h4 className="text-xs font-mono tracking-wider uppercase">SPORTS & EXTRACURRICULARS</h4>
+              </div>
+              <p className="text-xs md:text-sm text-white/70 leading-relaxed pl-4 border-l border-white/10">
+                {member.sports}
+              </p>
+            </div>
+          )}
+
+          {/* Spiritual & Social Service Section */}
+          {member.outreach && member.outreach !== 'Nil' && (
+            <div>
+              <div className="flex items-center gap-2 text-[hsl(var(--phosphor))] mb-4">
+                <User className="h-4 w-4" />
+                <h4 className="text-xs font-mono tracking-wider uppercase">OUTREACH & SOCIAL SERVICE</h4>
+              </div>
+              <p className="text-xs md:text-sm text-white/70 leading-relaxed pl-4 border-l border-white/10">
+                {member.outreach}
+              </p>
+            </div>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 /* -------------------------------------------------------------------------- */
 /* Member column                                                              */
 /* -------------------------------------------------------------------------- */
@@ -224,11 +449,13 @@ const MemberColumn = ({
   member,
   side,
   reducedMotion,
+  onSelect,
 }: {
   progress: number;
   member: Coordinator;
   side: 'left' | 'right';
   reducedMotion: boolean;
+  onSelect: () => void;
 }) => {
   const figureRef = useRef<HTMLDivElement>(null);
   const detailRef = useRef<HTMLDivElement>(null);
@@ -392,7 +619,8 @@ const MemberColumn = ({
 
       <div
         ref={figureRef}
-        className="
+        onClick={hasMember ? onSelect : undefined}
+        className={`
           pointer-events-auto
           flex
           h-[35vh]
@@ -407,7 +635,8 @@ const MemberColumn = ({
           bg-[hsl(var(--ink)/0.5)]
           transition-colors duration-500 hover:border-[hsl(var(--phosphor)/0.5)]
           group
-        "
+          ${hasMember ? 'cursor-pointer' : ''}
+        `}
         style={{
           opacity: 0,
           willChange: reducedMotion
@@ -416,26 +645,35 @@ const MemberColumn = ({
         }}
       >
         {member.image ? (
-          <img
-            src={member.image}
-            alt={
-              hasMember
-                ? `${member.name} portrait`
-                : ''
-            }
-            loading="eager"
-            decoding="async"
-            className="
-              block
-              h-full
-              w-full
-              object-cover
-              object-center
-              group-hover:scale-105
-              transition-all
-              duration-700
-            "
-          />
+          <>
+            <img
+              src={member.image}
+              alt={
+                hasMember
+                  ? `${member.name} portrait`
+                  : ''
+              }
+              loading="eager"
+              decoding="async"
+              className="
+                block
+                h-full
+                w-full
+                object-cover
+                object-center
+                group-hover:scale-105
+                transition-all
+                duration-700
+              "
+            />
+            {hasMember && (
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                <span className="px-3 py-1.5 rounded-lg bg-black/60 border border-white/10 text-[10px] sm:text-xs font-mono text-[hsl(var(--phosphor))] uppercase tracking-wider scale-95 group-hover:scale-100 transition-transform duration-300">
+                  Click to view details
+                </span>
+              </div>
+            )}
+          </>
         ) : (
           <div className="flex flex-col items-center justify-center w-full h-full opacity-20 bg-[hsl(var(--ink)/0.3)]">
             <span
@@ -680,6 +918,7 @@ const SceneLabel = ({
 
 const CoreMembers = () => {
   const reducedMotion = useReducedMotion();
+  const [selectedMember, setSelectedMember] = useState<Coordinator | null>(null);
 
   return (
     <section
@@ -796,6 +1035,7 @@ const CoreMembers = () => {
                       reducedMotion={
                         reducedMotion
                       }
+                      onSelect={() => setSelectedMember(lead)}
                     />
                   )}
 
@@ -811,6 +1051,7 @@ const CoreMembers = () => {
                       reducedMotion={
                         reducedMotion
                       }
+                      onSelect={() => setSelectedMember(joint)}
                     />
                   )}
 
@@ -839,6 +1080,14 @@ const CoreMembers = () => {
             </ScrollScene>
           );
         },
+      )}
+
+      {selectedMember && (
+        <MemberDetailModal
+          member={selectedMember}
+          isOpen={!!selectedMember}
+          onClose={() => setSelectedMember(null)}
+        />
       )}
     </section>
   );
