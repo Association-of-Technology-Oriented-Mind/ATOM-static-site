@@ -399,17 +399,17 @@ const ClubScene = ({
             >
               <Link
                 to={`/clubs/${club.slug}`}
-                className="group relative inline-flex items-center justify-between gap-6 bg-black/60 border border-[hsl(var(--phosphor)/0.4)] hover:border-[hsl(var(--phosphor))] px-8 py-5 w-full md:w-auto overflow-hidden transition-all duration-300 rounded shadow-[0_0_20px_rgba(0,0,0,0.5)] hover:shadow-[0_0_30px_hsl(var(--phosphor)/0.2)]"
+                className="group relative inline-flex items-center justify-between gap-6 bg-black/60 border border-[hsl(var(--phosphor)/0.4)] hover:border-[hsl(var(--phosphor))] px-8 py-5 w-full md:w-auto overflow-hidden transition-all duration-300 rounded shadow-[0_0_20px_rgba(0,0,0,0.5)]"
               >
-                {/* Swipe Glow */}
-                <div className="absolute inset-0 bg-[hsl(var(--phosphor)/0.1)] translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-out" />
+                {/* Sliding Mint Cyan Background from Bottom to Top */}
+                <div className="absolute inset-0 bg-[hsl(var(--phosphor))] translate-y-[100%] group-hover:translate-y-0 transition-transform duration-400 ease-out pointer-events-none" />
 
                 <div className="relative z-10 flex items-center gap-3">
-                  <span className="w-2 h-2 bg-[hsl(var(--phosphor))] rounded-full animate-pulse shadow-[0_0_8px_hsl(var(--phosphor))]" />
-                  <span className="mono-label text-[hsl(var(--chalk))] group-hover:text-white transition-colors uppercase tracking-[0.2em] text-xs">Initiate Handshake</span>
+                  <span className="w-2 h-2 bg-[hsl(var(--phosphor))] group-hover:bg-black rounded-full transition-colors duration-300 shadow-[0_0_8px_hsl(var(--phosphor))]" />
+                  <span className="mono-label text-[hsl(var(--chalk))] group-hover:text-black transition-colors duration-300 uppercase tracking-[0.2em] text-xs">Initiate Handshake</span>
                 </div>
 
-                <svg className="w-4 h-4 text-[hsl(var(--graphite))] group-hover:text-[hsl(var(--phosphor))] transition-colors relative z-10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                <svg className="w-4 h-4 text-[hsl(var(--graphite))] group-hover:text-black transition-colors duration-300 relative z-10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
                   <path d="M1 6h10M6 1l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </Link>

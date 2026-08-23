@@ -475,19 +475,19 @@ export const Hero = () => {
             >
               <a
                 href="#clubs-section"
-                className="btn-tech flex items-center gap-2 border border-[hsl(var(--rule))] px-8 py-3.5 bg-black hover:border-[hsl(var(--phosphor))] hover:text-[hsl(var(--phosphor))] transition-all font-mono text-xs uppercase"
+                className="btn-tech flex items-center gap-2 border border-[hsl(var(--rule))] px-8 py-3.5 bg-transparent hover:border-[hsl(var(--phosphor))] font-mono text-xs uppercase"
               >
-                Explore Clubs
+                <span>Explore Clubs</span>
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
                   <path d="M1 6h10M6 1l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </a>
-              <a
-                href="#about"
-                className="btn-tech border border-[hsl(var(--rule))] px-8 py-3.5 hover:border-[hsl(var(--phosphor))] hover:text-[hsl(var(--phosphor))] transition-all font-mono text-xs uppercase"
+              <Link
+                to="/core"
+                className="btn-tech border border-[hsl(var(--rule))] px-8 py-3.5 bg-transparent hover:border-[hsl(var(--phosphor))] font-mono text-xs uppercase"
               >
-                Our Story
-              </a>
+                <span>Core Members</span>
+              </Link>
             </motion.div>
           </motion.div>
 
