@@ -1,9 +1,7 @@
 // DotDev Club data and imports
 import Allen from "@/assets/DOTDEV/Allen.jpg";
 import Yakshini from "@/assets/DOTDEV/Yakshini.jpg";
-const Jola = null;
-const Manisha = null;
-const Varsha = null;
+
 import Dot1 from "@/assets/DOTDEV/Dot1.webp";
 import Dot2 from "@/assets/DOTDEV/Dot2.webp";
 import Dot3 from "@/assets/DOTDEV/Dot3.webp";
@@ -36,7 +34,7 @@ export const dotdevClub = {
       role: "Coordinator",
       image: Allen,
       isMain: true,
-      bio: "Skilled in AI/ML, Data Science, and Full-Stack Development. Led the development of VOX, an assistive voice-first exam platform, and recognized for leadership in technology and NSS initiatives.",
+      bio: "Data Science Intern at Codmetric and NSS Parade Commander. Lead developer of VOX, a voice-first exam interface for specially-abled students.",
       linkedin: "linkedin.com/in/allen-john-isac-7b6730363",
     },
     {
@@ -44,34 +42,9 @@ export const dotdevClub = {
       role: "Junior Coordinator",
       image: Yakshini,
       isMain: false,
-      bio: "Skilled in AI and Full-Stack Development, with 19+ certifications, a 3rd-place finish at Mindkraft Expo 2026, and hands-on internship experience in full-stack development.",
+      bio: "Full-Stack Developer Intern at Trimed Technologies and Mindkraft Expo winner. Holds 19+ technical certifications and developed the LUMI voice assistant.",
       linkedin: "",
     },
-    {
-      name: "Manisha S",
-      role: "Educator",
-      image: Manisha,
-      isMain: false,
-      bio: "",
-      linkedin: "linkedin.com/in/manisha-c",
-    },
-    {
-      name: "Jola Kaseena C",
-      role: "Educator",
-      image: Jola,
-      isMain: false,
-      bio: "",
-      linkedin: "linkedin.com/in/jola-keseena-b0895a2a9",
-    },
-    {
-      name: "Varsha S",
-      role: "Educator",
-      image: Varsha,
-      isMain: false,
-      bio: "",
-      linkedin: "linkedin.com/in/varsha-nadarajan",
-    },
-
   ],
   projects: [
     {

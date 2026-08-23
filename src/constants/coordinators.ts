@@ -9,6 +9,7 @@ import nithishk from '@/assets/NithishK.jpg';
 import sona from '@/assets/Sona.jpg';
 import jemimah from '@/assets/Jemimah.png';
 import evans from '@/assets/EVANS T.jpeg';
+import sanjaynesan from '@/assets/SANJAY NESAN J.jpg';
 
 // Core team for the current academic year.
 //
@@ -67,78 +68,84 @@ export const coordinators: Coordinator[] = [
     ...seat(1, 'Secretary', 'Secretariat', true),
     name: 'Deepakumar S',
     image: deepakumar,
-    bio: 'Skilled in offensive security. Awarded Best Idea at the TN Police Hackathon and secured a summer internship offer through Cyberthon 2025.',
+    bio: 'Co-founder & CEO of Torkq secure AI gateway. Winner of Cyberthon 2025, and creator of custom forensic VOIP interception tools for the Tamil Nadu Police.',
     linkedin: 'linkedin.com/in/deepakumar-s',
   },
   {
     ...seat(2, 'Joint Secretary', 'Secretariat', false),
     name: 'Lebi Raja C',
     image: lebi,
-    bio: 'Skilled in Generative AI and software development. Winner of Makers Day 2026, Meta × PyTorch Hackathon finalist, and BI3 Bytes Hackathon runner-up.',
+    bio: 'Junior Software Engineer Intern at Fludigo, specializing in Generative AI, DevOps, and System Design. Winner of Makers Day 2026, Meta × PyTorch Hackathon finalist, and creator of the Athena Indic voice cloning platform.',
     linkedin: 'linkedin.com/in/lebiraja',
   },
   {
     ...seat(3, 'Treasurer', 'Treasury', true),
     name: 'Thirupathi S',
     image: thirupathi,
-    bio: 'Focused on building practical tools and keeping the club’s accounts straight. Active across ATOM’s technical events.',
+    bio: 'Software Engineer Intern at GMS and National Level Technoverse Hackathon winner. Main developer of DrugTrace, a LangGraph and Neo4j multi-agent AI drug repurposing platform.',
     linkedin: 'linkedin.com/in/thirupathi-s',
   },
   {
     ...seat(4, 'Joint Treasurer', 'Treasury', false),
     name: 'Nithishkumar S',
     image: nithishkumar,
-    bio: 'Skilled in Artificial Intelligence and Data Science, with hands-on experience as a Data Science Intern at Codec Technologies.',
+    bio: 'AI & Data Science specialist with hands-on industry experience as a Data Science Intern at Codec Technologies.',
     linkedin: 'linkedin.com/in/nithishkumar-sakthivel-49a7ba365',
   },
   {
     ...seat(5, 'Technical Event Coordinator', 'Technical Events', true),
     name: 'Sanjay S',
     image: sanjay,
-    bio: 'Skilled in Cybersecurity, awarded Best Idea at the TN Police Hackathon 2025, and co-founded Torkq, an LLM gateway for PII/PCI redaction and compliance.',
+    bio: 'Co-founder & CTO of Torkq. Winner of the TN Police Hackathon 2025 Best Idea Award for building secure PII/PCI redaction gateway middleware.',
     linkedin: 'linkedin.com/in/sanjay-s-699585345',
   },
   {
     ...seat(6, 'Joint Technical Event Coordinator', 'Technical Events', false),
     name: 'KP Shohil',
     image: shohil,
-    bio: 'Skilled in AI/ML and Data Science, with ML and Data Analytics internship experience and a 1st-place win at Makers Day.',
+    bio: 'Double-phase ML & Data Analytics Intern at Innovate. Winner of Makers Day 2026, specializing in predictive modeling and business intelligence pipelines.',
     linkedin: 'linkedin.com/in/kp-shohil',
   },
   {
     ...seat(7, 'Event Management Coordinator', 'Event Management', true),
     name: 'Regulla Mallika Priyaharshini',
     image: mallika,
-    bio: 'Skilled in AI, Deep Learning, and Machine Learning, with hands-on internship experience and active involvement in technical and organizational initiatives.',
+    bio: 'AI and Cloud Computing intern with experience at CodSoft and HashTek. Served as Megaplay Coordinator and volunteer in rural social initiatives.',
     linkedin: 'linkedin.com/in/mallika-regulla-059232297',
   },
   {
     ...seat(8, 'Joint Event Management Coordinator', 'Event Management', false),
     name: 'Nithishkumar K',
     image: nithishk,
-    bio: 'Cybersecurity specialist protecting networks and data',
+    bio: 'Cybersecurity researcher and Tamil Nadu’s No. 1 ranked archer, representing the state and securing 7th place in national level archery championships.',
     linkedin: 'linkedin.com/in/nithishkumar-k-691473351',
   },
-  seat(9, 'Media Coordinator', 'Media', true),
+  {
+    ...seat(9, 'Media Coordinator', 'Media', true),
+    name: 'Sanjay Nesan J',
+    image: sanjaynesan,
+    bio: 'Technical Lead of ICCT 26 and Chief Design Officer at I-Intern. Built an Enterprise AI Meeting Intelligence diarization suite and the K-MENTOR AI guidance platform.',
+    linkedin: 'linkedin.com/in/sanjaynesan',
+  },
   {
     ...seat(10, 'Joint Media Coordinator', 'Media', false),
     name: 'Sona Santhosh',
     image: sona,
-    bio: 'Skilled in Data Analytics with hands-on experience in Python, SQL, and data visualization, and serves as Head of the NSS Media Team with strong creative and event coordination skills.',
+    bio: 'Data Analytics Intern at Hexanova Tech Solutions and Head of the NSS Media Team. Skilled in Python data preprocessing, visualization, and creative content creation.',
     linkedin: 'linkedin.com/in/sona-santhosh-urk24ai1040',
   },
   {
     ...seat(11, 'Spiritual Coordinator', 'Spiritual', true),
-    name: 'Jemimah Praisy P',
+    name: 'Jemimah Praisy',
     image: jemimah,
-    bio: 'Academic rank holder skilled in AI, Full-Stack Development, and Data Science, with AWS and Microsoft Azure AI certifications and experience as a Software Engineering Intern.',
+    bio: 'Academic rank holder and Software Engineering Intern at Soft Teams Solutions. Certified in AWS and Azure AI, and active as a worship leader and choir director.',
     linkedin: 'linkedin.com/in/jemimahpraisy7',
   },
   {
     ...seat(12, 'Joint Spiritual Coordinator', 'Spiritual', false),
     name: 'Evans T',
     image: evans,
-    bio: 'Skilled in Artificial Intelligence and Full-Stack Development. Institutional Merit Scholarship holder, SIPCOT Hackathon runner-up, and zonal football gold medalist who actively volunteers in community and spiritual service.',
+    bio: 'Full-Stack Developer, SIPCOT Hackathon runner-up, and Zonal Football gold medalist. Developed the ASEL AI personalized learning tutor platform.',
     linkedin: '',
   },
 ];

@@ -7,8 +7,7 @@ import Footer from '@/components/Footer';
 import { hackhiveClub } from '@/constants/hackhive';
 import { dotdevClub } from '@/constants/dotdev';
 import { unbiasClub } from '@/constants/unbias';
-import { rndClub } from '@/constants/rnd';
-import { careerGuidanceClub } from '@/constants/career-guidance';
+import { qyroClub } from '@/constants/qyro';
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -18,8 +17,7 @@ const getClubData = (slug?: string) => {
   if (s === 'hackhive') return hackhiveClub;
   if (s === 'dotdev') return dotdevClub;
   if (s === 'unbias' || s === 'unbiased') return unbiasClub;
-  if (s === 'qyro' || s === 'rnd') return { ...rndClub, name: s === 'qyro' ? 'Qyro Club' : rndClub.name };
-  if (s === 'career-guidance') return careerGuidanceClub;
+  if (s === 'qyro') return qyroClub;
   return null;
 };
 
@@ -29,8 +27,7 @@ const getClubThemeColor = (slug?: string) => {
   if (s === 'hackhive') return '142 80% 60%'; // Bright Cyber Green
   if (s === 'dotdev') return '230 100% 75%'; // Bright Electric Indigo
   if (s === 'unbias' || s === 'unbiased') return '270 80% 75%'; // Bright Amethyst
-  if (s === 'qyro' || s === 'rnd') return '35 100% 65%'; // Bright Amber
-  if (s === 'career-guidance') return '180 80% 65%'; // Bright Mint Cyan
+  if (s === 'qyro') return '35 100% 65%'; // Bright Amber
   return '168 90% 74%';
 };
 

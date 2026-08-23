@@ -1,25 +1,25 @@
-// RND Club data and imports
+// Qyro Club data and imports
 import Alain from '@/assets/QYRO/Alain.jpg';
 import Ankitha from '@/assets/QYRO/Ankitha.jpg';
-import { Shield } from "lucide-react";
+import qyroLogo from '@/assets/qyro.webp';
 
-export const rndClub = {
+export const qyroClub = {
   id: 4,
-  name: "RND Club",
-  icon: Shield,
+  name: "Qyro Club",
+  icon: qyroLogo,
   description:
-    "The R&D Club under ATOM is a hub for innovation, turning real-world challenges into smart, practical, and startup-ready solutions. It empowers students to explore ideas, build prototypes, and collaborate with industry experts to bring innovations to life.",
+    "The Qyro Club under ATOM is a hub for innovation, turning real-world challenges into smart, practical, and startup-ready solutions. It empowers students to explore ideas, build prototypes, and collaborate with industry experts to bring innovations to life.",
   objectives:
     "To identify real-world problems, foster creativity and innovation, guide students in building impactful projects, connect them with industry leaders and startups, and promote a strong research and entrepreneurship culture on campus.",
   extraInfo:
-    "R&D Club has incubated 15+ startup ideas, secured funding for 5 student projects, and established partnerships with 10+ industry leaders. The club organizes innovation challenges and prototype development workshops.",
+    "Qyro Club has incubated 15+ startup ideas, secured funding for 5 student projects, and established partnerships with 10+ industry leaders. The club organizes innovation challenges and prototype development workshops.",
   coordinators: [
     {
       name: "Alain Abraham",
       role: "Coordinator",
       image: Alain,
       isMain: true,
-      bio: "Quantum computing enthusiast and Quantum Engineer, with IBM Quantum certifications, a runner-up finish at the Andhra Pradesh Quantum Hackathon, and experience developing VQE-based quantum algorithms.",
+      bio: "Quantum Engineer Intern at Artificial Brain and AP Quantum Hackathon runner-up. IBM Quantum certified researcher specializing in VQE-based molecular ground state algorithms.",
       linkedin: "linkedin.com/in/alain-abraham-b91193304",
     },
     {
@@ -27,7 +27,7 @@ export const rndClub = {
       role: "Junior Coordinator",
       image: Ankitha,
       isMain: false,
-      bio: "Skilled in AI and Machine Learning, with hands-on experience building AI voice control, biometric voting, and heart disease prediction projects.",
+      bio: "AI/ML scholar and Python intern at Internzvally. Developed AI voice control systems, biometric voting interfaces, and predictive heart disease models.",
       linkedin: "",
     },
   ],
@@ -35,17 +35,17 @@ export const rndClub = {
     {
       name: "InnovateLab Platform",
       description: "A comprehensive platform for managing research projects, connecting with mentors, and tracking innovation progress.",
-      github: "https://github.com/rndclub/innovatelab"
+      github: "https://github.com/qyroclub/innovatelab"
     },
     {
       name: "StartupHub Network",
       description: "Networking platform connecting student entrepreneurs with investors, mentors, and industry experts.",
-      github: "https://github.com/rndclub/startuphub"
+      github: "https://github.com/qyroclub/startuphub"
     },
     {
       name: "Research Repository",
       description: "Digital library for storing, sharing, and collaborating on research papers and project documentation.",
-      github: "https://github.com/rndclub/research-repo"
+      github: "https://github.com/qyroclub/research-repo"
     }
   ],
   gallery: [

@@ -49,14 +49,14 @@ const CLUBS: ClubDef[] = [
         name: 'KRM Lohith',
         role: 'Coordinator',
         image: lohithImg,
-        bio: "AI/ML and Blockchain enthusiast, Makers Day winner and BI3 Hackathon runner-up, with Meta Hackathon finalist experience and a 3-month Full-Stack Development internship.",
+        bio: "Full-Stack Developer, 2x National Volleyball gold medalist, Makers Day winner, and creator of Retinal AI, an AI-powered disease detection system.",
         linkedin: 'https://linkedin.com/in/lohith-krm'
       },
       {
         name: 'Antonio Jeffrey A',
         role: 'Junior Coordinator',
         image: jeffreyImg,
-        bio: "Skilled in AI, Computer Vision, IoT, and Full-Stack Development, with multiple product-building projects, startup experience, and recognition for excellence in product development.",
+        bio: "Co-founder of Build Your Bot robotics startup and Mindkraft Expo winner. Creator of Meowy Companion AI, WeCANN hosting, and Matrix Matrix AnalogKey systems.",
         linkedin: ''
       },
     ],
@@ -75,14 +75,14 @@ const CLUBS: ClubDef[] = [
         name: 'Allen John Isac',
         role: 'Coordinator',
         image: allenImg,
-        bio: 'Skilled in AI/ML, Data Science, and Full-Stack Development. Led the development of VOX, an assistive voice-first exam platform, and recognized for leadership in technology and NSS initiatives.',
+        bio: 'Data Science Intern at Codmetric and NSS Parade Commander. Lead developer of VOX, a voice-first exam interface for specially-abled students.',
         linkedin: 'https://linkedin.com/in/allen-john-isac-7b6730363'
       },
       {
         name: 'Yakshini S',
         role: 'Junior Coordinator',
         image: yakshiniImg,
-        bio: 'Skilled in AI and Full-Stack Development, with 19+ certifications, a 3rd-place finish at Mindkraft Expo 2026, and hands-on internship experience in full-stack development.',
+        bio: 'Full-Stack Developer Intern at Trimed Technologies and Mindkraft Expo winner. Holds 19+ technical certifications and developed the LUMI voice assistant.',
         linkedin: ''
       },
     ],
@@ -101,14 +101,14 @@ const CLUBS: ClubDef[] = [
         name: 'Jefferson Raja',
         role: 'Coordinator',
         image: jeffersonImg,
-        bio: 'Skilled in Cybersecurity and Software Development, winner of the Smart India Hackathon, Aurelion Hackathon 3rd-place winner, and finalist in Meta × Scalar and Cyberthon.',
+        bio: 'Cybersecurity researcher and software developer. Winner of Smart India Hackathon, Aurelion Hackathon 3rd-place winner, and finalist in Meta × Scalar and Cyberthon.',
         linkedin: 'https://linkedin.com/in/jefferson-raja/'
       },
       {
         name: 'Dave V Shah',
         role: 'Junior Coordinator',
         image: daveImg,
-        bio: 'Skilled in Cybersecurity, with expertise in network attack detection and digital media protection. Winner of Smart India Hackathon 2025, securing 1st place among 500 teams.',
+        bio: 'Smart India Hackathon 2025 winner. Cryptography and network security researcher who designed RTT temporal anomaly detection and custom DRM media protection protocols.',
         linkedin: ''
       },
     ],
@@ -119,22 +119,22 @@ const CLUBS: ClubDef[] = [
     id: 'qyro',
     slug: 'qyro',
     name: 'Qyro',
-    tag: 'NEW CLUB',
+    tag: 'RESEARCH / INNOVATION',
     description:
-      'Club description, objectives and focus area for Qyro are pending. Please supply this content.',
+      'The Qyro Club under ATOM is a hub for innovation, turning real-world challenges into smart, practical, and startup-ready solutions. It empowers students to explore ideas, build prototypes, and collaborate with industry experts to bring innovations to life.',
     coordinators: [
       {
         name: 'Alain Abraham',
         role: 'Coordinator',
         image: alainImg,
-        bio: 'Quantum computing enthusiast and Quantum Engineer, with IBM Quantum certifications, a runner-up finish at the Andhra Pradesh Quantum Hackathon, and experience developing VQE-based quantum algorithms.',
+        bio: 'Quantum Engineer Intern at Artificial Brain and AP Quantum Hackathon runner-up. IBM Quantum certified researcher specializing in VQE-based molecular ground state algorithms.',
         linkedin: 'https://linkedin.com/in/alain-abraham-b91193304'
       },
       {
         name: 'Thumma Ankitha Ignatious',
         role: 'Junior Coordinator',
         image: ankithaImg,
-        bio: 'Skilled in AI and Machine Learning, with hands-on experience building AI voice control, biometric voting, and heart disease prediction projects.',
+        bio: 'AI/ML scholar and Python intern at Internzvally. Developed AI voice control systems, biometric voting interfaces, and predictive heart disease models.',
         linkedin: ''
       },
     ],

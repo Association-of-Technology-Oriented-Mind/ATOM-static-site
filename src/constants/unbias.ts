@@ -1,11 +1,8 @@
 // UnBias Club data and imports
 import Lohith from '@/assets/UNBIAS/Lohith.jpg';
 import Jeffrey from '@/assets/UNBIAS/Jeffrey.jpg';
-import Aparna from '@/assets/UNBIAS/Aparna.webp';
-import Lebi from '@/assets/UNBIAS/Lebi.webp';
+import Lebi from '@/assets/Lebi.jpg';
 import Thirupathy from '@/assets/Thirupathi S.webp';
-import Pooja from '@/assets/UNBIAS/Pooja.webp';
-import Vasuki from '@/assets/UNBIAS/Vasuki.webp';
 // Note: Unbias1.jpg, Unbias3.jpg, and Unbias7.jpg don't exist
 import Bias1 from "@/assets/UNBIAS/IMG-20250913-WA0012.webp";
 import Bias2 from "@/assets/UNBIAS/Unbias2.webp";
@@ -35,7 +32,7 @@ export const unbiasClub = {
       role: "Coordinator",
       image: Lohith,
       isMain: true,
-      bio: "AI/ML and Blockchain enthusiast, Makers Day winner and BI3 Hackathon runner-up, with Meta Hackathon finalist experience and a 3-month Full-Stack Development internship.",
+      bio: "Full-Stack Developer, 2x National Volleyball gold medalist, Makers Day winner, and creator of Retinal AI, an AI-powered disease detection system.",
       linkedin: "linkedin.com/in/lohith-krm",
     },
     {
@@ -43,48 +40,24 @@ export const unbiasClub = {
       role: "Junior Coordinator",
       image: Jeffrey,
       isMain: false,
-      bio: "Skilled in AI, Computer Vision, IoT, and Full-Stack Development, with multiple product-building projects, startup experience, and recognition for excellence in product development.",
+      bio: "Co-founder of Build Your Bot robotics startup and Mindkraft Expo winner. Creator of Meowy Companion AI, WeCANN hosting, and Matrix Matrix AnalogKey systems.",
       linkedin: "",
-    },
-    {
-      name: "Aparna",
-      role: "Educator",
-      image: Aparna,
-      isMain: false,
-      bio: "",
-      linkedin: "linkedin.com/in/aparna-j-a13647297",
     },
     {
       name: "Thirupathi",
       role: "Educator",
       image: Thirupathy,
       isMain: false,
-      bio: "",
+      bio: "Software Engineer Intern at GMS and National Level Technoverse Hackathon winner. Main developer of DrugTrace, a LangGraph and Neo4j multi-agent AI drug repurposing platform.",
       linkedin: "linkedin.com/in/thirupathis",
-    },
-    {
-      name: "Vasuki",
-      role: "Educator",
-      image: Vasuki,
-      isMain: false,
-      bio: "",
-      linkedin: "linkedin.com/in/vasuki-g-0b31a9288",
     },
     {
       name: "Lebi Raja",
       role: "Educator",
       image: Lebi,
       isMain: false,
-      bio: "",
+      bio: "Junior Software Engineer Intern at Fludigo, specializing in Generative AI, DevOps, and System Design. Winner of Makers Day 2026, Meta × PyTorch Hackathon finalist, and creator of the Athena Indic voice cloning platform.",
       linkedin: "linkedin.com/in/lebiraja",
-    },
-    {
-      name: "Pooja",
-      role: "Educator",
-      image: Pooja,
-      isMain: false,
-      bio: "",
-      linkedin: "linkedin.com/in/pooja-s-1190862b8/",
     },
   ],
   projects: [

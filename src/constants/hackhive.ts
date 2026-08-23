@@ -1,9 +1,7 @@
 // HackHive Club data and imports
 import Jefferson from '@/assets/HACKHIVE/Jefferson.jpg';
 import Dave from "@/assets/HACKHIVE/Dave.png";
-import Leo from '@/assets/HACKHIVE/Leo.webp';
-const Gre = null;
-import Nithish from "@/assets/Nithishkumar.webp";
+import Nithish from "@/assets/NithishK.jpg";
 import Hack1 from "@/assets/HACKHIVE/Hack1.webp";
 import Hack2 from "@/assets/HACKHIVE/Hack2.webp";
 import Hack3 from "@/assets/HACKHIVE/Hack3.webp";
@@ -31,7 +29,7 @@ export const hackhiveClub = {
       role: "Coordinator",
       image: Jefferson,
       isMain: true,
-      bio: "Skilled in Cybersecurity and Software Development, winner of the Smart India Hackathon, Aurelion Hackathon 3rd-place winner, and finalist in Meta × Scalar and Cyberthon.",
+      bio: "Cybersecurity researcher and software developer. Winner of Smart India Hackathon, Aurelion Hackathon 3rd-place winner, and finalist in Meta × Scalar and Cyberthon.",
       linkedin: "linkedin.com/in/jefferson-raja/",
     },
     {
@@ -39,32 +37,16 @@ export const hackhiveClub = {
       role: "Junior Coordinator",
       image: Dave,
       isMain: false,
-      bio: "Skilled in Cybersecurity, with expertise in network attack detection and digital media protection. Winner of Smart India Hackathon 2025, securing 1st place among 500 teams.",
+      bio: "Smart India Hackathon 2025 winner. Cryptography and network security researcher who designed RTT temporal anomaly detection and custom DRM media protection protocols.",
       linkedin: "",
-    },
-    {
-      name: "Gregory Joe Jeni C",
-      role: "Educator",
-      image: Gre,
-      isMain: false,
-      bio: "",
-      linkedin: "linkedin.com/in/gregory-joe-jeni-0850142bb",
     },
     {
       name: "Nithishkumar K",
       role: "Educator",
       image: Nithish,
       isMain: false,
-      bio: "",
+      bio: "Cybersecurity researcher and Tamil Nadu’s No. 1 ranked archer, representing the state and securing 7th place in national level archery championships.",
       linkedin: "linkedin.com/in/nithishkumar-k-691473351",
-    },
-    {
-      name: "Leo Francis A",
-      role: "Educator",
-      image: Leo,
-      isMain: false,
-      bio: "",
-      linkedin: "linkedin.com/in/leo-francis-a-a9092531b",
     }
   ],
   projects: [
