@@ -259,7 +259,7 @@ function CircuitryCanvas() {
 // ──────────────────────────────────────────────────────────
 // RIGHT PANEL COMPONENT (INTERACTIVE)
 // ──────────────────────────────────────────────────────────
-function RightPanel({ rightY }: { rightY: any }) {
+function RightPanel({ rightY, isMobile }: { rightY: any; isMobile: boolean }) {
   const containerRef = useRef<HTMLDivElement>(null);
   
   // framer motion for logo tilt
@@ -292,11 +292,11 @@ function RightPanel({ rightY }: { rightY: any }) {
 
   return (
     <motion.div
-      style={{ y: rightY }}
+      style={{ y: isMobile ? 0 : rightY }}
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="w-full md:w-[35%] min-h-[40vh] md:min-h-screen flex flex-col justify-between p-8 sm:p-12 lg:p-16 relative pointer-events-auto overflow-hidden group"
+      className="w-full md:w-[35%] min-h-[40vh] md:min-h-screen flex flex-col justify-between p-6 sm:p-12 lg:p-16 relative pointer-events-auto overflow-hidden group"
     >
       
       {/* Top metadata */}
@@ -333,6 +333,14 @@ export const Hero = () => {
   const containerRef = useRef<HTMLElement>(null);
   const { scrollY } = useScroll();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Parallax transform on scroll
   const leftY = useTransform(scrollY, [0, 800], [0, -50]);
@@ -376,8 +384,8 @@ export const Hero = () => {
     >
       {/* 1. SPLIT BACKGROUND LAYER (z-0) */}
       <div className="absolute inset-0 w-full h-full flex flex-col md:flex-row z-0 pointer-events-none">
-        <div className="w-full md:w-[65%] h-full bg-[#121212] border-b md:border-b-0 md:border-r border-[hsl(var(--rule))]" />
-        <div className="w-full md:w-[35%] h-full bg-[#0a0a0a]" />
+        <div className="w-full md:w-[65%] h-[60%] md:h-full bg-[#121212] border-b md:border-b-0 md:border-r border-[hsl(var(--rule))]" />
+        <div className="w-full md:w-[35%] h-[40%] md:h-full bg-[#0a0a0a]" />
       </div>
 
       {/* 2. DYNAMIC CIRCUITRY LAYER (z-10) */}
@@ -412,8 +420,8 @@ export const Hero = () => {
         
         {/* LEFT COLUMN CONTENT */}
         <motion.div
-          style={{ y: leftY }}
-          className="w-full md:w-[65%] min-h-[60vh] md:min-h-screen flex flex-col justify-between p-8 sm:p-12 lg:p-16 relative pointer-events-auto"
+          style={{ y: isMobile ? 0 : leftY }}
+          className="w-full md:w-[65%] min-h-[60vh] md:min-h-screen flex flex-col justify-between p-6 sm:p-12 lg:p-16 relative pointer-events-auto"
         >
           {/* Top brand header */}
           <div className="flex items-center justify-between md:justify-start gap-4">
@@ -430,7 +438,7 @@ export const Hero = () => {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="my-auto py-12 md:py-0 max-w-2xl"
+            className="my-auto py-6 md:py-0 max-w-2xl"
           >
             <motion.h1
               variants={itemVariants}
@@ -484,7 +492,7 @@ export const Hero = () => {
         </motion.div>
 
         {/* RIGHT COLUMN CONTENT */}
-        <RightPanel rightY={rightY} />
+        <RightPanel rightY={rightY} isMobile={isMobile} />
       </div>
 
       {/* 5. FULLSCREEN MENU OVERLAY (z-[100]) */}

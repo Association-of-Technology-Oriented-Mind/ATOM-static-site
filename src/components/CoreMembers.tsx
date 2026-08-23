@@ -235,6 +235,17 @@ const MemberColumn = ({
 
   const isLeft = side === 'left';
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const hasMember = Boolean(
     member.name?.trim(),
   );
@@ -245,17 +256,41 @@ const MemberColumn = ({
 
   const safeProgress = clamp01(progress);
 
-  const memberProgress = reducedMotion
+  // Timing ranges: desktop side-by-side vs mobile scroll sequence
+  let memberRange: readonly [number, number] = MEMBER_IN;
+  let detailRange: readonly [number, number] = DETAIL_IN;
+  let exitRange: readonly [number, number] | null = null;
+
+  if (isMobile) {
+    if (isLeft) {
+      memberRange = [0.38, 0.52];
+      detailRange = [0.48, 0.60];
+      exitRange = [0.62, 0.70];
+    } else {
+      memberRange = [0.72, 0.86];
+      detailRange = [0.82, 0.94];
+    }
+  }
+
+  let memberProgress = reducedMotion
     ? 1
     : easeInOut(
-        prog(safeProgress, ...MEMBER_IN),
+        prog(safeProgress, ...memberRange),
       );
 
-  const detailProgress = reducedMotion
+  let detailProgress = reducedMotion
     ? 1
     : easeInOut(
-        prog(safeProgress, ...DETAIL_IN),
+        prog(safeProgress, ...detailRange),
       );
+
+  if (isMobile && isLeft && exitRange) {
+    const exitProgress = easeInOut(
+      prog(safeProgress, ...exitRange),
+    );
+    memberProgress = memberProgress * (1 - exitProgress);
+    detailProgress = detailProgress * (1 - exitProgress);
+  }
 
   useEffect(() => {
     const figure = figureRef.current;
