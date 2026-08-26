@@ -1,22 +1,17 @@
 // DotDev Club data and imports
-import Danish from '@/assets/Danish.webp';
-import Jola from '@/assets/Jola.webp';
-import Darshan from '@/assets/Dharshan_KumarJ.webp';
-import Manisha from '@/assets/Manisha.webp';
-import Monish from "@/assets/Monish.webp";
-import Varsha from '@/assets/Varsha.webp';
-import Dot1 from "@/assets/DOTDEV/Dot1.webp"; 
-import Dot2 from "@/assets/DOTDEV/Dot2.webp"; 
-import Dot3 from "@/assets/DOTDEV/Dot3.webp"; 
-import Dot4 from "@/assets/DOTDEV/Dot4.webp"; 
-import Dot5 from "@/assets/DOTDEV/Dot5.webp"; 
-import Dot6 from "@/assets/DOTDEV/Dot6.webp"; 
-import Dot7 from "@/assets/DOTDEV/Dot7.webp"; 
-import Dot8 from "@/assets/DOTDEV/Dot8.webp"; 
+import Allen from "@/assets/DOTDEV/Allen.jpg";
+import Yakshini from "@/assets/DOTDEV/Yakshini.jpg";
+
+import Dot1 from "@/assets/DOTDEV/Dot1.webp";
+import Dot2 from "@/assets/DOTDEV/Dot2.webp";
+import Dot3 from "@/assets/DOTDEV/Dot3.webp";
+import Dot4 from "@/assets/DOTDEV/Dot4.webp";
+import Dot5 from "@/assets/DOTDEV/Dot5.webp";
+import Dot6 from "@/assets/DOTDEV/Dot6.webp";
+import Dot7 from "@/assets/DOTDEV/Dot7.webp";
+import Dot8 from "@/assets/DOTDEV/Dot8.webp";
 import Dot9 from "@/assets/DOTDEV/Dot9.webp";
 import Dot10 from "@/assets/DOTDEV/Dot10.webp";
-import Dot11 from "@/assets/DOTDEV/Dot11.webp";
-import Dot12 from "@/assets/DOTDEV/Dot12.webp";
 import Dot13 from "@/assets/DOTDEV/Dot13.webp";
 import Dot14 from "@/assets/DOTDEV/Dot14.webp";
 import DotIcon from "@/assets/Dot.ico";
@@ -35,52 +30,20 @@ export const dotdevClub = {
     "DotDev Club organizes hackathons, code sprints, mentorship sessions, and collaborative projects for members. The club has built over 50+ web applications and mobile apps, with members securing internships at top tech companies.",
   coordinators: [
     {
-      name: "Dharshan Kumar J",
+      name: "Allen John Isac",
       role: "Coordinator",
-      image: Darshan,
+      image: Allen,
       isMain: true,
-      bio: "As Coordinator of DotDev, Dharshan Kumar J is a Finalist of the NEXUS hackathon and a Software Developer skilled in developing Web and Mobile Applications. He is also a co-founder of VelsyMedia and TurpleSpace and has led a Midkraft24 website team.",
-      linkedin: "linkedin.com/in/j-dharshan-kumar",
+      bio: "Data Science Intern at Codmetric and NSS Parade Commander. Lead developer of VOX, a voice-first exam interface for specially-abled students.",
+      linkedin: "linkedin.com/in/allen-john-isac-7b6730363",
     },
     {
-      name: "Danish Prabhu K V",
+      name: "Yakshini S",
       role: "Junior Coordinator",
-      image: Danish,
+      image: Yakshini,
       isMain: false,
-      bio: " As Junior Coordinator of DotDev, Danish Prabhu K V is a Finalist of the NEXUS Hackathon and is passionate about AI, and software engineering. He works as a freelancer and is currently an intern at GMS (US Based company) earning a stipend of 10k/month.",
-      linkedin: "linkedin.com/in/danish-prabhu-0a1691293",
-    },
-    {
-      name: "Manisha S",
-      role: "Educator",
-      image: Manisha,
-      isMain: false,
-      bio: "",
-      linkedin: "linkedin.com/in/manisha-c",
-    },
-    {
-      name: "Jola Kaseena C",
-      role: "Educator",
-      image: Jola,
-      isMain: false,
-      bio: "",
-      linkedin: "linkedin.com/in/jola-keseena-b0895a2a9",
-    },
-    {
-      name: "Varsha S",
-      role: "Educator",
-      image: Varsha,
-      isMain: false,
-      bio: "",
-      linkedin: "linkedin.com/in/varsha-nadarajan",
-    },
-    {
-      name: "Monish",
-      role: "Educator",
-      image: Monish,
-      isMain: false,
-      bio: "",
-      linkedin: "linkedin.com/in/varsha-nadarajan",
+      bio: "Full-Stack Developer Intern at Trimed Technologies and Mindkraft Expo winner. Holds 19+ technical certifications and developed the LUMI voice assistant.",
+      linkedin: "",
     },
   ],
   projects: [
@@ -111,8 +74,6 @@ export const dotdevClub = {
     Dot8,
     Dot9,
     Dot10,
-    Dot11,
-    Dot12,
     Dot13,
     Dot14,
   ]

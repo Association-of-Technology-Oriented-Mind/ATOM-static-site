@@ -1,9 +1,7 @@
 // HackHive Club data and imports
-import Sanjay from '@/assets/HACKHIVE/Sanjay.webp';
-import Jayesh from "@/assets/HACKHIVE/Jayesh.webp";
-import Leo from '@/assets/HACKHIVE/Leo.webp';
-import Gre from '@/assets/Gre.webp';
-import Nithish from "@/assets/Nithishkumar.webp";
+import Jefferson from '@/assets/HACKHIVE/Jefferson.jpg';
+import Dave from "@/assets/HACKHIVE/Dave.png";
+import Nithish from "@/assets/NithishK.jpg";
 import Hack1 from "@/assets/HACKHIVE/Hack1.webp";
 import Hack2 from "@/assets/HACKHIVE/Hack2.webp";
 import Hack3 from "@/assets/HACKHIVE/Hack3.webp";
@@ -27,44 +25,28 @@ export const hackhiveClub = {
     "Hack Hive hosts weekly learning sessions, invites industry experts for talks, and participates in national cybersecurity competitions. The club has successfully organized multiple CTF events and security workshops that have benefited over 200+ students.",
   coordinators: [
     {
-      name: "Sanjay S",
+      name: "Jefferson Raja",
       role: "Coordinator",
-      image: Sanjay,
+      image: Jefferson,
       isMain: true,
-      bio: "As Coordinator of Hack Hive, Sanjay S is a finalist in the Cyberthon and was awarded the Best Idea Award at the TN-Police Hackathon.",
-      linkedin: "linkedin.com/in/sanjay-s-699585345",
+      bio: "Cybersecurity researcher and software developer. Winner of Smart India Hackathon, Aurelion Hackathon 3rd-place winner, and finalist in Meta × Scalar and Cyberthon.",
+      linkedin: "linkedin.com/in/jefferson-raja/",
     },
     {
-      name: "Jayesh",
-      role: "Joint Coordinator",
-      image: Jayesh,
+      name: "Dave V Shah",
+      role: "Junior Coordinator",
+      image: Dave,
       isMain: false,
-      bio: "As Junior Coordinator of Hack Hive, Jayesh V Prakash Naidu is passionate about DIGITAL FORENSICS and created a Wi-Fi penetration-testing device to learn networking. He is also the founder of BlackSpotAI, a cybersecurity project.",
-      linkedin: "linkedin.com/in/jayesh-v-prakash-naidu",
-    },
-    {
-      name: "Gregory Joe Jeni C",
-      role: "Educator",
-      image: Gre,
-      isMain: false,
-      bio: "",
-      linkedin: "linkedin.com/in/gregory-joe-jeni-0850142bb",
+      bio: "Smart India Hackathon 2025 winner. Cryptography and network security researcher who designed RTT temporal anomaly detection and custom DRM media protection protocols.",
+      linkedin: "",
     },
     {
       name: "Nithishkumar K",
       role: "Educator",
       image: Nithish,
       isMain: false,
-      bio: "",
+      bio: "Cybersecurity researcher and Tamil Nadu’s No. 1 ranked archer, representing the state and securing 7th place in national level archery championships.",
       linkedin: "linkedin.com/in/nithishkumar-k-691473351",
-    },
-    {
-      name: "Leo Francis A",
-      role: "Educator",
-      image: Leo,
-      isMain: false,
-      bio: "",
-      linkedin: "linkedin.com/in/leo-francis-a-a9092531b",
     }
   ],
   projects: [

@@ -1,131 +1,394 @@
-import React, { useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
+import { motion, useInView, useScroll, useSpring } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import PastEventTimeline from '@/components/events/PastEventTimeline';
-import { type Event } from '@/constants/events';
+import { ArrowLeft, Search, X } from 'lucide-react';
+import { type Event as EventType } from '@/constants/events';
 import { useEvents } from '@/hooks/useContent';
 import { generateSlug } from '@/utils/slug';
 import atomLogo from '@/assets/atom-logo.webp';
-import '@/styles/events.css';
-import '@/styles/event-enhancements.css';
-import '@/styles/event-card-enhancements.css';
+import { useLenis } from '@/hooks/useLenis';
+import { animate, useMotionValue, useTransform } from 'framer-motion';
+import Footer from '@/components/Footer';
+import OrbitalCanvas from '@/components/OrbitalCanvas';
+import PastEventTimeline from '@/components/events/PastEventTimeline';
+
+/* ── Helpers ─────────────────────────────────────────────────────────────── */
+
+const AnimatedCounter = ({ value, inView }: { value: number; inView: boolean }) => {
+  const count = useMotionValue(0);
+  const rounded = useTransform(count, Math.round);
+
+  useEffect(() => {
+    if (inView) {
+      const controls = animate(count, value, { duration: 2, ease: 'easeOut' });
+      return controls.stop;
+    }
+  }, [value, inView, count]);
+
+  return <motion.span>{rounded}</motion.span>;
+};
+
+const ease = [0.16, 1, 0.3, 1] as const;
+
+/* ── Main Event Page ─────────────────────────────────────────────────────── */
 
 const Event: React.FC = () => {
   const navigate = useNavigate();
   const { data: events = [] } = useEvents();
+  
+  const heroRef = useRef<HTMLElement>(null);
+  const heroInView = useInView(heroRef, { once: true, margin: '-40px' });
 
+  const [activeFilter, setActiveFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+
+  // Smooth scrolling
+  useLenis();
+
+  // Scroll progress bar
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+
+  // Categories from event data
+  const categories = useMemo(() => {
+    const cats = Array.from(new Set(events.map((e) => e.category)));
+    return ['all', ...cats.sort()];
+  }, [events]);
+
+  // Filter + search
+  const filteredEvents = useMemo(() => {
+    let filtered = events;
+    if (activeFilter !== 'all') {
+      filtered = filtered.filter((e) => e.category === activeFilter);
+    }
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        (e) =>
+          e.title.toLowerCase().includes(q) ||
+          e.description.toLowerCase().includes(q) ||
+          e.category.toLowerCase().includes(q)
+      );
+    }
+    return filtered;
+  }, [events, activeFilter, searchQuery]);
+
+  // Stats
+  const totalEvents = events.length;
+  const totalCategories = new Set(events.map((e) => e.category)).size;
+
+  // Scroll to top on mount
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
 
-
-  const handleEventClick = (event: Event) => {
+  const handleEventClick = (event: EventType) => {
     const slug = generateSlug(event.title);
     navigate(`/events/${slug}`);
   };
 
-  const handleLogoClick = () => {
-    navigate('/');
-  };
-
-  // Remove modal-related functions since we're not using modals anymore
-
   return (
-    <div 
-      className="min-h-screen relative overflow-hidden"
-      style={{
-        background: "linear-gradient(135deg, hsl(220, 25%, 6%) 0%, hsl(220, 20%, 8%) 25%, hsl(220, 15%, 12%) 50%, hsl(220, 20%, 8%) 75%, hsl(220, 25%, 6%) 100%)",
-      }}
-    >
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-20 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-conic from-blue-500/5 via-cyan-500/5 to-blue-500/5 rounded-full blur-3xl animate-spin" style={{ animationDuration: '30s' }}></div>
+    <main className="min-h-screen relative" style={{ backgroundColor: 'hsl(var(--ink))' }}>
+
+      {/* ── Backgrounds ─────────────────────────────────────────────────── */}
+      <div className="fixed inset-0 z-0 pointer-events-none" aria-hidden="true">
+        {/* Orbital Canvas for visual continuity with home page */}
+        <OrbitalCanvas />
+        {/* Subtle grid fade */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              'linear-gradient(to right, hsl(var(--rule)) 1px, transparent 1px), linear-gradient(to bottom, hsl(var(--rule)) 1px, transparent 1px)',
+            backgroundSize: '80px 80px',
+            backgroundPosition: 'center',
+            maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.1) 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.1) 100%)',
+          }}
+        />
+        {/* Gradient transition so cards sit on solid dark */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[hsl(var(--ink)/0.8)] to-[hsl(var(--ink))]" />
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 lg:py-12">
+      {/* Scroll progress */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-[2px] z-[100] origin-left"
+        style={{
+          scaleX,
+          background: 'hsl(var(--phosphor))',
+        }}
+      />
 
-        {/* ATOM Logo - Top Left */}
-        <motion.div
-          initial={{ opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
-          className="absolute top-4 left-4 sm:top-6 sm:left-6 lg:top-8 lg:left-8 z-20"
+      {/* ── Sticky Nav ──────────────────────────────────────────────────── */}
+      <motion.nav
+        className="fixed top-0 left-0 w-full z-40"
+        style={{
+          height: 'var(--nav-height)',
+          backgroundColor: 'hsla(var(--ink), 0.85)',
+          backdropFilter: 'blur(16px)',
+          borderBottom: '1px solid hsl(var(--rule))'
+        }}
+        initial={{ opacity: 0, y: -12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
+      >
+        <div
+          className="mx-auto flex items-center justify-between h-full"
+          style={{
+            maxWidth: 'var(--container-xl)',
+            padding: '0 var(--space-6)',
+          }}
         >
-          <motion.button
-            onClick={handleLogoClick}
-            className="flex items-center gap-3 p-2 sm:p-3 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 hover:bg-white/20 hover:border-blue-500/50 transition-all duration-300 group cursor-pointer"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            aria-label="Go to Home"
-          >
-            <img 
-              src={atomLogo} 
-              alt="ATOM Logo" 
-              className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 transition-transform duration-300 group-hover:rotate-12"
-            />
-            <span className="text-white font-semibold text-sm sm:text-base lg:text-lg group-hover:text-blue-300 transition-colors duration-300">
-              ATOM
-            </span>
-          </motion.button>
-        </motion.div>
+          {/* Logo & Back Button - Left aligned */}
+          <div className="flex items-center gap-4 sm:gap-6">
+            <button
+              onClick={() => {
+                if (window.history.length > 1) {
+                  navigate(-1);
+                } else {
+                  navigate('/');
+                }
+              }}
+              className="focus-phosphor flex items-center gap-1.5 text-[hsl(var(--graphite))] hover:text-[hsl(var(--chalk))] transition-colors uppercase tracking-[0.15em] group"
+              style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem' }}
+            >
+              <ArrowLeft className="w-3 h-3 transition-transform group-hover:-translate-x-1" />
+              <span>Back</span>
+            </button>
 
-        {/* Hero Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-8 sm:mb-10 lg:mb-16 px-2 pt-16 sm:pt-20 lg:pt-24"
-        >
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold bg-gradient-to-r from-blue-400 via-cyan-500 to-blue-400 bg-clip-text text-transparent mb-4 sm:mb-6">
-            ATOM EVENTS
-          </h1>
-          <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-3 sm:mb-4 px-3 sm:px-0">
-            Join us in shaping the future through technology, innovation, and collaboration.
-            Experience cutting-edge workshops, hackathons, and tech talks.
-          </p>
-          <p className="text-xs sm:text-sm text-gray-500 max-w-2xl mx-auto px-3 sm:px-0">
-            Explore our journey through events, workshops, and achievements
-          </p>
-        </motion.div>
-
-        {/* Events Section - Timeline of all events */}
-        <motion.section
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="mb-20"
-        >
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-cyan-500 to-blue-400 bg-clip-text text-transparent mb-4">
-              Events
-            </h2>
-            <p className="text-lg text-gray-300 max-w-2xl mx-auto">
-              Explore our timeline of events, from the latest to our earliest achievements
-            </p>
+            <button
+              onClick={() => navigate('/')}
+              className="focus-phosphor flex items-center gap-2.5 group"
+              aria-label="Return to homepage"
+            >
+              <img
+                src={atomLogo}
+                alt="ATOM"
+                className="w-7 h-7 opacity-90 transition-transform duration-500 group-hover:rotate-90"
+              />
+              <span
+                className="hidden sm:inline text-[hsl(var(--chalk))] tracking-[-0.03em]"
+                style={{ fontFamily: 'var(--font-display)', fontSize: '0.9375rem' }}
+              >
+                ATOM
+              </span>
+            </button>
           </div>
 
-          {events.length > 0 ? (
-            <PastEventTimeline events={events} onEventClick={handleEventClick} />
-          ) : (
+          <div className="flex items-center gap-6">
+            <span
+              className="text-[hsl(var(--chalk))] uppercase tracking-[0.15em]"
+              style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem' }}
+            >
+              Events Archive
+            </span>
+          </div>
+        </div>
+      </motion.nav>
+
+      {/* ── Hero Section ────────────────────────────────────────────────── */}
+      <section
+        ref={heroRef}
+        className="relative z-10 flex flex-col justify-end min-h-[60vh] pt-32 pb-16"
+      >
+        <div className="max-w-[var(--container-xl)] w-full mx-auto px-6 sm:px-10 lg:px-16 text-[hsl(var(--chalk))]">
+
+          {/* Section label */}
+          <motion.div
+            className="flex items-center gap-3 mb-6 uppercase tracking-[0.2em]"
+            style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'hsl(var(--graphite))' }}
+            initial={{ opacity: 0, y: 12 }}
+            animate={heroInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, ease }}
+          >
+            <span style={{ color: 'hsl(var(--phosphor))' }}>04</span>
+            <span className="w-6 h-px bg-[hsl(var(--rule))]" aria-hidden="true" />
+            <span>Events Archive</span>
+          </motion.div>
+
+          {/* Main heading */}
+          <motion.h1
+            className="uppercase mb-10 max-w-[14ch]"
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(3rem, 9vw, 6.5rem)',
+              lineHeight: 0.9,
+              letterSpacing: '-0.03em',
+            }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={heroInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.1, ease }}
+          >
+            Our Legacy
+          </motion.h1>
+
+          {/* Stats row */}
+          <motion.div
+            className="flex flex-wrap items-center gap-6 sm:gap-10"
+            initial={{ opacity: 0 }}
+            animate={heroInView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.5, delay: 0.3, ease }}
+          >
+            <div className="flex items-baseline gap-2">
+              <span
+                style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.5rem, 3vw, 2.5rem)', lineHeight: 1 }}
+              >
+                <AnimatedCounter value={totalEvents} inView={heroInView} />
+              </span>
+              <span
+                className="uppercase tracking-[0.15em]"
+                style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', color: 'hsl(var(--graphite))' }}
+              >
+                Events
+              </span>
+            </div>
+
+            <div className="h-6 w-px bg-[hsl(var(--rule))]" aria-hidden="true" />
+
+            <div className="flex items-baseline gap-2">
+              <span
+                style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.5rem, 3vw, 2.5rem)', lineHeight: 1 }}
+              >
+                <AnimatedCounter value={totalCategories} inView={heroInView} />
+              </span>
+              <span
+                className="uppercase tracking-[0.15em]"
+                style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', color: 'hsl(var(--graphite))' }}
+              >
+                Categories
+              </span>
+            </div>
+
+            <div className="h-6 w-px bg-[hsl(var(--rule))] hidden sm:block" aria-hidden="true" />
+
+            <p
+              className="hidden sm:block max-w-[32ch]"
+              style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: '0.875rem',
+                color: 'hsl(var(--chalk)/0.5)',
+                lineHeight: 1.5,
+              }}
+            >
+              Hackathons, bootcamps, seminars, and more — explore our journey.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── Filter + Search Bar ─────────────────────────────────────────── */}
+      <section
+        className="relative z-30 sticky top-[calc(var(--nav-height)+24px)] flex justify-center px-4 pointer-events-none mb-12"
+      >
+        <motion.div
+          className="pointer-events-auto flex items-center justify-between gap-4 px-2 py-2 rounded-full border border-[hsl(var(--rule))] shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)] max-w-full overflow-hidden"
+          style={{ backgroundColor: 'hsla(var(--ink-raised), 0.75)', backdropFilter: 'blur(20px)' }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+        >
+          {/* Category pills */}
+          <div className="flex items-center gap-1 overflow-x-auto px-2" style={{ scrollbarWidth: 'none' }}>
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveFilter(cat)}
+                className="uppercase tracking-[0.15em] whitespace-nowrap px-4 py-2 rounded-full transition-all duration-300 border"
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.625rem',
+                  borderColor: activeFilter === cat ? 'hsl(var(--phosphor))' : 'transparent',
+                  backgroundColor: activeFilter === cat ? 'hsl(var(--phosphor)/0.1)' : 'transparent',
+                  color: activeFilter === cat ? 'hsl(var(--phosphor))' : 'hsl(var(--chalk)/0.6)',
+                }}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          {/* Search */}
+          <motion.div
+            className="relative flex items-center shrink-0"
+            initial={false}
+            animate={{ width: isSearchExpanded ? 240 : 40 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          >
+            <div
+              className="flex items-center w-full h-10 rounded-full transition-colors overflow-hidden"
+              style={{
+                backgroundColor: isSearchExpanded ? 'hsl(var(--ink))' : 'transparent',
+                border: isSearchExpanded ? '1px solid hsl(var(--rule))' : '1px solid transparent',
+              }}
+            >
+              <button
+                onClick={() => setIsSearchExpanded(true)}
+                className="flex items-center justify-center w-10 h-10 shrink-0 text-[hsl(var(--graphite))] hover:text-[hsl(var(--chalk))] transition-colors focus-phosphor"
+                aria-label="Search events"
+              >
+                <Search className="w-4 h-4" />
+              </button>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search..."
+                className="bg-transparent border-none outline-none w-full h-full pr-8"
+                style={{
+                  fontFamily: 'var(--font-body)',
+                  fontSize: '0.8125rem',
+                  color: 'hsl(var(--chalk))',
+                  display: isSearchExpanded ? 'block' : 'none'
+                }}
+                onBlur={(e) => {
+                  if (!e.target.value) setIsSearchExpanded(false);
+                }}
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => {
+                    setSearchQuery('');
+                    setIsSearchExpanded(false);
+                  }}
+                  className="absolute right-2 text-[hsl(var(--graphite))] hover:text-white transition-colors"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+          </motion.div>
+        </motion.div>
+      </section>
+
+      {/* ── Events Timeline ─────────────────────────────────────────────── */}
+      <section className="relative z-10 w-full min-h-[50vh]">
+        {filteredEvents.length > 0 ? (
+          <PastEventTimeline events={filteredEvents} onEventClick={handleEventClick} />
+        ) : (
+          <div className="max-w-[var(--container-xl)] mx-auto px-6 sm:px-10 lg:px-16 py-16 sm:py-24">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-center py-20"
-              role="status"
-              aria-live="polite"
+              className="py-32 text-center border border-[hsl(var(--rule))]"
             >
-              <div className="text-6xl mb-6">📅</div>
-              <h3 className="text-2xl font-bold text-white mb-4">No Events Yet</h3>
-              <p className="text-gray-400 max-w-md mx-auto">
-                Our events will appear here. Stay tuned for exciting updates!
+              <Search className="w-8 h-8 mx-auto mb-4" style={{ color: 'hsl(var(--graphite))' }} />
+              <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'hsl(var(--chalk)/0.5)', textTransform: 'uppercase', letterSpacing: '0.15em' }}>
+                No events found matching "{searchQuery}"
               </p>
+              <button
+                onClick={() => setSearchQuery('')}
+                className="mt-6 btn-tech mx-auto"
+              >
+                Clear search
+              </button>
             </motion.div>
-          )}
-        </motion.section>
-      </div>
-    </div>
+          </div>
+        )}
+      </section>
+
+      <Footer />
+    </main>
   );
 };
 

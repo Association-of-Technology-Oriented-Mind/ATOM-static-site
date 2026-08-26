@@ -1,321 +1,202 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Users, Star, ChevronDown, ChevronUp, Clock } from 'lucide-react';
-
-interface Event {
-  id: number;
-  title: string;
-  date: string;
-  time?: string;
-  location: string;
-  description: string;
-  image: string;
-  status: 'upcoming' | 'past';
-  category: string;
-  participants?: number;
-  rating?: number;
-  registrationLink?: string;
-  eventType: 'free' | 'paid';
-}
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { ArrowRight, Calendar, MapPin } from 'lucide-react';
+import type { Event } from '@/constants/events';
 
 interface PastEventTimelineProps {
   events: Event[];
   onEventClick?: (event: Event) => void;
 }
 
+const extractYear = (dateString: string) => {
+  const firstDate = dateString.includes(',') ? dateString.split(',')[0].trim() : dateString;
+  return new Date(firstDate).getFullYear().toString();
+};
+
+const formatDateDisplay = (dateString: string) => {
+  const firstDate = dateString.includes(',') ? dateString.split(',')[0].trim() : dateString;
+  const date = new Date(firstDate);
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: '2-digit'
+  }).toUpperCase();
+};
+
 const PastEventTimeline: React.FC<PastEventTimelineProps> = ({ events, onEventClick }) => {
-  const [expandedEvents, setExpandedEvents] = useState<Set<number>>(new Set());
-  const groupBy: 'year' | 'month' = 'year';
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const toggleExpand = (eventId: number) => {
-    const newExpanded = new Set(expandedEvents);
-    if (newExpanded.has(eventId)) {
-      newExpanded.delete(eventId);
-    } else {
-      newExpanded.add(eventId);
-    }
-    setExpandedEvents(newExpanded);
-  };
+  // Scroll progress for the central line
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start center", "end end"]
+  });
 
-  const formatDate = (dateString: string) => {
-    // Handle multi-day events (comma-separated dates)
-    // Use the first date for grouping and year extraction
-    const firstDate = dateString.includes(',') ? dateString.split(',')[0].trim() : dateString;
-    const date = new Date(firstDate);
-    
-    // Format display for multi-day events
-    let fullDisplay, shortDisplay;
-    if (dateString.includes(',')) {
-      const dates = dateString.split(',').map(d => d.trim());
-      const startDate = new Date(dates[0]);
-      const endDate = new Date(dates[1]);
-      
-      fullDisplay = `${startDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} - ${endDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`;
-      shortDisplay = `${startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
-    } else {
-      fullDisplay = date.toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
-      shortDisplay = date.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric'
-      });
-    }
-    
-    return {
-      full: fullDisplay,
-      short: shortDisplay,
-      year: date.getFullYear(),
-      month: date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
-    };
-  };
+  const lineHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
-  // Group events by year or month
+  // Group events by year
   const groupedEvents = events.reduce((acc, event) => {
-    const date = formatDate(event.date);
-    const key = groupBy === 'year' ? date.year.toString() : date.month;
-    
-    if (!acc[key]) {
-      acc[key] = [];
-    }
-    acc[key].push(event);
+    const year = extractYear(event.date);
+    if (!acc[year]) acc[year] = [];
+    acc[year].push(event);
     return acc;
   }, {} as Record<string, Event[]>);
 
-  // Sort groups in descending order
-  const sortedGroups = Object.entries(groupedEvents).sort(([a], [b]) => {
-    if (groupBy === 'year') {
-      return parseInt(b) - parseInt(a);
-    } else {
-      return new Date(b).getTime() - new Date(a).getTime();
-    }
-  });
+  const sortedYears = Object.entries(groupedEvents).sort(([a], [b]) => parseInt(b) - parseInt(a));
 
-
-  if (events.length === 0) {
-    return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="text-center py-20"
-      >
-        <div className="text-6xl mb-4">📅</div>
-        <h3 className="text-2xl font-semibold text-white mb-2">No past events found</h3>
-        <p className="text-gray-400">Check back later for event archives</p>
-      </motion.div>
-    );
-  }
+  // Global event index for alternating left/right layout across all years
+  let globalIndex = 0;
 
   return (
-    <div className="space-y-8">
-      {/* Stats Overview */}
-      {/* <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
-      >
-        <Card className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 backdrop-blur-xl border border-blue-500/20 rounded-2xl">
-          <CardContent className="p-6 text-center">
-            <Users className="w-8 h-8 text-blue-400 mx-auto mb-3" />
-            <div className="text-3xl font-bold text-white mb-1">{stats.totalParticipants.toLocaleString()}</div>
-            <div className="text-blue-300 text-sm">Total Participants</div>
-          </CardContent>
-        </Card>
+    <div className="w-full bg-[hsl(var(--ink))] py-20 relative overflow-hidden" ref={containerRef}>
+      
+      <div className="max-w-6xl mx-auto px-6 relative">
+        {/* The Central Line (Background) */}
+        <div className="absolute left-[36px] md:left-1/2 top-0 bottom-0 w-[2px] bg-[hsl(var(--rule))] transform md:-translate-x-1/2" />
+        
+        {/* The Central Line (Active Progress) */}
+        <motion.div 
+          className="absolute left-[36px] md:left-1/2 top-0 w-[2px] bg-[hsl(var(--phosphor))] transform md:-translate-x-1/2 origin-top shadow-[0_0_15px_hsl(var(--phosphor))]"
+          style={{ height: lineHeight }}
+        />
 
-        <Card className="bg-gradient-to-br from-purple-500/10 to-purple-600/5 backdrop-blur-xl border border-purple-500/20 rounded-2xl">
-          <CardContent className="p-6 text-center">
-            <Star className="w-8 h-8 text-yellow-400 mx-auto mb-3 fill-current" />
-            <div className="text-3xl font-bold text-white mb-1">{stats.avgRating}</div>
-            <div className="text-purple-300 text-sm">Average Rating</div>
-          </CardContent>
-        </Card>
+        {sortedYears.map(([year, yearEvents]) => (
+          <div key={year} className="mb-24 relative">
+            
+            {/* Year Milestone Node */}
+            <div className="relative flex items-center justify-start md:justify-center mb-16 pt-8">
+               <motion.div 
+                 initial={{ opacity: 0, scale: 0.5 }}
+                 whileInView={{ opacity: 1, scale: 1 }}
+                 viewport={{ once: true, margin: "-20%" }}
+                 className="absolute left-[36px] md:left-1/2 w-5 h-5 rounded-full bg-[hsl(var(--ink))] border-4 border-[hsl(var(--phosphor))] transform -translate-x-1/2 z-20 shadow-[0_0_20px_hsl(var(--phosphor))]" 
+               />
+               
+               <motion.div
+                 initial={{ opacity: 0, y: 20 }}
+                 whileInView={{ opacity: 1, y: 0 }}
+                 viewport={{ once: true, margin: "-20%" }}
+                 className="ml-20 md:ml-0 relative z-10"
+               >
+                 <span className="inline-block px-8 py-2 rounded-full border border-[hsl(var(--phosphor)/0.3)] bg-[hsl(var(--ink-raised))] backdrop-blur-md shadow-[0_10px_30px_-10px_hsl(var(--phosphor)/0.2)]">
+                   <h2 className="text-3xl md:text-4xl font-black tracking-widest text-[hsl(var(--chalk))]" style={{ fontFamily: 'var(--font-display)' }}>
+                     {year}
+                   </h2>
+                 </span>
+               </motion.div>
+            </div>
+            
+            {/* Events for the Year */}
+            <div className="flex flex-col gap-0 relative">
+              {yearEvents.map((event) => {
+                const isLeft = globalIndex % 2 === 0;
+                globalIndex++;
+                
+                return (
+                  <div key={event.id} className="relative flex items-center justify-between w-full group cursor-pointer" onClick={() => onEventClick && onEventClick(event)}>
+                    
+                    {/* Desktop Layout: Alternating Sides */}
+                    <div className={`hidden md:flex w-full items-center justify-between ${isLeft ? 'flex-row-reverse' : 'flex-row'}`}>
+                      {/* Empty spacer for the timeline balance */}
+                      <div className="w-1/2" />
 
-        <Card className="bg-gradient-to-br from-green-500/10 to-green-600/5 backdrop-blur-xl border border-green-500/20 rounded-2xl">
-          <CardContent className="p-6 text-center">
-            <Award className="w-8 h-8 text-green-400 mx-auto mb-3" />
-            <div className="text-3xl font-bold text-white mb-1">{stats.categories}</div>
-            <div className="text-green-300 text-sm">Event Categories</div>
-          </CardContent>
-        </Card>
-      </motion.div> */}
+                      {/* Event Card */}
+                      <motion.div 
+                        initial={{ opacity: 0, x: isLeft ? 50 : -50 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true, margin: "-10%" }}
+                        transition={{ duration: 0.6, ease: "easeOut" }}
+                        className="w-1/2 relative"
+                        onMouseMove={(e) => {
+                          const rect = e.currentTarget.getBoundingClientRect();
+                          const x = e.clientX - rect.left;
+                          const y = e.clientY - rect.top;
+                          e.currentTarget.style.setProperty('--mouse-x', `${x}px`);
+                          e.currentTarget.style.setProperty('--mouse-y', `${y}px`);
+                        }}
+                      >
+                        <EventCard 
+                          event={event} 
+                          className={isLeft ? "md:rounded-r-none md:border-r-0" : "md:rounded-l-none md:border-l-0"} 
+                        />
+                      </motion.div>
+                    </div>
 
-      {/* Group By Toggle */}
-      {/* <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-        className="flex justify-center mb-8"
-      >
-        <div className="bg-white/5 backdrop-blur-md rounded-xl p-1 border border-white/10">
-          {['year', 'month'].map((option) => (
-            <button
-              key={option}
-              onClick={() => setGroupBy(option as 'year' | 'month')}
-              className={`px-6 py-2 rounded-lg font-medium transition-all duration-300 ${
-                groupBy === option
-                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'
-                  : 'text-gray-300 hover:text-white hover:bg-white/10'
-              }`}
-            >
-              Group by {option.charAt(0).toUpperCase() + option.slice(1)}
-            </button>
-          ))}
-        </div>
-      </motion.div> */}
-
-      {/* Timeline */}
-      <div className="relative">
-        {/* Timeline Line */}
-        <div className="absolute left-8 top-0 bottom-0 w-px bg-gradient-to-b from-blue-500 via-purple-500 to-pink-500 opacity-30" />
-
-        <div className="space-y-12">
-          {sortedGroups.map(([period, periodEvents], groupIndex) => (
-            <motion.div
-              key={period}
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: groupIndex * 0.1 }}
-              className="relative"
-            >
-              {/* Period Header */}
-              <div className="flex items-center mb-8">
-                <div className="relative">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-purple-500/25">
-                    {groupBy === 'year' ? period : new Date(period).getFullYear()}
+                    {/* Mobile Layout: Left Aligned */}
+                    <div className="flex md:hidden w-full items-center pl-20 pr-0 relative my-4">
+                      {/* Connecting Line */}
+                      <div className="absolute left-[36px] w-[20px] h-px bg-[hsl(var(--rule))] group-hover:bg-[hsl(var(--phosphor)/0.5)] transition-colors duration-300 z-10" />
+                      
+                      <motion.div 
+                        initial={{ opacity: 0, x: 30 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true, margin: "-10%" }}
+                        transition={{ duration: 0.6, ease: "easeOut" }}
+                        className="w-full relative"
+                      >
+                         <EventCard event={event} />
+                      </motion.div>
+                    </div>
                   </div>
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl blur-lg opacity-30 -z-10" />
-                </div>
-                <div className="ml-6">
-                  <h3 className="text-2xl font-bold text-white">{period}</h3>
-                  <p className="text-gray-400">{periodEvents.length} events</p>
-                </div>
-              </div>
-
-              {/* Events in this period */}
-              <div className="ml-24 space-y-6">
-                {periodEvents.map((event, eventIndex) => (
-                  <motion.div
-                    key={event.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: eventIndex * 0.1 }}
-                    className="relative"
-                  >
-                    {/* Connection Line */}
-                    <div className="absolute -left-24 top-6 w-16 h-px bg-gradient-to-r from-purple-500 to-transparent" />
-                    <div className="absolute -left-8 top-5 w-2 h-2 bg-purple-500 rounded-full" />
-
-                    <Card 
-                      className="bg-gradient-to-br from-white/5 to-white/2 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:border-purple-500/30 transition-all duration-300 group cursor-pointer"
-                      onClick={() => onEventClick && onEventClick(event)}
-                    >
-                      <div className="flex flex-col md:flex-row">
-                        {/* Event Image */}
-                        <div className="relative md:w-48 h-48 md:h-auto overflow-hidden">
-                          <img 
-                            src={event.image} 
-                            alt={event.title}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                          
-                          {/* Category Badge */}
-                          <Badge className="absolute top-4 left-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white border-none">
-                            {event.category}
-                          </Badge>
-                        </div>
-
-                        {/* Event Content */}
-                        <CardContent className="flex-1 p-6">
-                          <div className="flex justify-between items-start mb-4">
-                            <div>
-                              <h4 className="text-xl font-bold text-white mb-2 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-purple-400 group-hover:bg-clip-text transition-all duration-300">
-                                {event.title}
-                              </h4>
-                              
-                              <div className="space-y-1 text-sm text-gray-300">
-                                <div className="flex items-center">
-                                  <Calendar className="w-4 h-4 mr-2 text-blue-400" />
-                                  <span>{formatDate(event.date).full}</span>
-                                </div>
-                                <div className="flex items-center">
-                                  <MapPin className="w-4 h-4 mr-2 text-green-400" />
-                                  <span>{event.location}</span>
-                                </div>
-                                {event.time && (
-                                  <div className="flex items-center">
-                                    <Clock className="w-4 h-4 mr-2 text-purple-400" />
-                                    <span>{event.time}</span>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => toggleExpand(event.id)}
-                              className="text-gray-400 hover:text-white hover:bg-white/10"
-                            >
-                              {expandedEvents.has(event.id) ? (
-                                <ChevronUp className="w-4 h-4" />
-                              ) : (
-                                <ChevronDown className="w-4 h-4" />
-                              )}
-                            </Button>
-                          </div>
-
-                          {/* Event Stats */}
-                          <div className="flex items-center gap-6 mb-4 text-sm">
-                            {event.participants && (
-                              <div className="flex items-center text-gray-300">
-                                <Users className="w-4 h-4 mr-2 text-blue-400" />
-                                <span>{event.participants} participants</span>
-                              </div>
-                            )}
-                            {event.rating && (
-                              <div className="flex items-center text-gray-300">
-                                <Star className="w-4 h-4 mr-2 text-yellow-400 fill-current" />
-                                <span>{event.rating}/5 rating</span>
-                              </div>
-                            )}
-                          </div>
-
-                          {/* Expanded Content */}
-                          <AnimatePresence>
-                            {expandedEvents.has(event.id) && (
-                              <motion.div
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: 'auto' }}
-                                exit={{ opacity: 0, height: 0 }}
-                                transition={{ duration: 0.3 }}
-                                className="space-y-4"
-                              >
-                                <p className="text-gray-300 leading-relaxed">
-                                  {event.description}
-                                </p>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </CardContent>
-                      </div>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          ))}
-        </div>
+                );
+              })}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
 };
+
+// Sub-component for the actual card
+const EventCard = ({ event, className = "" }: { event: Event, className?: string }) => (
+  <div className={`w-full bg-[hsl(var(--ink-raised))] border border-[hsl(var(--rule))] overflow-hidden group-hover:border-[hsl(var(--phosphor)/0.4)] transition-colors duration-500 rounded-xl relative shadow-lg group-hover:shadow-[0_10px_40px_-10px_hsla(168,90%,74%,0.15)] flex flex-col xl:flex-row ${className}`}>
+    
+    {/* Mouse Glow */}
+    <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_var(--mouse-x,_50%)_var(--mouse-y,_50%),_hsla(var(--phosphor),0.1)_0%,_transparent_60%)]" />
+    </div>
+
+    {/* Image */}
+    <div className="relative w-full xl:w-2/5 shrink-0 overflow-hidden h-48 xl:h-auto">
+      <div className="absolute inset-0 bg-black/30 z-10 group-hover:bg-transparent transition-colors duration-500" />
+      <div className="absolute top-4 left-4 z-20">
+        <span className="mono-label bg-[hsl(var(--phosphor))] text-[hsl(var(--ink))] px-2 py-1 text-[10px] rounded shadow-md">
+          {event.category}
+        </span>
+      </div>
+      <img 
+        src={event.image} 
+        alt={event.title}
+        className="w-full h-full object-cover transform transition-transform duration-700 ease-out group-hover:scale-105"
+      />
+    </div>
+
+    {/* Content */}
+    <div className="p-6 relative z-10 flex flex-col justify-center flex-1">
+      <div className="flex items-center gap-3 mb-3 text-[hsl(var(--graphite))] mono-label text-xs">
+        <div className="flex items-center gap-1.5">
+          <Calendar className="w-3.5 h-3.5 text-[hsl(var(--phosphor))]" />
+          <span>{formatDateDisplay(event.date)}</span>
+        </div>
+        <span className="opacity-50">/</span>
+        <div className="flex items-center gap-1.5">
+          <MapPin className="w-3.5 h-3.5" />
+          <span className="truncate max-w-[120px]" title={event.location}>{event.location}</span>
+        </div>
+      </div>
+      
+      <h3 className="text-xl sm:text-2xl font-bold uppercase tracking-tight text-[hsl(var(--chalk))] group-hover:text-[hsl(var(--phosphor))] transition-colors duration-300"
+          style={{ fontFamily: "var(--font-body)", fontWeight: 700 }}
+      >
+        {event.title}
+      </h3>
+      
+      <div className="mt-6 flex items-center gap-2 text-[hsl(var(--phosphor))] transform translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 ease-out">
+        <span className="mono-label text-[10px]">EXPLORE DOSSIER</span>
+        <ArrowRight className="w-4 h-4" />
+      </div>
+    </div>
+  </div>
+);
 
 export default PastEventTimeline;

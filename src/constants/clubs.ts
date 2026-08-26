@@ -2,8 +2,7 @@
 import { hackhiveClub, HackIcon } from './hackhive';
 import { dotdevClub, DotIcon } from './dotdev';
 import { unbiasClub, BiasIcon } from './unbias';
-import { rndClub } from './rnd';
-import { careerGuidanceClub } from './career-guidance';
+import { qyroClub } from './qyro';
 
 // Export icons for use in components
 export { DotIcon, BiasIcon, HackIcon };
@@ -13,6 +12,5 @@ export const clubs = [
   hackhiveClub,
   dotdevClub,
   unbiasClub,
-  rndClub,
-  careerGuidanceClub,
+  qyroClub,
 ];

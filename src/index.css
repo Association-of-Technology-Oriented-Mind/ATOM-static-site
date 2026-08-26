@@ -1,15 +1,24 @@
 @import './styles/events.css';
 @import './styles/event-enhancements.css';
 @import './styles/event-card-enhancements.css';
+@import './styles/event-page.css';
+@import './styles/hero-network.css';
+@import './styles/about-section.css';
+@import './styles/achievements-section.css';
+@import './styles/sections.css';
+@import './styles/liquid-glass.css';
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ATOM Club Design System - Blue & Metallic Theme */
+/* ============================================================================
+   OLD TOKENS — admin CMS depends on these. Do NOT remove.
+   ============================================================================ */
 
 @layer base {
   :root {
@@ -21,10 +30,10 @@
     --foreground-secondary: 210 15% 85%;
 
     /* ATOM Brand Colors */
-    --atom-primary: 220 100% 52%;        /* #0B63FF */
+    --atom-primary: 220 100% 52%;
     --atom-primary-light: 220 100% 62%;
     --atom-primary-dark: 220 100% 42%;
-    --atom-metallic: 200 8% 77%;         /* #C0C6C9 */
+    --atom-metallic: 200 8% 77%;
     --atom-metallic-light: 200 12% 85%;
     --atom-metallic-dark: 200 8% 65%;
 
@@ -93,7 +102,6 @@
     --transition-spring: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
     /* Sidebar colors (keeping for compatibility) */
-
     --sidebar-background: 220 20% 10%;
     --sidebar-foreground: 210 15% 85%;
     --sidebar-primary: 220 100% 52%;
@@ -105,47 +113,15 @@
   }
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground font-inter antialiased;
-    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
-  }
-
-  html {
-    scroll-behavior: smooth;
-  }
-
-  /* Scrollbar Styling */
-  ::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  ::-webkit-scrollbar-track {
-    @apply bg-background-secondary;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    @apply bg-atom-metallic rounded-full;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-atom-metallic-light;
-  }
-}
-
+/* Old component classes the admin CMS may reference */
 @layer components {
-  /* Glass Effect Classes */
   .glass-card {
     background: var(--gradient-glass);
     backdrop-filter: blur(12px);
     border: 1px solid hsl(var(--glass-border));
-    @apply rounded-xl shadow-card;
+    @apply rounded-xl;
+    box-shadow: var(--shadow-card);
   }
-
   .glass-card:hover {
     background: linear-gradient(135deg, 
       hsla(var(--glass), 0.6), 
@@ -153,201 +129,164 @@
     );
     box-shadow: var(--shadow-glow);
   }
-
-  /* Metallic Button */
   .btn-metallic {
     background: var(--gradient-metallic);
     @apply text-background font-semibold px-6 py-3 rounded-lg transition-all duration-300;
     box-shadow: 0 4px 20px hsla(var(--atom-metallic), 0.4);
   }
-
   .btn-metallic:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 30px hsla(var(--atom-metallic), 0.6);
   }
-
-  /* Electric Glow Effect */
-  .electric-glow {
-    box-shadow: var(--shadow-electric);
-    animation: pulse-glow 2s ease-in-out infinite alternate;
-  }
-
-  /* Scroll Reveal Animation */
-  .scroll-reveal {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: var(--transition-smooth);
-  }
-
-  .scroll-reveal.revealed {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* Hover Scale Animation */
-  .hover-scale {
-    transition: var(--transition-spring);
-  }
-
-  .hover-scale:hover {
-    transform: scale(1.05);
-  }
-
-  /* Tilted Card */
-  .tilted-card {
-    transform: rotate(-2deg);
-    transition: var(--transition-spring);
-  }
-
-  .tilted-card:hover {
-    transform: rotate(0deg) scale(1.05);
-  }
 }
 
 @layer utilities {
-  /* Gradient Text */
   .gradient-text {
     background: var(--gradient-primary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-
-  /* Metallic Text */
   .metallic-text {
     background: var(--gradient-metallic);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-
-  /* Animation Keyframes */
-  @keyframes pulse-glow {
-    0% {
-      box-shadow: 0 0 20px hsla(var(--electric), 0.4);
-    }
-    100% {
-      box-shadow: 0 0 40px hsla(var(--electric), 0.8);
-    }
-  }
-
-  @keyframes shimmer {
-    0% {
-      background-position: -200% 0;
-    }
-    100% {
-      background-position: 200% 0;
-    }
-  }
-
-  .shimmer {
-    background: linear-gradient(
-      90deg,
-      hsla(var(--atom-metallic), 0.1) 0%,
-      hsla(var(--atom-metallic), 0.8) 50%,
-      hsla(var(--atom-metallic), 0.1) 100%
-    );
-    background-size: 200% 100%;
-    animation: shimmer 2s infinite;
-  }
-
-  /* Mobile-specific animations */
-  @keyframes scroll {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  }
-
-  /* Mobile Touch Improvements */
-  @media (max-width: 768px) {
-    .hover-scale:hover {
-      transform: none; /* Disable hover effects on mobile */
-    }
-    
-    .hover-scale:active {
-      transform: scale(0.95);
-    }
-    
-    /* Better touch target sizes */
-    button, a, [role="button"] {
-      min-height: 44px;
-      min-width: 44px;
-    }
-    
-    /* Prevent horizontal scroll */
-    body {
-      overflow-x: hidden;
-    }
-    
-    /* Better text sizing for mobile */
-    .gradient-text {
-      line-height: 1.2;
-    }
-  }
-
-  /* Tablet Optimizations */
-  @media (min-width: 769px) and (max-width: 1024px) {
-    .glass-card {
-      padding: 1.5rem;
-    }
-  }
-
-  /* Large Screen Optimizations */
-  @media (min-width: 1920px) {
-    .container {
-      max-width: 1400px;
-    }
-  }
-
-  /* High DPI / Retina Displays */
-  @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-    .glass-card {
-      backdrop-filter: blur(16px);
-    }
-  }
-
-  /* Reduced Motion */
-  @media (prefers-reduced-motion: reduce) {
-    * {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-    }
-    
-    .scroll-reveal {
-      opacity: 1 !important;
-      transform: translateY(0) !important;
-    }
-  }
-
-  /* Radial gradient utility for liquid countdown */
   .bg-gradient-radial {
     background: radial-gradient(circle, var(--tw-gradient-stops));
   }
 }
 
 /* ============================================================================
-   LATTICE — public-site design system (see docs/design-system.md)
+   PRECISION TECH — Premium public-site design system
    Additive: the admin CMS keeps the older tokens above.
    ============================================================================ */
 
 @layer base {
   :root {
-    --ink: 220 11% 5%;
-    --ink-raised: 228 11% 8%;
-    --chalk: 220 8% 95%;
-    --graphite: 213 5% 46%;
-    --rule: 228 8% 15%;
-    --phosphor: 168 90% 74%;
+    /* ─── Core palette ─── */
+    --ink:            220 14% 4%;     /* deepest background */
+    --ink-raised:     220 12% 7%;     /* elevated surface */
+    --chalk:          220 8% 95%;     /* primary text */
+    --graphite:       213 6% 42%;     /* secondary text */
+    --rule:           228 10% 12%;    /* very subtle borders, hairlines */
+    --phosphor:       168 90% 74%;    /* brand accent */
+    
+    /* ─── Typography ─── */
+    --font-display: 'Chakra Petch', system-ui, sans-serif;
+    --font-body:    'Chakra Petch', system-ui, sans-serif;
+    --font-mono:    'JetBrains Mono', ui-monospace, monospace;
+
+    /* ─── Spacing scale (px) ─── */
+    --space-1: 0.25rem;   /* 4px */
+    --space-2: 0.5rem;    /* 8px */
+    --space-3: 0.75rem;   /* 12px */
+    --space-4: 1rem;      /* 16px */
+    --space-5: 1.25rem;   /* 20px */
+    --space-6: 1.5rem;    /* 24px */
+    --space-8: 2rem;      /* 32px */
+    --space-10: 2.5rem;   /* 40px */
+    --space-12: 3rem;     /* 48px */
+    --space-16: 4rem;     /* 64px */
+    --space-20: 5rem;     /* 80px */
+    --space-24: 6rem;     /* 96px */
+    --space-32: 8rem;     /* 128px */
+
+    /* ─── Border radius ─── */
+    --radius-xs: 2px;
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 10px;
+    --radius-full: 9999px;
+
+    /* ─── Layout ─── */
+    --container-xl: 1440px;
+    --nav-height: 72px;
+
+    /* ─── Z-index ─── */
+    --z-base: 0;
+    --z-raised: 10;
+    --z-nav: 40;
+    --z-overlay: 50;
+    --z-modal: 60;
   }
 }
 
-@layer components {
-  .lattice {
+@layer base {
+  body {
+    font-family: var(--font-body);
     background-color: hsl(var(--ink));
+    color: hsl(var(--chalk));
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scrollbar-gutter: stable;
+  }
+
+  /* ─── Scrollbar ─── */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--ink));
+    border-left: 1px solid hsl(var(--rule));
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--graphite) / 0.2);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--graphite) / 0.4);
+  }
+
+  ::selection {
+    background: hsl(var(--phosphor) / 0.2);
     color: hsl(var(--chalk));
   }
 
-  /* Utility face carries the technical register: roles, dates, counters. */
+  :focus-visible {
+    outline: 2px solid hsl(var(--phosphor));
+    outline-offset: 3px;
+  }
+}
+
+/* ============================================================================
+   PRECISION TECH — Component classes
+   ============================================================================ */
+
+@layer components {
+  /* ─── Section container ─── */
+  .section-container {
+    max-width: var(--container-xl);
+    margin: 0 auto;
+    padding: var(--space-16) var(--space-6);
+  }
+  @media (min-width: 640px) {
+    .section-container {
+      padding: var(--space-20) var(--space-10);
+    }
+  }
+  @media (min-width: 1024px) {
+    .section-container {
+      padding: var(--space-24) var(--space-16);
+    }
+  }
+
+  /* ─── Typography ─── */
+  .tech-label {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: hsl(var(--graphite));
+  }
+
   .mono-label {
     font-family: 'JetBrains Mono', ui-monospace, monospace;
     font-size: 0.75rem;
@@ -357,7 +296,7 @@
   }
 
   .display-xl {
-    font-family: 'Archivo Black', system-ui, sans-serif;
+    font-family: var(--font-display);
     font-size: clamp(3.5rem, 12vw, 11rem);
     letter-spacing: -0.04em;
     line-height: 0.88;
@@ -365,7 +304,7 @@
   }
 
   .display-l {
-    font-family: 'Archivo Black', system-ui, sans-serif;
+    font-family: var(--font-display);
     font-size: clamp(2.5rem, 7vw, 5.5rem);
     letter-spacing: -0.03em;
     line-height: 0.92;
@@ -373,43 +312,221 @@
   }
 
   .display-m {
-    font-family: 'Archivo Black', system-ui, sans-serif;
+    font-family: var(--font-display);
     font-size: clamp(1.5rem, 3vw, 2.5rem);
     letter-spacing: -0.02em;
     line-height: 1;
     text-transform: uppercase;
   }
+  
+  .tech-label.accent {
+    color: hsl(var(--phosphor));
+  }
 
-  /* Hairlines do the work that whitespace alone can't: they make the
-     underlying grid visible rather than implied. */
-  .rule-t { border-top: 1px solid hsl(var(--rule)); }
-  .rule-b { border-bottom: 1px solid hsl(var(--rule)); }
-  .rule-l { border-left: 1px solid hsl(var(--rule)); }
+  .display-hero {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 10vw, 8rem);
+    letter-spacing: -0.04em;
+    line-height: 0.9;
+    text-transform: uppercase;
+    color: hsl(var(--chalk));
+  }
 
-  .accent { color: hsl(var(--phosphor)); }
+  .display-section {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 4rem);
+    letter-spacing: -0.03em;
+    line-height: 0.95;
+    text-transform: uppercase;
+    color: hsl(var(--chalk));
+  }
 
-  .focus-phosphor:focus-visible {
-    outline: 2px solid hsl(var(--phosphor));
-    outline-offset: 3px;
+  .editorial-body {
+    font-family: var(--font-body);
+    font-size: clamp(1rem, 1.5vw, 1.125rem);
+    line-height: 1.7;
+    color: hsl(var(--chalk) / 0.8);
+    font-weight: 300;
+  }
+
+  /* ─── Snap Scrolling ─── */
+  @media (min-width: 1024px) {
+    html.snap-enabled {
+      scroll-snap-type: y proximity;
+      scroll-behavior: smooth;
+    }
+  }
+  
+  .snap-section {
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
+    min-height: 100dvh;
+    height: 100dvh;
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    transform: translateZ(0);
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .snap-section::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge */
+  }
+
+  .snap-start {
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
+    position: relative;
+    width: 100%;
+  }
+  
+  /* Global reveal animation utility */
+  .section-reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  .section-reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .snap-section > * {
+    flex: 1 1 100%;
+    min-height: 100%;
+    width: 100%;
+  }
+  
+  .snap-section--auto-height {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    min-height: 100dvh;
+    height: auto;
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .snap-section--auto-height > * {
+    width: 100%;
+  }
+
+  /* ─── Hairlines & Rules ─── */
+  .hairline-t, .rule-t { border-top: 1px solid hsl(var(--rule)); }
+  .hairline-b, .rule-b { border-bottom: 1px solid hsl(var(--rule)); }
+  .hairline-l, .rule-l { border-left: 1px solid hsl(var(--rule)); }
+  .hairline-r { border-right: 1px solid hsl(var(--rule)); }
+
+  /* ─── Button ─── */
+  .btn-tech {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 0.875rem 1.75rem;
+    border: 1px solid hsl(var(--rule));
+    background: transparent;
+    color: hsl(var(--chalk));
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    border-radius: var(--radius-xs);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .btn-tech::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: hsl(var(--phosphor) / 0.1);
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 0;
+  }
+  
+  .btn-tech > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .btn-tech:hover {
+    border-color: hsl(var(--phosphor));
+    color: hsl(var(--phosphor));
+  }
+  
+  .btn-tech:hover::before {
+    transform: translateY(0);
+  }
+
+  /* ─── Bento Grid ─── */
+  .grid-bento {
+    display: grid;
+    gap: 1px;
+    background: hsl(var(--rule));
+    border: 1px solid hsl(var(--rule));
+  }
+  .grid-bento > * {
+    background: hsl(var(--ink));
   }
 }
 
+/* ============================================================================
+   PRECISION TECH — Utilities
+   ============================================================================ */
+
 @layer utilities {
-  /* Positional reveal: translate + opacity only, no scale or blur. */
-  .reveal {
-    opacity: 0;
-    transform: translateY(12px);
-    transition: opacity 320ms ease-out, transform 320ms ease-out;
+  /* ─── Precision Grid Background ─── */
+  .bg-precision-grid {
+    background-size: 40px 40px;
+    background-image: 
+      linear-gradient(to right, hsl(var(--rule)) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--rule)) 1px, transparent 1px);
+    background-position: center top;
   }
-  .reveal.is-visible {
-    opacity: 1;
-    transform: none;
+  
+  .bg-precision-grid-dense {
+    background-size: 20px 20px;
+    background-image: 
+      linear-gradient(to right, hsl(var(--rule)) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--rule)) 1px, transparent 1px);
+    background-position: center top;
+  }
+
+  /* ─── Noise texture overlay ─── */
+  .noise-overlay::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-overlay);
+    pointer-events: none;
+    opacity: 0.02;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .reveal {
-      transform: none;
-      transition: opacity 200ms ease-out;
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+  /* Scale down club coordinators container on shorter screens to prevent navbar clipping */
+  @media (max-height: 740px) and (max-width: 1024px) {
+    .club-members-container {
+      transform: scale(0.82) !important;
     }
   }
 }

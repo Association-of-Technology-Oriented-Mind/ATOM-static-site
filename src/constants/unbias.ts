@@ -1,11 +1,8 @@
 // UnBias Club data and imports
-import Aravind from '@/assets/Aravind.webp';
-import Ronnie from '@/assets/ra1.webp';
-import Aparna from '@/assets/UNBIAS/Aparna.webp';
-import Lebi from '@/assets/UNBIAS/Lebi.webp';
+import Lohith from '@/assets/UNBIAS/Lohith.jpg';
+import Jeffrey from '@/assets/UNBIAS/Jeffrey.jpg';
+import Lebi from '@/assets/Lebi.jpg';
 import Thirupathy from '@/assets/Thirupathi S.webp';
-import Pooja from '@/assets/UNBIAS/Pooja.webp';
-import Vasuki from '@/assets/UNBIAS/Vasuki.webp';
 // Note: Unbias1.jpg, Unbias3.jpg, and Unbias7.jpg don't exist
 import Bias1 from "@/assets/UNBIAS/IMG-20250913-WA0012.webp";
 import Bias2 from "@/assets/UNBIAS/Unbias2.webp";
@@ -31,60 +28,36 @@ export const unbiasClub = {
     "Unbiased Club conducts weekly AI workshops, research paper discussions, and hands-on ML projects. Members have published 10+ research papers and won multiple AI competitions including national-level hackathons.",
   coordinators: [
     {
-      name: "Aravindan",
+      name: "KRM Lohith",
       role: "Coordinator",
-      image: Aravind,
+      image: Lohith,
       isMain: true,
-      bio: "As Coordinator of Unbias, Aravindan M is a Silver Medalist in the International Taekwondo Championship and a finalist at IIT Bombay's Eureka 2024. He is specialized in Generative AI and is the Head of AI at Rapha MedTech.",
-      linkedin: "linkedin.com/in/aravindan-arru",
+      bio: "Full-Stack Developer, 2x National Volleyball gold medalist, Makers Day winner, and creator of Retinal AI, an AI-powered disease detection system.",
+      linkedin: "linkedin.com/in/lohith-krm",
     },
     {
-      name: "Ronnie A Jeffrey",
+      name: "Antonio Jeffrey A",
       role: "Junior Coordinator",
-      image: Ronnie,
+      image: Jeffrey,
       isMain: false,
-      bio: "As Junior Coordinator of Unbias, Ronnie A Jeffrey is a winner in NEXUS 2024 and was awarded a special mention at Cyberthon '25. He is passionate about AI and Full Stack development.",
-      linkedin: "linkedin.com/in/ronnie-a-jeffrey",
-    },
-    {
-      name: "Aparna",
-      role: "Educator",
-      image: Aparna,
-      isMain: false,
-      bio: "",
-      linkedin: "linkedin.com/in/aparna-j-a13647297",
+      bio: "Co-founder of Build Your Bot robotics startup and Mindkraft Expo winner. Creator of Meowy Companion AI, WeCANN hosting, and Matrix Matrix AnalogKey systems.",
+      linkedin: "",
     },
     {
       name: "Thirupathi",
       role: "Educator",
       image: Thirupathy,
       isMain: false,
-      bio: "",
+      bio: "Software Engineer Intern at GMS and National Level Technoverse Hackathon winner. Main developer of DrugTrace, a LangGraph and Neo4j multi-agent AI drug repurposing platform.",
       linkedin: "linkedin.com/in/thirupathis",
-    },
-    {
-      name: "Vasuki",
-      role: "Educator",
-      image: Vasuki,
-      isMain: false,
-      bio: "",
-      linkedin: "linkedin.com/in/vasuki-g-0b31a9288",
     },
     {
       name: "Lebi Raja",
       role: "Educator",
       image: Lebi,
       isMain: false,
-      bio: "",
+      bio: "Junior Software Engineer Intern at Fludigo, specializing in Generative AI, DevOps, and System Design. Winner of Makers Day 2026, Meta × PyTorch Hackathon finalist, and creator of the Athena Indic voice cloning platform.",
       linkedin: "linkedin.com/in/lebiraja",
-    },
-    {
-      name: "Pooja",
-      role: "Educator",
-      image: Pooja,
-      isMain: false,
-      bio: "",
-      linkedin: "linkedin.com/in/pooja-s-1190862b8/",
     },
   ],
   projects: [

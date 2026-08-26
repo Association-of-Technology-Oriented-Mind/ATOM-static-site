@@ -12,66 +12,91 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background overflow-x-hidden">
-      <div className="text-center px-4 sm:px-6 lg:px-8 max-w-2xl mx-auto">
+    <div
+      className="flex min-h-screen items-center justify-center overflow-x-hidden"
+      style={{ backgroundColor: 'hsl(var(--ink))' }}
+    >
+      <div className="text-center px-6 sm:px-8 max-w-lg mx-auto">
         <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6 }}
-          className="glass-card p-8 sm:p-12"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
         >
+          {/* 404 display */}
           <motion.h1 
-            initial={{ opacity: 0, y: -30 }}
+            initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mb-4 sm:mb-6 text-6xl sm:text-8xl lg:text-9xl font-bold gradient-text"
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="mb-6"
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(5rem, 15vw, 10rem)',
+              letterSpacing: '-0.04em',
+              lineHeight: 0.9,
+              color: 'hsl(var(--chalk))',
+            }}
           >
             404
           </motion.h1>
           
           <motion.p 
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="mb-6 sm:mb-8 text-lg sm:text-xl lg:text-2xl text-foreground-secondary"
+            transition={{ duration: 0.5, delay: 0.25 }}
+            className="mb-4"
+            style={{
+              fontSize: '1.125rem',
+              color: 'hsl(var(--text-secondary))',
+            }}
           >
-            Oops! The page you're looking for doesn't exist.
+            This page doesn't exist.
           </motion.p>
           
           <motion.p 
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="mb-8 sm:mb-12 text-sm sm:text-base text-foreground-secondary/80"
+            transition={{ duration: 0.5, delay: 0.35 }}
+            className="mb-10"
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.75rem',
+              color: 'hsl(var(--text-muted))',
+            }}
           >
-            You tried to access: <code className="bg-muted px-2 py-1 rounded text-atom-primary">{location.pathname}</code>
+            <code
+              className="px-2 py-1 rounded-sm"
+              style={{
+                background: 'hsl(var(--surface-raised))',
+                border: '1px solid hsl(var(--border-default))',
+                color: 'hsl(var(--phosphor))',
+                fontSize: '0.6875rem',
+              }}
+            >
+              {location.pathname}
+            </code>
           </motion.p>
           
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+            transition={{ duration: 0.5, delay: 0.45 }}
+            className="flex flex-col sm:flex-row gap-3 justify-center items-center"
           >
-            <motion.button
+            <button
               onClick={() => navigate("/")}
-              className="btn-metallic flex items-center gap-2 text-sm sm:text-base px-4 sm:px-6 py-2 sm:py-3"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              className="btn-primary"
             >
-              <Home className="w-4 h-4 sm:w-5 sm:h-5" />
+              <Home className="w-4 h-4" />
               Return to Home
-            </motion.button>
+            </button>
             
-            <motion.button
+            <button
               onClick={() => navigate(-1)}
-              className="text-foreground-secondary hover:text-foreground transition-colors flex items-center gap-2 text-sm sm:text-base"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              className="btn-ghost"
             >
-              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+              <ArrowLeft className="w-4 h-4" />
               Go Back
-            </motion.button>
+            </button>
           </motion.div>
         </motion.div>
       </div>

@@ -5,9 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Lock, User, Key, Sparkles, Zap } from 'lucide-react';
+import { Lock, User, Key, Sparkles, Zap, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
-import Waves from '@/components/Waves';
 import atomLogo from '@/assets/atom-logo.webp';
 
 const Login: React.FC = () => {
@@ -74,21 +73,25 @@ const Login: React.FC = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      {/* Waves Background */}
-      <Waves
-        lineColor="rgba(255, 255, 255, 0.25)"
-        backgroundColor="transparent"
-        waveSpeedX={0.012}
-        waveSpeedY={0.008}
-        waveAmpX={25}
-        waveAmpY={15}
-        xGap={15}
-        yGap={25}
-        friction={0.95}
-        tension={0.008}
-        maxCursorMove={100}
-        className="opacity-80"
-      />
+      {/* Back Button */}
+      <div className="absolute top-6 left-6 z-50">
+        <button
+          onClick={() => {
+            if (window.history.length > 1) {
+              navigate(-1);
+            } else {
+              navigate('/');
+            }
+          }}
+          className="focus-phosphor flex items-center gap-2 text-white/50 hover:text-white transition-colors duration-200 mono-label text-xs uppercase tracking-widest"
+          aria-label="Go back"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>Back</span>
+        </button>
+      </div>
+
+      {/* Removed Waves Background, keeping gradient background */}
 
       {/* Additional floating elements */}
       <motion.div

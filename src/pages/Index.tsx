@@ -1,15 +1,17 @@
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Hero } from '@/components/Hero';
 import { About } from '@/components/About';
-import { Achievements } from '@/components/Achievements';
-import CoreMembers from '@/components/CoreMembers';
-import { Clubs } from '@/components/Clubs';
-import PhotoGallerySection from '@/components/PhotoGallerySection';
 import EventsSection from '@/components/EventsSection';
-import { ThreeDBackground } from '@/components/ThreeDBackground';
+import { Clubs } from '@/components/Clubs';
+import CoreMembers from '@/components/CoreMembers';
+import PhotoGallerySection from '@/components/PhotoGallerySection';
+import Footer from '@/components/Footer';
 import { useImageProtection } from '@/hooks/useImageProtection';
 
 const Index = () => {
-  // Enable comprehensive image protection
+  const location = useLocation();
+
   useImageProtection({
     disableRightClick: true,
     disableDrag: true,
@@ -19,35 +21,56 @@ const Index = () => {
     showWarningOnRightClick: true,
   });
 
-  return (
-    <main className="min-h-screen bg-background overflow-x-hidden">
-      <Hero />
-      <About />
-      
-      {/* Container for sections with 3D background */}
-      <div className="relative">
-        {/* 3D Background only for the sections below */}
-        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-          <ThreeDBackground />
-        </div>
-        
-        {/* Content sections with relative positioning */}
-        <div className="relative z-10">
-          <Achievements />
-          {/* EventsSection with higher z-index to ensure clicks work properly */}
-          <div className="relative z-30">
-            <EventsSection />
-          </div>
-          {/* PhotoGallerySection with standard z-index */}
-          <div className="relative z-20">
-            <PhotoGallerySection />
-          </div>
-          <Clubs />
-        </div>
-      </div>
+  useEffect(() => {
+    // Apply liquid glass dark body theme
+    document.body.classList.add('liquid-theme');
+    document.body.style.backgroundColor = 'var(--lg-bg)';
+    document.documentElement.style.backgroundColor = 'var(--lg-bg)';
 
-      <CoreMembers />
-    </main>
+    // Scroll to hash or top
+    if (window.location.hash) {
+      const id = window.location.hash.replace('#', '');
+      const el = document.getElementById(id);
+      if (el) {
+        setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 100);
+      }
+    } else {
+      window.scrollTo(0, 0);
+    }
+
+    return () => {
+      document.body.classList.remove('liquid-theme');
+      document.body.style.backgroundColor = '';
+      document.documentElement.style.backgroundColor = '';
+    };
+  }, []);
+
+  // Listen to hash changes for smooth navigation within the home page
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.replace('#', '');
+      const el = document.getElementById(id);
+      if (el) {
+        setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 100);
+      }
+    }
+  }, [location.hash]);
+
+  return (
+    <>
+      <main
+        className="min-h-screen overflow-x-hidden"
+        style={{ backgroundColor: 'var(--lg-bg)' }}
+      >
+        <Hero />
+        <About />
+        <EventsSection />
+        <Clubs />
+        <CoreMembers />
+        <PhotoGallerySection />
+        <Footer />
+      </main>
+    </>
   );
 };
 

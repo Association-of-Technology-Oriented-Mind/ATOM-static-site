@@ -36,23 +36,13 @@ const useMeasure = <T extends HTMLElement>() => {
   return [ref, size] as const;
 };
 
-const preloadImages = async (urls: string[]): Promise<void> => {
-  await Promise.all(
-    urls.map(
-      src =>
-        new Promise<void>(resolve => {
-          const img = new Image();
-          img.src = src;
-          img.onload = img.onerror = () => resolve();
-        })
-    )
-  );
-};
+// Removed standalone preloadImages as preloading and dimension extraction happens in the main component.
 
 interface Item {
   id: string;
   img: string;
   url: string;
+  width: number;
   height: number;
 }
 
@@ -127,11 +117,13 @@ const Masonry: React.FC<MasonryProps> = ({
   };
 
   useEffect(() => {
-    preloadImages(items.map(i => i.img)).then(() => setImagesReady(true));
+    if (items.length > 0) {
+      setImagesReady(true);
+    }
   }, [items]);
 
   const grid = useMemo<GridItem[]>(() => {
-    if (!width) return [];
+    if (!width || items.length === 0) return [];
     const colHeights = new Array(columns).fill(0);
     const gap = 16;
     const totalGaps = (columns - 1) * gap;
@@ -140,7 +132,11 @@ const Masonry: React.FC<MasonryProps> = ({
     return items.map(child => {
       const col = colHeights.indexOf(Math.min(...colHeights));
       const x = col * (columnWidth + gap);
-      const height = child.height / 2;
+      
+      // True Aspect Ratio Calculation
+      const aspectRatio = child.width && child.height ? child.width / child.height : 1;
+      const height = columnWidth / aspectRatio;
+      
       const y = colHeights[col];
 
       colHeights[col] += height + gap;
@@ -384,19 +380,44 @@ const FullPhotoGallery = () => {
   const { data: images = [] } = useGalleryImages();
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loadedItems, setLoadedItems] = useState<Item[]>([]);
 
-  // Memoised because the masonry heights are randomised: recomputing them on
-  // every render would reshuffle the layout mid-scroll.
-  const galleryItems: Item[] = useMemo(
-    () =>
-      images.map((src, index) => ({
-        id: `photo-${index}`,
-        img: String(src),
-        url: String(src), // Open image in new tab when clicked
-        height: 400 + Math.random() * 200 // Random height for masonry effect
-      })),
-    [images],
-  );
+  useEffect(() => {
+    if (!images || images.length === 0) return;
+    
+    let isMounted = true;
+    
+    const loadImagesAndDimensions = async () => {
+      const itemsWithDims = await Promise.all(
+        images.map((src, index) => {
+          return new Promise<Item>(resolve => {
+            const img = new Image();
+            img.src = String(src);
+            img.onload = () => resolve({
+              id: `photo-${index}`,
+              img: String(src),
+              url: String(src),
+              width: img.width,
+              height: img.height
+            });
+            img.onerror = () => resolve({
+              id: `photo-${index}`,
+              img: String(src),
+              url: String(src),
+              width: 400,
+              height: 400
+            });
+          });
+        })
+      );
+      if (isMounted) {
+        setLoadedItems(itemsWithDims);
+      }
+    };
+    
+    loadImagesAndDimensions();
+    return () => { isMounted = false; };
+  }, [images]);
 
   const handleImageClick = (_item: Item, index: number) => {
     setSelectedImageIndex(index);
@@ -413,44 +434,44 @@ const FullPhotoGallery = () => {
     
     if (direction === 'prev' && selectedImageIndex > 0) {
       setSelectedImageIndex(selectedImageIndex - 1);
-    } else if (direction === 'next' && selectedImageIndex < galleryItems.length - 1) {
+    } else if (direction === 'next' && selectedImageIndex < loadedItems.length - 1) {
       setSelectedImageIndex(selectedImageIndex + 1);
     }
   };
 
   return (
-    <main className="min-h-screen bg-background overflow-hidden">
+    <main className="min-h-screen bg-[hsl(var(--ink))] overflow-hidden">
       {/* Header with back button */}
-      <div className="absolute top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <motion.button
-              onClick={() => navigate(-1)}
-              className="flex items-center gap-2 px-3 py-2 text-foreground-secondary hover:text-foreground transition-colors rounded-lg hover:bg-white/5"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <ArrowLeft className="w-5 h-5" />
-              <span className="hidden sm:inline">Back</span>
-            </motion.button>
-            
-            <motion.h1 
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-2xl sm:text-3xl lg:text-4xl font-bold gradient-text text-center flex-1"
-            >
-              Event Gallery
-            </motion.h1>
-            
-            <div className="w-16 sm:w-20"></div> {/* Spacer for centering */}
-          </div>
+      <div className="absolute top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-[hsl(var(--rule))]" style={{ backgroundColor: 'hsla(var(--ink), 0.85)' }}>
+        <div className="mx-auto px-6 sm:px-10 lg:px-16 py-0 flex items-center justify-between" style={{ maxWidth: 'var(--container-xl)', height: 'var(--nav-height)' }}>
+          <motion.button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 text-[hsl(var(--graphite))] hover:text-[hsl(var(--chalk))] transition-colors"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span className="hidden sm:inline uppercase tracking-[0.15em] mono-label" style={{ fontSize: '0.625rem' }}>Back</span>
+          </motion.button>
+
+          <motion.h1
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-base sm:text-lg uppercase absolute left-1/2 -translate-x-1/2"
+            style={{ fontFamily: 'var(--font-display)', color: 'hsl(var(--chalk))', letterSpacing: '-0.02em' }}
+          >
+            Event Gallery
+          </motion.h1>
+
+          <div className="w-16 sm:w-20"></div> {/* Spacer for centering */}
         </div>
       </div>
 
       {/* GSAP Masonry Gallery */}
       <div className="w-full h-screen pt-20 p-8 overflow-y-auto">
-        <Masonry
-          items={galleryItems}
+        {loadedItems.length > 0 ? (
+          <Masonry
+            items={loadedItems}
           ease="power3.out"
           duration={0.6}
           stagger={0.05}
@@ -461,13 +482,18 @@ const FullPhotoGallery = () => {
           colorShiftOnHover={false}
           onImageClick={handleImageClick}
         />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="w-8 h-8 border-2 border-[hsl(var(--phosphor))] border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
       </div>
 
       {/* Image Modal */}
       <ImageModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        images={galleryItems}
+        images={loadedItems}
         currentIndex={selectedImageIndex ?? 0}
         onNavigate={handleNavigate}
       />

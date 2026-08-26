@@ -1,535 +1,723 @@
-import { motion, useInView } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
-import { X, Linkedin, ArrowLeft } from "lucide-react";
+import { useEffect, useRef, useState } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { Linkedin } from 'lucide-react';
+import ScrollScene from '@/components/scroll/ScrollScene';
+import { easeInOut, prog } from '@/utils/scrollMath';
 
-import { useClubs } from "@/hooks/useContent";
-import { DotIcon, BiasIcon, HackIcon } from "@/constants/clubs";
+// Import real club icons & logos
+import { DotIcon, BiasIcon, HackIcon } from '@/constants/clubs';
+import qyroLogo from '@/assets/qyro.webp';
+import lohithImg from '@/assets/UNBIAS/Lohith.jpg';
+import jeffreyImg from '@/assets/UNBIAS/Jeffrey.jpg';
+import allenImg from '@/assets/DOTDEV/Allen.jpg';
+import yakshiniImg from '@/assets/DOTDEV/Yakshini.jpg';
+import jeffersonImg from '@/assets/HACKHIVE/Jefferson.jpg';
+import daveImg from '@/assets/HACKHIVE/Dave.png';
+import alainImg from '@/assets/QYRO/Alain.jpg';
+import ankithaImg from '@/assets/QYRO/Ankitha.jpg';
 
-export const Clubs = () => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.2 });
-  const { data: clubs = [] } = useClubs();
+interface CoordinatorDef {
+  name: string;
+  role: string;
+  image: string | null;
+  bio: string;
+  linkedin: string;
+}
 
-  const [selectedClub, setSelectedClub] = useState<null | typeof clubs[0]>(null);
-  const [clubPage, setClubPage] = useState<null | typeof clubs[0]>(null);
-  const [selectedCoordinator, setSelectedCoordinator] = useState<
-    null | typeof clubs[0]["coordinators"][0]
-  >(null);
+interface ClubDef {
+  id: string;
+  slug: string;
+  name: string;
+  tag: string;           // short mono-label category
+  description: string;
+  coordinators: CoordinatorDef[];
+  logo: string | null;   // imported asset URL, or null for icon fallback
+  logoAlt: string;
+}
 
-  // disable background scroll only when modals are open, not for club page
-  useEffect(() => {
-    if (selectedClub || selectedCoordinator) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-    return () => {
-      document.body.style.overflow = "auto";
-    };
-  }, [selectedClub, selectedCoordinator]);
+const CLUBS: ClubDef[] = [
+  {
+    id: 'unbias',
+    slug: 'unbias',
+    name: 'Unbiased',
+    tag: 'AI / ML / NLP',
+    description:
+      'Exploring AI, ML, Deep Learning, NLP, Generative AI and Agents. Weekly sessions, research paper discussions, and hands-on model building — with a focus on department-relevant applications.',
+    coordinators: [
+      {
+        name: 'KRM Lohith',
+        role: 'Coordinator',
+        image: lohithImg,
+        bio: "Full-Stack Developer, 2x National Volleyball gold medalist, Makers Day winner, and creator of Retinal AI, an AI-powered disease detection system.",
+        linkedin: 'https://linkedin.com/in/lohith-krm'
+      },
+      {
+        name: 'Antonio Jeffrey A',
+        role: 'Junior Coordinator',
+        image: jeffreyImg,
+        bio: "Co-founder of Build Your Bot robotics startup and Mindkraft Expo winner. Creator of Meowy Companion AI, WeCANN hosting, and Matrix Matrix AnalogKey systems.",
+        linkedin: ''
+      },
+    ],
+    logo: BiasIcon,
+    logoAlt: 'Unbiased club icon',
+  },
+  {
+    id: 'dotdev',
+    slug: 'dotdev',
+    name: 'DotDev',
+    tag: 'WEB DEVELOPMENT',
+    description:
+      'A student community for aspiring software engineers focused on full-stack development. Hackathons, code sprints, mentorship sessions and collaborative projects — from frontend to backend to deployment.',
+    coordinators: [
+      {
+        name: 'Allen John Isac',
+        role: 'Coordinator',
+        image: allenImg,
+        bio: 'Data Science Intern at Codmetric and NSS Parade Commander. Lead developer of VOX, a voice-first exam interface for specially-abled students.',
+        linkedin: 'https://linkedin.com/in/allen-john-isac-7b6730363'
+      },
+      {
+        name: 'Yakshini S',
+        role: 'Junior Coordinator',
+        image: yakshiniImg,
+        bio: 'Full-Stack Developer Intern at Trimed Technologies and Mindkraft Expo winner. Holds 19+ technical certifications and developed the LUMI voice assistant.',
+        linkedin: ''
+      },
+    ],
+    logo: DotIcon,
+    logoAlt: 'DotDev icon',
+  },
+  {
+    id: 'hackhive',
+    slug: 'hackhive',
+    name: 'Hack Hive',
+    tag: 'CYBERSECURITY',
+    description:
+      'A student-driven club that brings together passionate individuals to explore, learn, and innovate in the field of information security. Hands-on CTFs, ethical hacking workshops, and security competitions.',
+    coordinators: [
+      {
+        name: 'Jefferson Raja',
+        role: 'Coordinator',
+        image: jeffersonImg,
+        bio: 'Cybersecurity researcher and software developer. Winner of Smart India Hackathon, Aurelion Hackathon 3rd-place winner, and finalist in Meta × Scalar and Cyberthon.',
+        linkedin: 'https://linkedin.com/in/jefferson-raja/'
+      },
+      {
+        name: 'Dave V Shah',
+        role: 'Junior Coordinator',
+        image: daveImg,
+        bio: 'Smart India Hackathon 2025 winner. Cryptography and network security researcher who designed RTT temporal anomaly detection and custom DRM media protection protocols.',
+        linkedin: ''
+      },
+    ],
+    logo: HackIcon,
+    logoAlt: 'Hack Hive icon',
+  },
+  {
+    id: 'qyro',
+    slug: 'qyro',
+    name: 'Qyro',
+    tag: 'RESEARCH / INNOVATION',
+    description:
+      'The Qyro Club under ATOM is a hub for innovation, turning real-world challenges into smart, practical, and startup-ready solutions. It empowers students to explore ideas, build prototypes, and collaborate with industry experts to bring innovations to life.',
+    coordinators: [
+      {
+        name: 'Alain Abraham',
+        role: 'Coordinator',
+        image: alainImg,
+        bio: 'Quantum Engineer Intern at Artificial Brain and AP Quantum Hackathon runner-up. IBM Quantum certified researcher specializing in VQE-based molecular ground state algorithms.',
+        linkedin: 'https://linkedin.com/in/alain-abraham-b91193304'
+      },
+      {
+        name: 'Thumma Ankitha Ignatious',
+        role: 'Junior Coordinator',
+        image: ankithaImg,
+        bio: 'AI/ML scholar and Python intern at Internzvally. Developed AI voice control systems, biometric voting interfaces, and predictive heart disease models.',
+        linkedin: ''
+      },
+    ],
+    logo: qyroLogo,
+    logoAlt: 'Qyro club logo',
+  },
+];
 
-  const renderCoordinatorsByRole = (coordinators: typeof clubs[0]["coordinators"], roles: string[]) => {
-    const filtered = coordinators.filter(coord => roles.includes(coord.role));
-    if (filtered.length === 0) return null;
+const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
 
-    return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 max-w-6xl mx-auto">
-        {filtered.map((coordinator, index) => (
-          <div
-            key={index}
-            className={`glass-card p-4 sm:p-6 text-center cursor-pointer w-full ${
-              coordinator.isMain ? "ring-2 ring-atom-primary" : ""
-            }`}
-            onClick={() => setSelectedCoordinator(coordinator)}
-          >
-            <img
-              src={coordinator.image}
-              alt={coordinator.name}
-              className="w-16 h-16 sm:w-20 sm:h-20 rounded-full mx-auto object-cover border-2 border-atom-metallic mb-3 sm:mb-4"
-            />
-            <h5 className="font-semibold text-sm sm:text-base text-foreground mb-1 sm:mb-2">
-              {coordinator.name}
-            </h5>
-            <p
-              className={`text-xs sm:text-sm ${
-                coordinator.isMain
-                  ? "text-atom-primary font-semibold"
-                  : "text-foreground-secondary"
-              }`}
-            >
-              {coordinator.role}
-            </p>
-          </div>
-        ))}
-      </div>
-    );
-  };
+const INTRO_IN: [number, number] = [0.0, 0.15];
+const COORD_IN: [number, number] = [0.15, 0.4];
+const JOINT_IN: [number, number] = [0.35, 0.6];
+const DETAIL_IN: [number, number] = [0.55, 0.75];
 
-  // Helper to render a centered LinkedIn anchor for a coordinator
-  const renderCoordinatorLinkedIn = (coordinator?: typeof clubs[0]["coordinators"][0] | null) => {
-    if (!coordinator || !coordinator.linkedin) return null;
-    const raw = coordinator.linkedin as string;
-    const url = raw.startsWith('http') ? raw : `https://${raw}`;
-
-    return (
-      <div className="w-full flex justify-center">
-        <a
-          href={url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 max-w-[520px] w-full justify-center px-2"
-          aria-label={`Open ${coordinator.name}'s LinkedIn`}
-        >
-          <Linkedin className="w-4 h-4 text-blue-600 flex-shrink-0" />
-          <span className="truncate block max-w-[420px] text-center">{raw}</span>
-        </a>
-      </div>
-    );
-  };
-
-  if (clubPage) {
-    return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="fixed inset-0 bg-background z-50 overflow-y-auto"
-      >
-        {/* Back Button */}
-        <div className="sticky top-4 left-4 z-10 ml-4 mt-4">
-          <button
-            onClick={() => setClubPage(null)}
-            className="flex items-center gap-2 px-4 py-2 bg-glass-card backdrop-blur-sm rounded-full hover:bg-card-hover transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back
-          </button>
-        </div>
-
-        <div className="pt-4 sm:pt-6 lg:pt-8 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto pb-12 sm:pb-16 lg:pb-20">
-          {/* Club Header */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-8 sm:mb-10 lg:mb-12"
-          >
-            <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 mx-auto bg-gradient-primary rounded-xl flex items-center justify-center mb-4 sm:mb-6">
-              {clubPage.name === "DotDev Club" ? (
-                <img src={DotIcon} alt="DotDev Logo" className="w-14 h-14 object-contain mx-auto" style={{ display: 'block' }} />
-              ) : clubPage.name === "Unbiased Club" ? (
-                <img src={BiasIcon} alt="Unbiased Logo" className="w-14 h-14 object-contain mx-auto" style={{ display: 'block' }} />
-              ) : clubPage.name === "Hack Hive Club" ? (
-                <img src={HackIcon} alt="Hack Hive Logo" className="w-14 h-14 object-contain mx-auto" style={{ display: 'block' }} />
-              ) : typeof clubPage.icon === "string" ? (
-                <img src={clubPage.icon} alt={`${clubPage.name} icon`} className="w-12 h-12 object-contain mx-auto" style={{ display: 'block' }} />
-              ) : (
-                (() => {
-                  const Icon = clubPage.icon;
-                  return <Icon className="w-12 h-12 text-primary-foreground mx-auto" style={{ display: 'block' }} />;
-                })()
-              )}
-            </div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold mb-3 sm:mb-4 gradient-text px-4 sm:px-0">
-              {clubPage.name}
-            </h1>
-            <p className="text-sm sm:text-base lg:text-lg text-foreground-secondary mb-4 sm:mb-6 max-w-3xl mx-auto px-4 sm:px-0">
-              {clubPage.description}
-            </p>
-          </motion.div>
-
-          {/* Objectives */}
-          <motion.section
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="mb-8 sm:mb-10 lg:mb-12"
-          >
-            <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 metallic-text">Objectives</h2>
-            <div className="glass-card p-4 sm:p-6">
-              <p className="text-sm sm:text-base text-foreground-secondary leading-relaxed">{clubPage.objectives}</p>
-            </div>
-          </motion.section>
-
-          {/* Extra Info */}
-          <motion.section
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="mb-8 sm:mb-10 lg:mb-12"
-          >
-            <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 metallic-text">About the Club</h2>
-            <div className="glass-card p-4 sm:p-6">
-              <p className="text-sm sm:text-base text-foreground-secondary leading-relaxed">{clubPage.extraInfo}</p>
-            </div>
-          </motion.section>
-
-          {/* Coordinators */}
-          <motion.section
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="mb-8 sm:mb-10 lg:mb-12"
-          >
-            <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 metallic-text">Coordinators</h2>
-            {renderCoordinatorsByRole(clubPage.coordinators, ["Coordinator", "Senior Coordinator", "Joint Coordinator", "Junior Coordinator"])}
-          </motion.section>
-
-          {/* Educators */}
-          {clubPage.coordinators.some(coord => coord.role === "Educator") && (
-            <motion.section
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="mb-8 sm:mb-10 lg:mb-12"
-            >
-              <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 metallic-text">Educators</h2>
-              {renderCoordinatorsByRole(clubPage.coordinators, ["Educator"])}
-            </motion.section>
-          )}
-
-          {/* Projects
-          <motion.section
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="mb-12"
-          >
-            <h2 className="text-2xl font-bold mb-6 metallic-text">Projects</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {clubPage.projects.map((project, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 * index }}
-                  className="glass-card p-6"
-                >
-                  <h3 className="text-xl font-semibold mb-3 text-foreground">{project.name}</h3>
-                  <p className="text-foreground-secondary mb-4 leading-relaxed">{project.description}</p>
-                  <a
-                    href={project.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-atom-primary hover:text-atom-primary/80 transition-colors"
-                  >
-                    <Github className="w-4 h-4" />
-                    View Repository
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
-                </motion.div>
-              ))}
-            </div>
-          </motion.section> */}
-
-          {/* Gallery */}
-          <motion.section
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7 }}
-          >
-            <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 metallic-text">Gallery</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {clubPage.gallery.map((image, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.1 * index }}
-                  className="glass-card overflow-hidden hover-scale w-full aspect-video"
-                >
-                  <img
-                    src={image}
-                    alt={`${clubPage.name} gallery ${index + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                </motion.div>
-              ))}
-            </div>
-          </motion.section>
-        </div>
-
-        {/* Coordinator Modal in Club Page */}
-        {selectedCoordinator && (
-          <div
-            className="fixed inset-0 bg-background/80 backdrop-blur-sm z-60 flex items-center justify-center p-2 sm:p-4 min-h-screen overflow-y-auto"
-            onClick={() => setSelectedCoordinator(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="glass-card max-w-xs sm:max-w-md w-full p-4 sm:p-6 relative text-center mx-auto my-4 sm:my-8"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button
-                onClick={() => setSelectedCoordinator(null)}
-                className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 hover:bg-card-hover rounded-full transition-colors z-10"
-              >
-                <X className="w-4 h-4 sm:w-5 sm:h-5" />
-              </button>
-              
-              <div className="mb-4 sm:mb-6">
-                <img
-                  src={selectedCoordinator.image}
-                  alt={selectedCoordinator.name}
-                  className="w-20 h-20 sm:w-24 sm:h-24 rounded-full mx-auto object-cover border-2 border-atom-metallic mb-3 sm:mb-4"
-                />
-                <h5 className="font-bold text-foreground text-lg sm:text-xl lg:text-2xl mb-1 sm:mb-2 px-8 sm:px-0">
-                  {selectedCoordinator.name}
-                </h5>
-                <p className="text-foreground-secondary text-sm sm:text-base lg:text-lg mb-3 sm:mb-4">
-                  {selectedCoordinator.role}
-                </p>
-                {selectedCoordinator.isMain && (
-                  <div className="mb-3 sm:mb-4 text-xs text-atom-primary font-medium">
-                    ★ Lead Coordinator
-                  </div>
-                )}
-              </div>
-
-              {selectedCoordinator.bio && (
-                <div className="mb-4 sm:mb-6">
-                  <p className="text-foreground-secondary text-xs sm:text-sm leading-relaxed">
-                    {selectedCoordinator.bio}
-                  </p>
-                </div>
-              )}
-
-                {renderCoordinatorLinkedIn(selectedCoordinator)}
-            </motion.div>
-          </div>
-        )}
-      </motion.div>
-    );
+const getSceneTimeline = (progress: number, reducedMotion: boolean) => {
+  const safeProgress = clamp01(progress);
+  if (reducedMotion) {
+    return { intro: 1, coord: 1, joint: 1, details: 1 };
   }
+  return {
+    intro: easeInOut(prog(safeProgress, ...INTRO_IN)),
+    coord: easeInOut(prog(safeProgress, ...COORD_IN)),
+    joint: easeInOut(prog(safeProgress, ...JOINT_IN)),
+    details: easeInOut(prog(safeProgress, ...DETAIL_IN)),
+  };
+};
+
+const useReducedMotion = () => {
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const handleChange = () => setReducedMotion(mediaQuery.matches);
+    handleChange();
+    mediaQuery.addEventListener?.('change', handleChange);
+    return () => mediaQuery.removeEventListener?.('change', handleChange);
+  }, []);
+
+  return reducedMotion;
+};
+
+const ClubScene = ({
+  club,
+  index,
+  progress,
+  reducedMotion,
+  isMobile,
+}: {
+  club: ClubDef;
+  index: number;
+  progress: number;
+  reducedMotion: boolean;
+  isMobile: boolean;
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const headlineRef = useRef<HTMLDivElement>(null);
+  const membersRef = useRef<HTMLDivElement>(null);
+  const detailsRef = useRef<HTMLDivElement>(null);
+  const watermarkRef = useRef<HTMLDivElement>(null);
+  const rightColRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const headline = headlineRef.current;
+    const members = membersRef.current;
+    const details = detailsRef.current;
+    const watermark = watermarkRef.current;
+
+    if (!headline || !members || !details) return;
+
+    const t = getSceneTimeline(progress, reducedMotion);
+
+    // Watermark parallax
+    if (watermark) {
+      watermark.style.opacity = String(t.intro * 0.08); // very faint
+      watermark.style.transform = reducedMotion ? 'none' : `scale(${1 + t.intro * 0.1}) translate3d(0, ${(1 - t.intro) * 100}px, 0)`;
+    }
+
+    if (isMobile) {
+      /* ------------------ MOBILE SEQUENCED ANIMATIONS ------------------ */
+
+      // 1. Left Column (Club Info) is always visible in the scene
+      let leftOpacity = 0;
+      let leftTY = 20;
+
+      if (progress >= 0.0 && progress <= 0.08) {
+        const p = progress / 0.08;
+        leftOpacity = p;
+        leftTY = 20 * (1 - p);
+      } else if (progress > 0.08 && progress <= 0.92) {
+        leftOpacity = 1;
+        leftTY = 0;
+      } else if (progress > 0.92 && progress <= 1.0) {
+        const p = (1.0 - progress) / 0.08;
+        leftOpacity = p;
+        leftTY = -20 * (1 - p);
+      }
+
+      headline.style.opacity = String(leftOpacity);
+      headline.style.transform = reducedMotion ? 'none' : `translate3d(0, ${leftTY}px, 0)`;
+      headline.style.pointerEvents = leftOpacity > 0.5 ? 'auto' : 'none';
+
+      details.style.opacity = String(leftOpacity);
+      details.style.transform = 'none';
+      details.style.pointerEvents = leftOpacity > 0.5 ? 'auto' : 'none';
+
+      // 2. Right Column (Cards Sequence)
+      const card1 = members.children[0] as HTMLElement;
+      const card2 = members.children[1] as HTMLElement;
+
+      // Card 1
+      if (card1) {
+        let opacity = 0;
+        let ty = 24;
+        let scale = 0.95;
+
+        if (progress >= 0.08 && progress < 0.18) {
+          const p = (progress - 0.08) / 0.10;
+          opacity = p;
+          ty = 24 * (1 - p);
+          scale = 0.95 + 0.05 * p;
+        } else if (progress >= 0.18 && progress < 0.48) {
+          opacity = 1;
+          ty = 0;
+          scale = 1;
+        } else if (progress >= 0.48 && progress < 0.58) {
+          const p = (0.58 - progress) / 0.10;
+          opacity = p;
+          ty = -24 * (1 - p);
+          scale = 1 - 0.05 * (1 - p);
+        }
+
+        card1.style.opacity = String(opacity);
+        card1.style.transform = reducedMotion ? 'none' : `translate3d(0, ${ty}px, 0) scale(${scale})`;
+        card1.style.pointerEvents = opacity > 0.5 ? 'auto' : 'none';
+      }
+
+      // Card 2
+      if (card2) {
+        let opacity = 0;
+        let ty = 24;
+        let scale = 0.95;
+
+        if (progress >= 0.48 && progress < 0.58) {
+          const p = (progress - 0.48) / 0.10;
+          opacity = p;
+          ty = 24 * (1 - p);
+          scale = 0.95 + 0.05 * p;
+        } else if (progress >= 0.58 && progress < 0.88) {
+          opacity = 1;
+          ty = 0;
+          scale = 1;
+        } else if (progress >= 0.88 && progress <= 0.95) {
+          const p = (0.95 - progress) / 0.07;
+          opacity = p;
+          ty = -24 * (1 - p);
+          scale = 1 - 0.05 * (1 - p);
+        }
+
+        card2.style.opacity = String(opacity);
+        card2.style.transform = reducedMotion ? 'none' : `translate3d(0, ${ty}px, 0) scale(${scale})`;
+        card2.style.pointerEvents = opacity > 0.5 ? 'auto' : 'none';
+      }
+
+    } else {
+      /* ------------------ DESKTOP SIDE-BY-SIDE ANIMATIONS ------------------ */
+      // Headline (Part 1: Left Side)
+      let leftOpacity = 0;
+      let leftTranslateX = -40;
+
+      if (progress <= 0.15) {
+        const p = progress / 0.15; // 0 to 1
+        leftOpacity = p;
+        leftTranslateX = -40 * (1 - p);
+      } else if (progress > 0.15 && progress <= 0.85) {
+        leftOpacity = 1;
+        leftTranslateX = 0;
+      } else {
+        // fade out as we exit the scene
+        const p = Math.max(0, (1 - progress) / 0.15); // 1 to 0
+        leftOpacity = p;
+        leftTranslateX = -30 * (1 - p);
+      }
+
+      headline.style.opacity = String(leftOpacity);
+      headline.style.transform = reducedMotion ? 'none' : `translate3d(${leftTranslateX}px, 0, 0)`;
+      headline.style.pointerEvents = leftOpacity > 0.5 ? 'auto' : 'none';
+
+      // Right Side - Cards Sequence Animation
+      const card1 = members.children[0] as HTMLElement;
+      const card2 = members.children[1] as HTMLElement;
+
+      if (card1) {
+        let opacity = 0;
+        let tx = 100;
+        let scale = 0.95;
+        let rot = 3;
+
+        if (progress < 0.1) {
+          opacity = 0;
+          tx = 100;
+        } else if (progress >= 0.1 && progress < 0.22) {
+          // Slide in
+          const p = (progress - 0.1) / 0.12; // 0 to 1
+          opacity = p;
+          tx = 100 * (1 - p);
+          scale = 0.95 + 0.05 * p;
+          rot = 3 * (1 - p);
+        } else if (progress >= 0.22 && progress < 0.54) {
+          // Active
+          opacity = 1;
+          tx = 0;
+          scale = 1;
+          rot = 0;
+        } else if (progress >= 0.54 && progress < 0.66) {
+          // Slide out to the left
+          const p = (progress - 0.54) / 0.12; // 0 to 1
+          opacity = 1 - p;
+          tx = -120 * p;
+          scale = 1 - 0.05 * p;
+          rot = -3 * p;
+        } else {
+          opacity = 0;
+        }
+
+        card1.style.opacity = String(opacity);
+        card1.style.transform = reducedMotion ? 'none' : `translate3d(${tx}px, 0, 0) scale(${scale}) rotate(${rot}deg)`;
+        card1.style.pointerEvents = opacity > 0.5 ? 'auto' : 'none';
+      }
+
+      if (card2) {
+        let opacity = 0;
+        let tx = 120;
+        let scale = 0.95;
+        let rot = 3;
+
+        if (progress < 0.54) {
+          opacity = 0;
+          tx = 120;
+        } else if (progress >= 0.54 && progress < 0.66) {
+          // Slide in from the right
+          const p = (progress - 0.54) / 0.12; // 0 to 1
+          opacity = p;
+          tx = 120 * (1 - p);
+          scale = 0.95 + 0.05 * p;
+          rot = 3 * (1 - p);
+        } else if (progress >= 0.66 && progress < 0.88) {
+          // Active
+          opacity = 1;
+          tx = 0;
+          scale = 1;
+          rot = 0;
+        } else if (progress >= 0.88 && progress < 0.98) {
+          // Slide out to the left
+          const p = (progress - 0.88) / 0.10; // 0 to 1
+          opacity = 1 - p;
+          tx = -100 * p;
+          scale = 1 - 0.05 * p;
+          rot = -3 * p;
+        } else {
+          opacity = 0;
+        }
+
+        card2.style.opacity = String(opacity);
+        card2.style.transform = reducedMotion ? 'none' : `translate3d(${tx}px, 0, 0) scale(${scale}) rotate(${rot}deg)`;
+        card2.style.pointerEvents = opacity > 0.5 ? 'auto' : 'none';
+      }
+
+      // Detail button / CTA
+      let detailOpacity = 0;
+      let detailTranslateY = 30;
+      if (progress >= 0.25 && progress < 0.85) {
+        detailOpacity = 1;
+        detailTranslateY = 0;
+      } else if (progress < 0.25) {
+        const p = (progress) / 0.25;
+        detailOpacity = p;
+        detailTranslateY = 30 * (1 - p);
+      } else {
+        const p = Math.max(0, (1 - progress) / 0.15);
+        detailOpacity = p;
+        detailTranslateY = 20 * (1 - p);
+      }
+      details.style.opacity = String(detailOpacity);
+      details.style.transform = reducedMotion ? 'none' : `translate3d(0, ${detailTranslateY}px, 0)`;
+      details.style.pointerEvents = detailOpacity > 0.65 ? 'auto' : 'none';
+    }
+  }, [progress, reducedMotion, isMobile]);
 
   return (
-    <>
-      {/* Clubs Section */}
-      <section ref={ref} className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <motion.h2
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center mb-8 sm:mb-12 lg:mb-16 gradient-text"
+    <div className="relative h-full w-full overflow-hidden lattice bg-transparent" ref={containerRef}>
+      {/* Massive Background Watermark */}
+      <div
+        ref={watermarkRef}
+        className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden z-0"
+        style={{ willChange: 'opacity, transform' }}
+      >
+        <span
+          className="text-[20vw] font-black text-white whitespace-nowrap uppercase select-none opacity-[0.03]"
+          style={{ fontFamily: 'var(--font-display)', transform: 'rotate(-5deg) scale(1.2)' }}
         >
-          Our Clubs
-        </motion.h2>
+          {club.name}
+        </span>
+      </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 justify-center">
-          {clubs.map((club, index) => {
-            return (
-              <motion.div
-                key={club.id}
-                initial={{ opacity: 0, y: 30 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="glass-card p-4 sm:p-6 lg:p-8 hover-scale cursor-pointer group h-full flex flex-col justify-between max-w-sm mx-auto w-full"
-                onClick={() => setSelectedClub(club)}
+      {/* Split container */}
+      <div className="absolute inset-0 z-10 flex flex-col md:flex-row h-full max-w-[var(--container-xl)] mx-auto">
+
+        {/* Left: Club Info */}
+        <div
+          ref={headlineRef}
+          className={`flex flex-col justify-center px-8 md:px-16 py-6 md:py-0 relative z-20 ${isMobile ? 'h-[35vh] justify-end' : 'flex-1'}`}
+          style={{ willChange: 'opacity, transform' }}
+        >
+          <div className="w-full max-w-lg mx-auto md:mr-auto md:ml-0">
+            {/* Meta Tags */}
+            <div className="mb-4 sm:mb-12 flex items-center gap-4">
+              <span className="mono-label px-3 py-1 bg-[hsl(var(--phosphor)/0.15)] border border-[hsl(var(--phosphor)/0.3)] rounded text-[hsl(var(--phosphor))] shadow-[0_0_10px_hsl(var(--phosphor)/0.2)]">
+                0{index + 1} / 0{CLUBS.length}
+              </span>
+              <div className="flex-1 h-px bg-gradient-to-r from-[hsl(var(--phosphor)/0.5)] to-transparent" aria-hidden="true" />
+              <span className="mono-label tracking-widest text-[hsl(var(--chalk))] uppercase">{club.tag}</span>
+            </div>
+
+            {/* Title & Logo */}
+            <div className="flex items-center gap-6 mb-4 sm:mb-8 relative">
+              {club.logo && (
+                <div className="relative w-12 h-12 sm:w-20 sm:h-20 shrink-0">
+                  <div className="absolute inset-0 bg-[hsl(var(--phosphor))] blur-xl opacity-20 animate-pulse" />
+                  <img
+                    src={club.logo}
+                    alt={club.logoAlt}
+                    className="relative z-10 w-full h-full object-contain filter drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]"
+                  />
+                </div>
+              )}
+              <h3
+                className="text-3xl sm:text-7xl text-white font-bold leading-none tracking-tighter uppercase drop-shadow-2xl"
+                style={{ fontFamily: 'var(--font-display)' }}
               >
-                <div>
-                  <div className="relative mb-4 sm:mb-6">
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 mx-auto bg-gradient-primary rounded-xl flex items-center justify-center mb-3 sm:mb-4 group-hover:shadow-electric transition-all duration-300">
-                      {club.name === "DotDev Club" ? (
-                        <img src={DotIcon} alt="DotDev Logo" className="w-14 h-14 object-contain mx-auto" />
-                      ) : club.name === "Unbiased Club" ? (
-                        <img src={BiasIcon} alt="Unbiased Logo" className="w-14 h-14 object-contain mx-auto" />
-                      ) : club.name === "Hack Hive Club" ? (
-                        <img src={HackIcon} alt="Hack Hive Logo" className="w-14 h-14 object-contain mx-auto" />
-                      ) : typeof club.icon === "string" ? (
-                        <img src={club.icon} alt={`${club.name} icon`} className="w-12 h-12 object-contain mx-auto" />
+                {club.name}
+              </h3>
+            </div>
+
+            {/* Description */}
+            <p className="text-xs sm:text-lg leading-relaxed text-[hsl(var(--chalk)/0.75)] p-4 sm:p-6 bg-black/20 border-l-2 border-[hsl(var(--phosphor)/0.5)] rounded-r-lg backdrop-blur-sm mb-4 sm:mb-10">
+              {club.description}
+            </p>
+
+            {/* MOVED INITIATE HANDSHAKE CTA HERE */}
+            <div
+              ref={detailsRef}
+              className="w-full md:w-auto"
+              style={{ willChange: 'opacity, transform' }}
+            >
+              <Link
+                to={`/clubs/${club.slug}`}
+                className="group relative inline-flex items-center justify-between gap-4 bg-black/60 border border-[hsl(var(--phosphor)/0.4)] hover:border-[hsl(var(--phosphor))] px-5 py-3 sm:px-8 sm:py-5 w-full md:w-auto overflow-hidden transition-all duration-300 rounded shadow-[0_0_20px_rgba(0,0,0,0.5)] hover:shadow-[0_0_30px_hsl(var(--phosphor)/0.2)]"
+              >
+                {/* Swipe Glow */}
+                <div className="absolute inset-0 bg-[hsl(var(--phosphor)/0.1)] translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-out" />
+
+                <div className="relative z-10 flex items-center gap-3">
+                  <span className="w-2 h-2 bg-[hsl(var(--phosphor))] rounded-full animate-pulse shadow-[0_0_8px_hsl(var(--phosphor))]" />
+                  <span className="mono-label text-[hsl(var(--chalk))] group-hover:text-white transition-colors uppercase tracking-[0.2em] text-[10px] sm:text-xs">Initiate Handshake</span>
+                </div>
+
+                <svg className="w-4 h-4 text-[hsl(var(--graphite))] group-hover:text-[hsl(var(--phosphor))] transition-colors relative z-10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                  <path d="M1 6h10M6 1l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Right: Coordinators Detailed Profiles */}
+        <div 
+          ref={rightColRef}
+          className={`flex flex-col justify-center px-8 md:px-16 py-6 md:py-0 relative z-20 ${isMobile ? 'h-[65vh] justify-start pt-4' : 'flex-1'}`}
+        >
+          <div className="w-full max-w-lg mx-auto md:ml-auto md:mr-0 flex flex-col items-center">
+
+            {/* Portrait Coordinator Cards & Profiles Stack */}
+            <div
+              ref={membersRef}
+              className="club-members-container relative w-full max-w-sm h-[460px] sm:h-[500px] md:h-[700px] mx-auto md:mr-0"
+              style={{ willChange: 'opacity' }}
+            >
+              {club.coordinators.map((coord, i) => {
+                const isTBA = !coord.image || coord.name === 'TBA';
+
+                return (
+                  <div
+                    key={i}
+                    className="absolute inset-0 w-full h-full flex flex-col items-center text-center justify-center"
+                    style={{ willChange: 'transform' }}
+                  >
+                    {/* 1. Image Portrait Card */}
+                    <div className="relative w-56 h-72 md:w-80 md:h-[400px] border border-[hsl(var(--phosphor)/0.25)] bg-black shadow-[0_30px_60px_rgba(0,0,0,0.8)] overflow-hidden group">
+                      {/* Subtle hover overlay glow */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--phosphor)/0.15)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none" />
+
+                      {/* Holographic Glare */}
+                      <div className="absolute inset-0 z-20 pointer-events-none overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out translate-x-[-100%] group-hover:translate-x-[100%]" />
+                      </div>
+
+                      {isTBA ? (
+                        /* TBA Portrait State */
+                        <div className="absolute inset-0 flex items-center justify-center bg-black">
+                          <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[8rem] sm:text-[10rem] font-black text-white/5 select-none z-0 tracking-tighter" style={{ fontFamily: 'var(--font-display)' }}>TBA</span>
+                          <span className="relative z-10 text-sm text-[hsl(var(--graphite))] font-mono uppercase tracking-[0.2em]">// OPEN SEAT</span>
+                        </div>
                       ) : (
-                        (() => {
-                          const Icon = club.icon;
-                          return <Icon className="w-12 h-12 text-primary-foreground mx-auto" />;
-                        })()
+                        /* Filled Portrait State */
+                        <>
+                          <img
+                            src={coord.image!}
+                            alt={coord.name}
+                            className="absolute inset-0 w-full h-full object-cover transition-all duration-700"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500" />
+                        </>
+                      )}
+                    </div>
+
+                    {/* 2. Text Metadata Section */}
+                    <div className="mt-3 sm:mt-6 flex flex-col items-center max-w-[340px]">
+                      {/* Role Label */}
+                      <span className="mono-label text-[10px] sm:text-xs text-[hsl(var(--phosphor))] uppercase tracking-[0.2em] font-semibold">
+                        {coord.role}
+                      </span>
+
+                      {/* Name */}
+                      <h4 className="text-xl sm:text-3xl md:text-4xl font-bold text-white uppercase mt-1.5 leading-tight tracking-wide" style={{ fontFamily: 'var(--font-display)' }}>
+                        {coord.name}
+                      </h4>
+
+                      {/* Accent separator line */}
+                      <div className="w-8 h-[2px] bg-[hsl(var(--phosphor)/0.5)] my-2.5 sm:my-3" />
+
+                      {/* Bio brief */}
+                      <p className="text-xs sm:text-sm leading-relaxed text-[hsl(var(--graphite))] text-center px-4 font-normal max-w-[290px]">
+                        {coord.bio}
+                      </p>
+
+                      {/* LinkedIn URL Link */}
+                      {!isTBA && coord.linkedin && (
+                        <a
+                          href={coord.linkedin}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`${coord.name} on LinkedIn`}
+                          className="focus-phosphor mono-label mt-2.5 sm:mt-4 inline-flex items-center gap-2 text-[hsl(var(--chalk))] hover:text-[hsl(var(--phosphor))] transition-colors duration-200 text-xs tracking-widest"
+                        >
+                          <Linkedin className="h-4 w-4 shrink-0" aria-hidden="true" />
+                          <span>CONNECT</span>
+                        </a>
                       )}
                     </div>
                   </div>
-                  <h3 className="text-lg sm:text-xl font-bold text-center mb-3 sm:mb-4 text-foreground">
-                    {club.name}
-                  </h3>
-                  <p className="text-sm sm:text-base text-foreground-secondary text-center leading-relaxed mb-3 sm:mb-4 line-clamp-3">
-                    {club.description}
-                  </p>
-                </div>
-                <div className="flex justify-center space-x-2 mt-3 sm:mt-4">
-                  {club.coordinators.slice(0, 3).map((coordinator, i) => (
-                    <img
-                      key={i}
-                      src={coordinator.image}
-                      alt={coordinator.name}
-                      className="w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 border-atom-metallic"
-                    />
-                  ))}
-                  {club.coordinators.length > 3 && (
-                    <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-card-hover border-2 border-atom-metallic flex items-center justify-center text-xs font-semibold">
-                      +{club.coordinators.length - 3}
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            );
-          })}
+                );
+              })}
+            </div>
+          </div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-center mt-8">
-          {/* Add content for the second grid here */}
-        </div>
-      </section>
+      </div>
+    </div>
+  );
+};
 
-      {/* Club Modal */}
-      {selectedClub && (
+export const Clubs = () => {
+  const reducedMotion = useReducedMotion();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // For kinetic typography
+  const introRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: introRef,
+    offset: ["start end", "end start"]
+  });
+
+  // Slide left to center
+  const textX1 = useTransform(scrollYProgress, [0, 0.45], ["-40%", "0%"]);
+  // Slide right to center
+  const textX2 = useTransform(scrollYProgress, [0, 0.45], ["40%", "0%"]);
+
+  // Scale down and fade slightly as it scrolls away
+  const opacityOut = useTransform(scrollYProgress, [0.5, 0.8], [1, 0]);
+  const scaleOut = useTransform(scrollYProgress, [0.5, 0.8], [1, 0.9]);
+
+  return (
+    <section id="clubs-section" className="relative lattice overflow-hidden bg-transparent" aria-label="ATOM Sub-Clubs">
+
+      {/* ── Ambient Marquee Background ── */}
+      <div className="absolute top-0 left-0 w-full overflow-hidden pointer-events-none opacity-[0.02] select-none z-0 pt-40">
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 min-h-screen overflow-y-auto"
-          onClick={() => setSelectedClub(null)}
+          animate={reducedMotion ? {} : { x: ["0%", "-50%"] }}
+          transition={{ repeat: Infinity, ease: "linear", duration: 60 }}
+          className="flex whitespace-nowrap text-white"
+          style={{ fontFamily: 'var(--font-display)', fontSize: '15vw', lineHeight: 1 }}
         >
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="glass-card max-w-xs sm:max-w-2xl lg:max-w-4xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto p-4 sm:p-6 lg:p-8 relative mx-auto my-2 sm:my-4"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setSelectedClub(null)}
-              className="absolute top-4 right-4 p-2 hover:bg-card-hover rounded-full transition-colors z-10"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <div className="text-center mb-8">
-              <div className="w-20 h-20 mx-auto bg-gradient-primary rounded-xl flex items-center justify-center mb-4">
-                {selectedClub.name === "DotDev Club" ? (
-                  <img src={DotIcon} alt="DotDev Logo" className="w-14 h-14 object-contain mx-auto" style={{ display: 'block' }} />
-                ) : selectedClub.name === "Unbiased Club" ? (
-                  <img src={BiasIcon} alt="Unbiased Logo" className="w-14 h-14 object-contain mx-auto" style={{ display: 'block' }} />
-                ) : selectedClub.name === "Hack Hive Club" ? (
-                  <img src={HackIcon} alt="Hack Hive Logo" className="w-14 h-14 object-contain mx-auto" style={{ display: 'block' }} />
-                ) : typeof selectedClub.icon === "string" ? (
-                  <img src={selectedClub.icon} alt={`${selectedClub.name} icon`} className="w-12 h-12 object-contain mx-auto" style={{ display: 'block' }} />
-                ) : (
-                  (() => {
-                    const Icon = selectedClub.icon;
-                    return <Icon className="w-12 h-12 text-primary-foreground mx-auto" style={{ display: 'block' }} />;
-                  })()
-                )}
-              </div>
-              <h3 className="text-3xl font-bold mb-4 gradient-text">
-                {selectedClub.name}
-              </h3>
-              <p className="text-lg text-foreground-secondary">
-                {selectedClub.description}
-              </p>
-            </div>
-
-            <div className="mb-8 flex justify-center">
-              <button
-                onClick={() => {
-                  setClubPage(selectedClub);
-                  setSelectedClub(null);
-                }}
-                className="px-6 py-2 rounded-full bg-atom-primary text-white font-semibold hover:bg-atom-primary/80 transition-colors"
-              >
-                More Details
-              </button>
-            </div>
-
-            {/* Coordinators Only */}
-            <div>
-              <h4 className="text-xl font-semibold mb-6 metallic-text">
-                Coordinators
-              </h4>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 justify-items-center">
-                {selectedClub.coordinators
-                  .filter(coord => coord.role !== "Educator")
-                  .map((coordinator, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className={`glass-card p-6 text-center cursor-pointer w-full max-w-xs mx-auto ${
-                      coordinator.isMain ? "ring-2 ring-atom-primary" : ""
-                    }`}
-                    onClick={() => setSelectedCoordinator(coordinator)}
-                  >
-                    <img
-                      src={coordinator.image}
-                      alt={coordinator.name}
-                      className="w-20 h-20 rounded-full mx-auto object-cover border-2 border-atom-metallic mb-4"
-                    />
-                    <h5 className="font-semibold text-foreground mb-2">
-                      {coordinator.name}
-                    </h5>
-                    <p
-                      className={`text-sm ${
-                        coordinator.isMain
-                          ? "text-atom-primary font-semibold"
-                          : "text-foreground-secondary"
-                      }`}
-                    >
-                      {coordinator.role}
-                    </p>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
+          UNBIASED — DOTDEV — HACK HIVE — QYRO — UNBIASED — DOTDEV — HACK HIVE — QYRO — UNBIASED — DOTDEV — HACK HIVE — QYRO —
         </motion.div>
-      )}
+      </div>
 
-      {/* Coordinator Modal */}
-      {selectedCoordinator && (
+      {/* ── Massive Kinetic Typography Intro ── */}
+      <div ref={introRef} className="relative z-10 w-full min-h-[75vh] flex flex-col justify-center items-center py-32 overflow-hidden">
+
+        {/* Subtle Top Label */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 min-h-screen"
-          onClick={() => setSelectedCoordinator(null)}
+          style={{ opacity: opacityOut }}
+          className="mb-12 flex items-center gap-4 z-20"
         >
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="glass-card max-w-md w-full p-6 relative text-center mx-auto my-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setSelectedCoordinator(null)}
-              className="absolute top-4 right-4 p-2 hover:bg-card-hover rounded-full transition-colors z-10"
-            >
-              <X className="w-5 h-5" />
-            </button>
-            
-            <div className="mb-6">
-              <img
-                src={selectedCoordinator.image}
-                alt={selectedCoordinator.name}
-                className="w-24 h-24 rounded-full mx-auto object-cover border-2 border-atom-metallic mb-4"
-              />
-              <h5 className="font-bold text-foreground text-2xl mb-2">
-                {selectedCoordinator.name}
-              </h5>
-              <p className="text-foreground-secondary text-lg mb-4">
-                {selectedCoordinator.role}
-              </p>
-              {selectedCoordinator.isMain && (
-                <div className="mb-4 text-xs text-atom-primary font-medium">
-                  ★ Lead Coordinator
-                </div>
-              )}
-            </div>
+          <span className="accent">03</span>
+          <span className="w-12 h-px bg-[hsl(var(--rule))]"></span>
+          <span className="mono-label tracking-widest text-[hsl(var(--graphite))] uppercase">Domains</span>
+        </motion.div>
 
-            {selectedCoordinator.bio && (
-              <div className="mb-6">
-                <p className="text-foreground-secondary text-sm leading-relaxed">
-                  {selectedCoordinator.bio}
-                </p>
-              </div>
+        {/* Kinetic Text */}
+        <motion.div
+          style={{ opacity: opacityOut, scale: scaleOut }}
+          className="flex flex-col items-center justify-center w-full relative z-20"
+        >
+          {/* Spotlight Cursor Effect background */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--phosphor)/0.08)_0%,transparent_60%)] blur-3xl pointer-events-none mix-blend-screen" />
+
+          <div className="w-full overflow-hidden">
+            <motion.h2
+              style={{ x: reducedMotion ? "0%" : textX1, fontFamily: 'var(--font-display)' }}
+              className="text-[clamp(3.5rem,8vw,10rem)] text-[hsl(var(--chalk))] whitespace-nowrap text-center leading-[0.85] tracking-tighter uppercase drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]"
+            >
+              FOUR SPECIALIST
+            </motion.h2>
+          </div>
+          <div className="w-full overflow-hidden relative">
+            <motion.h2
+              style={{ x: reducedMotion ? "0%" : textX2, fontFamily: 'var(--font-display)' }}
+              className="text-[clamp(3.5rem,8vw,10rem)] text-[hsl(var(--phosphor))] whitespace-nowrap text-center leading-[0.85] tracking-tighter uppercase"
+            >
+              COMMUNITIES
+            </motion.h2>
+          </div>
+        </motion.div>
+
+        {/* Scroll Indicator */}
+        <motion.div
+          style={{ opacity: opacityOut }}
+          className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 z-20"
+        >
+          <span className="mono-label text-[10px] text-[hsl(var(--graphite))] uppercase tracking-widest">Descend</span>
+          <div className="w-px h-16 bg-gradient-to-b from-[hsl(var(--rule))] to-transparent relative overflow-hidden">
+            <motion.div
+              animate={{ y: ["-100%", "100%"] }}
+              transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+              className="absolute top-0 left-0 w-full h-1/2 bg-[hsl(var(--phosphor))] shadow-[0_0_10px_hsl(var(--phosphor))]"
+            />
+          </div>
+        </motion.div>
+      </div>
+
+      {/* ── Scroll Scenes ── */}
+      {/* One ScrollScene per club */}
+      {CLUBS.map((club, index) => (
+        <div id={`scene-${club.id}`} key={club.id}>
+          <ScrollScene heightVh={360}>
+            {(progress) => (
+              <ClubScene club={club} index={index} progress={progress} reducedMotion={reducedMotion} isMobile={isMobile} />
             )}
-
-              {renderCoordinatorLinkedIn(selectedCoordinator)}
-          </motion.div>
-        </motion.div>
-      )}
-    </>
+          </ScrollScene>
+        </div>
+      ))}
+    </section>
   );
 };
 

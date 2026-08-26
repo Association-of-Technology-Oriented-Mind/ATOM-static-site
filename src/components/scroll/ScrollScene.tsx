@@ -50,8 +50,9 @@ const ScrollScene = ({ heightVh = 400, children, className = '' }: ScrollScenePr
         else if (rect.bottom <= viewH) setStage('after');
         else setStage('fixed');
       }
+      
+      rafRef.current = requestAnimationFrame(tick);
     }
-    rafRef.current = requestAnimationFrame(tick);
   }, []);
 
   useEffect(() => {
