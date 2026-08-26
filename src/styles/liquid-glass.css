@@ -474,9 +474,9 @@
   border-radius: 999px;
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.08) 0%,
-    rgba(20, 24, 34, 0.55) 35%,
-    rgba(10, 12, 18, 0.78) 100%
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(12, 14, 20, 0.7) 40%,
+    rgba(5, 6, 9, 0.88) 100%
   );
   backdrop-filter: blur(28px) saturate(200%) brightness(1.1) url(#lg-water-magnify);
   -webkit-backdrop-filter: blur(28px) saturate(200%) brightness(1.1);
