@@ -399,7 +399,7 @@ const ClubScene = ({
             >
               <Link
                 to={`/clubs/${club.slug}`}
-                className="group relative inline-flex items-center justify-between gap-6 bg-black/60 border border-[hsl(var(--phosphor)/0.4)] hover:border-[hsl(var(--phosphor))] px-8 py-5 w-full md:w-auto overflow-hidden transition-all duration-300 rounded shadow-[0_0_20px_rgba(0,0,0,0.5)]"
+                className="group relative inline-flex items-center justify-between gap-6 bg-transparent border border-[hsl(var(--phosphor)/0.4)] hover:border-[hsl(var(--phosphor))] px-8 py-5 w-full md:w-auto overflow-hidden transition-all duration-300 rounded shadow-[0_0_20px_rgba(0,0,0,0.5)]"
               >
                 {/* Sliding Mint Cyan Background from Bottom to Top */}
                 <div className="absolute inset-0 bg-[hsl(var(--phosphor))] translate-y-[100%] group-hover:translate-y-0 transition-transform duration-400 ease-out pointer-events-none" />

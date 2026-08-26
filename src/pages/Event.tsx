@@ -158,49 +158,53 @@ const Event: React.FC = () => {
 
           {/* Stats row */}
           <motion.div
-            className="flex flex-wrap items-center gap-6 sm:gap-10"
+            className="group relative overflow-hidden flex flex-wrap items-center gap-6 sm:gap-10 p-5 sm:p-6 rounded-lg border border-[hsl(var(--rule))] hover:border-[hsl(var(--phosphor))] bg-transparent cursor-pointer transition-all duration-300 w-fit"
             initial={{ opacity: 0 }}
             animate={heroInView ? { opacity: 1 } : {}}
             transition={{ duration: 0.5, delay: 0.3, ease }}
           >
-            <div className="flex items-baseline gap-2">
+            {/* Sliding Mint Cyan Background from Bottom to Top */}
+            <div className="absolute inset-0 bg-[hsl(var(--phosphor))] translate-y-[100%] group-hover:translate-y-0 transition-transform duration-450 ease-out pointer-events-none z-0" />
+
+            <div className="relative z-10 flex items-baseline gap-2">
               <span
+                className="text-[hsl(var(--chalk))] group-hover:text-black transition-colors duration-300"
                 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.5rem, 3vw, 2.5rem)', lineHeight: 1 }}
               >
                 <AnimatedCounter value={totalEvents} inView={heroInView} />
               </span>
               <span
-                className="uppercase tracking-[0.15em]"
-                style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', color: 'hsl(var(--graphite))' }}
+                className="uppercase tracking-[0.15em] text-[hsl(var(--graphite))] group-hover:text-black transition-colors duration-300"
+                style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem' }}
               >
                 Events
               </span>
             </div>
 
-            <div className="h-6 w-px bg-[hsl(var(--rule))]" aria-hidden="true" />
+            <div className="h-6 w-px bg-[hsl(var(--rule))] group-hover:bg-black/30 transition-colors duration-300 relative z-10" aria-hidden="true" />
 
-            <div className="flex items-baseline gap-2">
+            <div className="relative z-10 flex items-baseline gap-2">
               <span
+                className="text-[hsl(var(--chalk))] group-hover:text-black transition-colors duration-300"
                 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.5rem, 3vw, 2.5rem)', lineHeight: 1 }}
               >
                 <AnimatedCounter value={totalCategories} inView={heroInView} />
               </span>
               <span
-                className="uppercase tracking-[0.15em]"
-                style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', color: 'hsl(var(--graphite))' }}
+                className="uppercase tracking-[0.15em] text-[hsl(var(--graphite))] group-hover:text-black transition-colors duration-300"
+                style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem' }}
               >
                 Categories
               </span>
             </div>
 
-            <div className="h-6 w-px bg-[hsl(var(--rule))] hidden sm:block" aria-hidden="true" />
+            <div className="h-6 w-px bg-[hsl(var(--rule))] hidden sm:block group-hover:bg-black/30 transition-colors duration-300 relative z-10" aria-hidden="true" />
 
             <p
-              className="hidden sm:block max-w-[32ch]"
+              className="hidden sm:block max-w-[32ch] relative z-10 text-[hsl(var(--chalk)/0.5)] group-hover:text-black transition-colors duration-300"
               style={{
                 fontFamily: 'var(--font-body)',
                 fontSize: '0.875rem',
-                color: 'hsl(var(--chalk)/0.5)',
                 lineHeight: 1.5,
               }}
             >
