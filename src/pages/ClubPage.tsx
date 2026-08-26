@@ -230,7 +230,6 @@ const ClubPage = () => {
             style={{ scale: logoScale, opacity: logoOpacity, y: yParallax }}
             className="w-40 h-40 md:w-56 md:h-56 lg:w-64 lg:h-64 mb-8 relative z-0 flex items-center justify-center"
           >
-            <div className="absolute inset-0 bg-[hsl(var(--phosphor))] blur-3xl opacity-20 rounded-full" />
             {typeof club.icon === 'string' ? (
               <img src={club.icon} alt={club.name} className="w-full h-full object-contain relative z-10 drop-shadow-2xl" />
             ) : (

@@ -444,16 +444,7 @@ export const Hero = () => {
         >
           {/* Top brand header */}
           <div className="flex items-center justify-between md:justify-start gap-4">
-            <span className="font-mono text-xl sm:text-2xl font-black tracking-tighter text-[hsl(var(--chalk))] inline-flex items-center gap-0.5">
-              <span>AT</span>
-              <img
-                src={atomLogo}
-                alt="O"
-                className="w-[0.72em] h-[0.72em] object-contain inline-block align-middle filter drop-shadow-[0_0_12px_rgba(125,249,228,0.35)] -mt-0.5"
-              />
-              <span>M</span>
-            </span>
-            <span className="mono-label text-[0.625rem] text-[hsl(var(--graphite))] tracking-widest hidden sm:inline">
+            <span className="mono-label text-[0.625rem] text-[hsl(var(--graphite))] tracking-widest sm:inline">
               // KARUNYA'S PREMIER TECHNICAL ASSOCIATION
             </span>
           </div>
@@ -469,13 +460,13 @@ export const Hero = () => {
               variants={itemVariants}
               className="text-[12vw] md:text-[6.5rem] lg:text-[7.5rem] font-black leading-[0.85] tracking-[-0.04em] uppercase text-[hsl(var(--chalk))] inline-flex items-center gap-[0.02em]"
             >
-              <span>AT</span>
+              <span className="atom-brand-text">AT</span>
               <img
                 src={atomLogo}
                 alt="O"
-                className="w-[0.72em] h-[0.72em] mx-[0.02em] object-contain inline-block align-middle filter drop-shadow-[0_0_20px_rgba(125,249,228,0.3)] -mt-[0.08em]"
+                className="w-[0.72em] h-[0.72em] mx-[0.02em] object-contain inline-block align-middle -mt-[0.08em]"
               />
-              <span>M.</span>
+              <span className="atom-brand-text">M</span>
             </motion.h1>
             
             <motion.p
@@ -500,18 +491,18 @@ export const Hero = () => {
             >
               <a
                 href="#clubs-section"
-                className="btn-tech flex items-center gap-2 border border-[hsl(var(--rule))] px-8 py-3.5 bg-black hover:border-[hsl(var(--phosphor))] hover:text-[hsl(var(--phosphor))] transition-all font-mono text-xs uppercase"
+                className="btn-tech flex items-center gap-2 px-8 py-3.5"
               >
-                Explore Clubs
+                <span>Explore Clubs</span>
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
                   <path d="M1 6h10M6 1l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </a>
               <a
-                href="#about"
-                className="btn-tech border border-[hsl(var(--rule))] px-8 py-3.5 hover:border-[hsl(var(--phosphor))] hover:text-[hsl(var(--phosphor))] transition-all font-mono text-xs uppercase"
+                href="#core-members"
+                className="btn-tech px-8 py-3.5"
               >
-                Our Story
+                <span>Core Team</span>
               </a>
             </motion.div>
           </motion.div>

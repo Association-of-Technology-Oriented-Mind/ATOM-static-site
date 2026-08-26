@@ -178,17 +178,14 @@ const LiquidGlassNav: React.FC = () => {
                     }
                   }}
                 >
-                  <div className="lg-nav-logo__mark">
-                    <img src={atomLogo} alt="" aria-hidden="true" />
-                  </div>
                   <span className="lg-nav-logo__text inline-flex items-center gap-0.5">
-                    <span>AT</span>
+                    <span className="atom-brand-text">AT</span>
                     <img
                       src={atomLogoColor}
                       alt="O"
-                      className="w-[0.75em] h-[0.75em] object-contain inline-block align-middle filter drop-shadow-[0_0_8px_rgba(125,249,228,0.4)] -mt-0.5"
+                      className="w-[0.75em] h-[0.75em] object-contain inline-block align-middle -mt-0.5"
                     />
-                    <span>M</span>
+                    <span className="atom-brand-text">M</span>
                   </span>
                 </Link>
 

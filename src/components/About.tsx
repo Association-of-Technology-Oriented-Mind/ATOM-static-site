@@ -45,29 +45,15 @@ export const About = () => {
           >
             About{' '}
             <span className="inline-flex items-center gap-0.5 font-bold">
-              <span
-                style={{
-                  background: 'linear-gradient(135deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.15) 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}
-              >
+              <span className="atom-brand-text">
                 AT
               </span>
               <img
                 src={atomLogo}
                 alt="O"
-                className="w-[0.72em] h-[0.72em] object-contain inline-block align-middle filter drop-shadow-[0_0_12px_rgba(125,249,228,0.35)] -mt-0.5"
+                className="w-[0.72em] h-[0.72em] object-contain inline-block align-middle -mt-0.5"
               />
-              <span
-                style={{
-                  background: 'linear-gradient(135deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.15) 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}
-              >
+              <span className="atom-brand-text">
                 M
               </span>
             </span>
