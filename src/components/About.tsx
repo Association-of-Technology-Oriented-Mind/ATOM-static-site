@@ -141,7 +141,7 @@ export const About = () => {
                 className={`about-card ${cardClass}`}
                 style={{
                   position: 'relative',
-                  borderRadius: 18,
+                  borderRadius: 0,
                   padding: 'clamp(1.5rem, 2.5vw, 2rem)',
                   overflow: 'hidden',
                   display: 'flex',
@@ -245,7 +245,7 @@ export const About = () => {
         .about-card__fill {
           position: absolute;
           inset: 0;
-          border-radius: 18px;
+          border-radius: 0;
           transform: translateY(100%);
           transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
           z-index: 1;
