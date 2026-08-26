@@ -1,203 +1,232 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { useEvents } from '@/hooks/useContent';
+import { use3DTilt } from '@/hooks/use3DTilt';
 
-// ── About + Our Numbers — Merged Section ─────────────────────────────────────
-// Preserves both original designs exactly as they were, but completely merged
-// into a single file and a single component for seamless rendering.
+// ── About Section — Liquid Glass Editorial Layout ─────────────────────────────
+// A floating 3D glass card presenting ATOM's thesis with interactive specular
+// reflection. Cursor-tracking card tilt courtesy of use3DTilt hook.
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
-// ── Animated Counter ──────────────────────────────────────────────────────────
-const AnimatedCounter = ({
-  target,
-  suffix = '',
-  isInView,
-}: {
-  target: number;
-  suffix?: string;
-  isInView: boolean;
-}) => {
-  const [count, setCount] = useState(0);
-  const hasAnimated = useRef(false);
-
-  useEffect(() => {
-    if (!isInView || hasAnimated.current) return;
-    hasAnimated.current = true;
-
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reducedMotion) {
-      setCount(target);
-      return;
-    }
-
-    const duration = 1800;
-    const startTime = performance.now();
-
-    const animate = (now: number) => {
-      const elapsed = now - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      // ease-out curve
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setCount(Math.floor(eased * target));
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        setCount(target);
-      }
-    };
-
-    requestAnimationFrame(animate);
-  }, [isInView, target]);
-
-  return (
-    <span>
-      {count}
-      {suffix}
-    </span>
-  );
-};
-
-
 export const About = () => {
-  const aboutRef = useRef<HTMLElement>(null);
-  const isAboutInView = useInView(aboutRef, { once: true, margin: '-120px' });
-
-  const achievementsRef = useRef<HTMLElement>(null);
-  const isAchievementsInView = useInView(achievementsRef, { once: true, margin: '-80px' });
-
-  const { data: events = [] } = useEvents();
-  const liveEventCount = events.length > 0 ? events.length : 9;
-
-  const stats = [
-    {
-      id: 'members',
-      target: 88,
-      suffix: '+',
-      title: 'Active Members',
-      context: 'Growing network',
-    },
-    {
-      id: 'events',
-      target: liveEventCount,
-      suffix: '',
-      title: 'Events Conducted',
-      context: 'In academic year 2025',
-    },
-    {
-      id: 'clubs',
-      target: 4,
-      suffix: '',
-      title: 'Specialist Clubs',
-      context: 'Focused domains',
-    },
-    {
-      id: 'portfolios',
-      target: 6,
-      suffix: '',
-      title: 'Core Portfolios',
-      context: 'Leadership seats',
-    },
-  ];
+  const sectionRef = useRef<HTMLElement>(null);
+  const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
+  const cardRef = use3DTilt<HTMLDivElement>({ max: 8, scale: 1.01 });
 
   return (
-    <>
-      {/* ── ABOUT ── */}
-      <section
-        ref={aboutRef}
-        className="about-section"
-        id="about"
-        aria-labelledby="about-heading"
-      >
-        {/* Subtle ambient background */}
-        <div className="about-ambient" aria-hidden="true" />
+    <section
+      ref={sectionRef}
+      className="lg-about"
+      id="about"
+      aria-labelledby="about-heading"
+    >
+      {/* Ambient light blobs */}
+      <div className="lg-about__ambient" aria-hidden="true" />
 
-          <div className="about-container">
-          {/* Section label */}
-          <motion.div
-            className="about-label"
-            initial={{ opacity: 0, y: 12 }}
-            animate={isAboutInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5, ease }}
-          >
-            <span className="about-label__num">01</span>
-            <span className="about-label__rule" aria-hidden="true" />
-            <span>Discover</span>
-          </motion.div>
+      <div className="lg-about__container" style={{ position: 'relative', zIndex: 2 }}>
 
-          {/* Heading */}
-          <motion.h2
+        {/* ── Left: Section label + heading ── */}
+        <motion.div
+          initial={{ opacity: 0, x: -32 }}
+          animate={isInView ? { opacity: 1, x: 0 } : {}}
+          transition={{ duration: 0.8, ease }}
+        >
+          <div className="lg-section-label" style={{ marginBottom: '2rem' }}>
+            <span className="lg-section-label__num">01</span>
+            <span className="lg-section-label__line" />
+            <span className="lg-section-label__text">Discover</span>
+          </div>
+
+          <h2
             id="about-heading"
-            className="about-heading"
-            initial={{ opacity: 0, y: 20 }}
-            animate={isAboutInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.1, ease }}
+            className="lg-section-heading"
+            style={{ marginBottom: '2rem', maxWidth: '10ch' }}
           >
-            <span className="about-heading__word">About</span>{' '}
-            <span className="about-heading__word accent">ATOM</span>
-          </motion.h2>
+            About
+            {' '}
+            <span
+              style={{
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.15) 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}
+            >
+              ATOM
+            </span>
+          </h2>
 
-          {/* Body */}
           <motion.p
-            className="about-body"
-            initial={{ opacity: 0, y: 14 }}
-            animate={isAboutInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.2, ease }}
+            initial={{ opacity: 0 }}
+            animate={isInView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.7, delay: 0.25, ease }}
+            style={{
+              fontFamily: 'var(--lg-font-body)',
+              fontSize: 'clamp(1rem, 1.4vw, 1.1rem)',
+              color: 'rgba(255,255,255,0.55)',
+              lineHeight: 1.75,
+              fontWeight: 300,
+              maxWidth: '44ch',
+            }}
           >
-            Association of Technology Oriented Minds (ATOM) is a student-driven
-            community that fosters innovation, learning, and collaboration. We aim
-            to empower students with hands-on experience, technical skills, and a
-            platform to turn ideas into impactful solutions.
+            A student-driven community that fosters innovation, learning, and
+            collaboration. We aim to empower students with hands-on experience,
+            technical skills, and a platform to turn ideas into impactful solutions.
           </motion.p>
 
-          {/* Signature line */}
           <motion.div
-            className="about-signature"
             initial={{ opacity: 0, scaleX: 0 }}
-            animate={isAboutInView ? { opacity: 1, scaleX: 1 } : {}}
-            transition={{ duration: 0.6, delay: 0.35, ease }}
-            style={{ transformOrigin: 'left' }}
+            animate={isInView ? { opacity: 1, scaleX: 1 } : {}}
+            transition={{ duration: 0.6, delay: 0.45, ease }}
+            style={{
+              transformOrigin: 'left',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              marginTop: '2rem',
+            }}
           >
-            <span className="about-signature__line" aria-hidden="true" />
-            <span className="about-signature__text">Karunya Institute of Technology and Sciences</span>
+            <div
+              style={{
+                width: 32,
+                height: 1,
+                background: 'rgba(255,255,255,0.15)',
+              }}
+              aria-hidden="true"
+            />
+            <span
+              style={{
+                fontFamily: 'var(--lg-font-mono)',
+                fontSize: '0.5625rem',
+                letterSpacing: '0.2em',
+                textTransform: 'uppercase',
+                color: 'rgba(255,255,255,0.3)',
+              }}
+            >
+              Karunya Institute of Technology and Sciences
+            </span>
           </motion.div>
-        </div>
-      </section>
+        </motion.div>
 
-      {/* ── OUR NUMBERS ── */}
-      <section
-        ref={achievementsRef}
-        className="achievements-section"
-        id="achievements"
-        aria-labelledby="achievements-heading"
-      >
-        <div className="achievements-container">
-          {/* Stats grid */}
-          <div className="achievements-strip">
-            {stats.map((stat, index) => (
-              <motion.div
-                key={stat.id}
-                className="achievements-stat"
-                initial={{ opacity: 0, y: 20 }}
-                animate={isAchievementsInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: 0.1 + index * 0.08, ease }}
+        {/* ── Right: 3D Glass Card ── */}
+        <motion.div
+          initial={{ opacity: 0, x: 32, scale: 0.95 }}
+          animate={isInView ? { opacity: 1, x: 0, scale: 1 } : {}}
+          transition={{ duration: 0.8, delay: 0.15, ease }}
+        >
+          <div
+            ref={cardRef}
+            className="lg-about__card liquid-glass-card"
+          >
+            {/* Specular top edge line */}
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: '10%',
+                right: '10%',
+                height: 1,
+                background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
+                borderRadius: '0 0 100px 100px',
+              }}
+              aria-hidden="true"
+            />
+
+            <div style={{ position: 'relative', zIndex: 2 }}>
+              {/* Stat row */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '1px',
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.05)',
+                  borderRadius: 16,
+                  overflow: 'hidden',
+                  marginBottom: '2rem',
+                }}
               >
-                <span className="achievements-stat__number">
-                  <AnimatedCounter
-                    target={stat.target}
-                    suffix={stat.suffix}
-                    isInView={isAchievementsInView}
-                  />
-                </span>
-                <span className="achievements-stat__title">{stat.title}</span>
-                <span className="achievements-stat__context">{stat.context}</span>
-              </motion.div>
-            ))}
+                {[
+                  { value: '4', label: 'Specialist Clubs' },
+                  { value: '6', label: 'Core Portfolios' },
+                  { value: '88+', label: 'Active Members' },
+                  { value: '2025', label: 'Academic Year' },
+                ].map(({ value, label }) => (
+                  <div
+                    key={label}
+                    style={{
+                      padding: '1.25rem',
+                      background: 'rgba(255,255,255,0.015)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontFamily: 'var(--lg-font-display)',
+                        fontSize: '1.875rem',
+                        fontWeight: 700,
+                        letterSpacing: '-0.04em',
+                        lineHeight: 1,
+                        color: 'rgba(255,255,255,0.9)',
+                        marginBottom: '0.375rem',
+                      }}
+                    >
+                      {value}
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: 'var(--lg-font-mono)',
+                        fontSize: '0.5625rem',
+                        letterSpacing: '0.14em',
+                        textTransform: 'uppercase',
+                        color: 'rgba(255,255,255,0.3)',
+                      }}
+                    >
+                      {label}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Description paragraphs */}
+              <p
+                style={{
+                  fontFamily: 'var(--lg-font-body)',
+                  fontSize: '0.9375rem',
+                  color: 'rgba(255,255,255,0.45)',
+                  lineHeight: 1.7,
+                  fontWeight: 300,
+                  marginBottom: '1.25rem',
+                }}
+              >
+                ATOM (Association of Technology Oriented Minds) is the flagship technical
+                student community at Karunya's Department of Computer Science & Engineering.
+              </p>
+              <p
+                style={{
+                  fontFamily: 'var(--lg-font-body)',
+                  fontSize: '0.9375rem',
+                  color: 'rgba(255,255,255,0.35)',
+                  lineHeight: 1.7,
+                  fontWeight: 300,
+                }}
+              >
+                Through four specialist sub-clubs — Hack Hive, DotDev, Unbiased,
+                and Qyro — we run hands-on programs, hackathons, workshops, and
+                collaborative research across cybersecurity, full-stack development,
+                AI/ML, and quantum computing.
+              </p>
+
+              {/* Bottom badge */}
+              <div style={{ marginTop: '2rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                {['Cybersecurity', 'AI / ML', 'Web Dev', 'Quantum'].map(tag => (
+                  <span key={tag} className="lg-badge">{tag}</span>
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
-    </>
+        </motion.div>
+      </div>
+    </section>
   );
 };
 

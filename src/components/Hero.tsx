@@ -375,6 +375,17 @@ export const Hero = () => {
     }
   };
 
+  const [showHeroMenu, setShowHeroMenu] = useState(true);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowHeroMenu(window.scrollY < window.innerHeight * 0.75);
+    };
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <section
       ref={containerRef}
@@ -391,8 +402,16 @@ export const Hero = () => {
       {/* 2. DYNAMIC CIRCUITRY LAYER (z-10) */}
       <CircuitryCanvas />
 
-      {/* 3. FIXED MENU TOGGLE BUTTON (z-[110]) */}
-      <div className="fixed top-6 right-8 z-[110] flex items-center gap-6">
+      {/* 3. FIXED MENU TOGGLE BUTTON (z-[110]) — Only visible during Hero Fold */}
+      <motion.div
+        className="fixed top-6 right-8 z-[110] flex items-center gap-6"
+        initial={{ opacity: 1 }}
+        animate={{
+          opacity: showHeroMenu ? 1 : 0,
+          pointerEvents: showHeroMenu ? 'auto' : 'none',
+        }}
+        transition={{ duration: 0.3 }}
+      >
         <button 
           onClick={() => setMenuOpen(!menuOpen)}
           className="group flex flex-col gap-1.5 focus:outline-none p-2"
@@ -413,7 +432,7 @@ export const Hero = () => {
             className="w-6 h-0.5 bg-[hsl(var(--chalk))] group-hover:bg-[hsl(var(--phosphor))] transition-colors" 
           />
         </button>
-      </div>
+      </motion.div>
 
       {/* 4. CONTENT LAYER (z-20) */}
       <div className="relative z-20 w-full min-h-screen flex flex-col md:flex-row pointer-events-none">

@@ -500,26 +500,32 @@
 .footer-social {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  margin-top: var(--space-1);
+  gap: var(--space-3);
+  margin-top: var(--space-4);
 }
 
 .footer-social__icon {
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius-md);
-  border: 1px solid hsl(var(--rule));
-  color: hsl(var(--graphite));
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.7);
   text-decoration: none;
-  transition: border-color 0.2s, color 0.2s;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .footer-social__icon:hover {
+  transform: translateY(-3px) scale(1.08);
+  background: rgba(255, 255, 255, 0.1);
   border-color: hsl(var(--phosphor));
-  color: hsl(var(--phosphor));
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), 0 0 15px hsl(var(--phosphor) / 0.4);
 }
 
 .footer-social__icon--disabled {

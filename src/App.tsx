@@ -21,7 +21,7 @@ const Admin = lazy(() => import("./pages/Admin"));
 const ClubPage = lazy(() => import("./pages/ClubPage"));
 
 
-import { FloatingNav } from "@/components/ui/floating-navbar";
+import LiquidGlassNav from "@/components/LiquidGlassNav";
 
 const queryClient = new QueryClient();
 
@@ -38,7 +38,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <FloatingNav />
+          <LiquidGlassNav />
           <Suspense fallback={<RouteFallback />}>
             <Routes>
               <Route path="/" element={<Index />} />

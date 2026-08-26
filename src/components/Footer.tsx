@@ -103,7 +103,7 @@ const Footer = () => {
                 href="https://github.com/Association-of-Technology-Oriented-Mind"
                 label="ATOM GitHub repository"
               >
-                <Github className="w-3.5 h-3.5" aria-hidden="true" />
+                <Github className="w-5 h-5" aria-hidden="true" />
               </SocialIcon>
 
               {/* Instagram */}
@@ -111,7 +111,7 @@ const Footer = () => {
                 href="https://instagram.com/atom-dscs"
                 label="ATOM Instagram"
               >
-                <Instagram className="w-3.5 h-3.5" aria-hidden="true" />
+                <Instagram className="w-5 h-5" aria-hidden="true" />
               </SocialIcon>
 
               {/* LinkedIn */}
@@ -119,14 +119,14 @@ const Footer = () => {
                 href="https://www.linkedin.com/company/atom-dscs/"
                 label="ATOM LinkedIn"
               >
-                <Linkedin className="w-3.5 h-3.5" aria-hidden="true" />
+                <Linkedin className="w-5 h-5" aria-hidden="true" />
               </SocialIcon>
 
               <SocialIcon
                 href="mailto:atom@karunya.edu"
                 label="Email ATOM at atom@karunya.edu"
               >
-                <Mail className="w-3.5 h-3.5" aria-hidden="true" />
+                <Mail className="w-5 h-5" aria-hidden="true" />
               </SocialIcon>
             </div>
           </div>
