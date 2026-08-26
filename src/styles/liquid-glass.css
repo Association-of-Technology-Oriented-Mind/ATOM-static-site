@@ -457,21 +457,12 @@
    ============================================================================ */
 
 .lg-nav-wrapper {
-  position: fixed;
-  top: 1.25rem;
-  left: 50%;
-  transform: translateX(-50%);
+  position: relative;
   z-index: 100;
   width: auto;
   max-width: calc(100vw - 2rem);
   display: flex;
   justify-content: center;
-}
-
-@media (min-width: 1024px) {
-  .lg-nav-wrapper {
-    top: 1.5rem;
-  }
 }
 
 .lg-nav-capsule {

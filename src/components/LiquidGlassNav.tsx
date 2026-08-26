@@ -106,141 +106,143 @@ const LiquidGlassNav: React.FC = () => {
           </svg>
 
           {/* ── Floating Centered Nav Capsule ──────────────────────────────────── */}
-          <motion.div
-            className="lg-nav-wrapper"
-            initial={{ opacity: 0, y: -28, scale: 0.92 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -28, scale: 0.92 }}
-            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            role="navigation"
-            aria-label="Main navigation"
-          >
-            <div
-              ref={dockRef}
-              className="lg-nav-capsule"
-              onMouseMove={handleDockMouseMove}
-              style={{
-                background: `
-                  radial-gradient(
-                    160px circle at ${mouseX}% 50%,
-                    rgba(255,255,255,0.08) 0%,
-                    transparent 70%
-                  ),
-                  rgba(10, 10, 18, 0.85)
-                `,
-              }}
+          <div className="fixed top-5 md:top-6 left-0 right-0 z-[100] flex justify-center pointer-events-none px-4">
+            <motion.div
+              className="lg-nav-wrapper pointer-events-auto"
+              initial={{ opacity: 0, y: -28, scale: 0.92 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -28, scale: 0.92 }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              role="navigation"
+              aria-label="Main navigation"
             >
-              {/* Logo */}
-              <Link
-                to="/"
-                className="lg-nav-logo lg-focusable"
-                aria-label="ATOM — return to homepage"
-                onClick={() => {
-                  if (location.pathname === '/') {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }
+              <div
+                ref={dockRef}
+                className="lg-nav-capsule"
+                onMouseMove={handleDockMouseMove}
+                style={{
+                  background: `
+                    radial-gradient(
+                      160px circle at ${mouseX}% 50%,
+                      rgba(255,255,255,0.08) 0%,
+                      transparent 70%
+                    ),
+                    rgba(10, 10, 18, 0.85)
+                  `,
                 }}
               >
-                <div className="lg-nav-logo__mark">
-                  <img src={atomLogo} alt="" aria-hidden="true" />
-                </div>
-                <span className="lg-nav-logo__text">ATOM</span>
-              </Link>
-
-              {/* Desktop nav links with 3D Liquid Glass Magnifying Lens */}
-              <div className="lg-nav-links lg-nav-links-desktop hidden md:flex">
-                {NAV_LINKS.map(({ path, label }) => {
-                  const isSelected = activePath === path;
-                  const isHash = path.startsWith('/#');
-                  
-                  return (
-                    <Link
-                      key={path}
-                      to={path}
-                      className={`lg-nav-link lg-focusable ${isActive(path) ? 'lg-nav-link--active' : ''}`}
-                      onMouseEnter={() => setHoveredPath(path)}
-                      onMouseLeave={() => setHoveredPath(null)}
-                      onClick={(e) => {
-                        if (isHash && location.pathname === '/') {
-                          e.preventDefault();
-                          const id = path.replace('/#', '');
-                          const el = document.getElementById(id);
-                          if (el) {
-                            el.scrollIntoView({ behavior: 'smooth' });
-                          }
-                        }
-                      }}
-                      aria-current={isActive(path) ? 'page' : undefined}
-                    >
-                      {/* Animated 3D Liquid Lens Magnifier */}
-                      {isSelected && (
-                        <motion.div
-                          layoutId="lg-nav-active-pill"
-                          className="lg-nav-pill-indicator"
-                          transition={springTransition}
-                          aria-hidden="true"
-                        />
-                      )}
-
-                      {/* Text scales up inside the glass lens like underwater magnification */}
-                      <span
-                        className="lg-nav-link__text"
-                        style={{
-                          transform: isSelected ? 'scale(1.12)' : 'scale(1)',
-                          transition: 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s ease',
-                          fontWeight: isSelected ? 700 : 500,
-                        }}
-                      >
-                        {label}
-                      </span>
-                    </Link>
-                  );
-                })}
-              </div>
-
-              {/* Mobile toggle */}
-              <div className="lg-nav-actions md:hidden">
-                <button
-                  className="lg-nav-mobile-btn lg-focusable"
-                  onClick={() => setMobileOpen(!mobileOpen)}
-                  aria-expanded={mobileOpen}
-                  aria-controls="lg-mobile-nav"
-                  aria-label={mobileOpen ? 'Close navigation' : 'Open navigation'}
+                {/* Logo */}
+                <Link
+                  to="/"
+                  className="lg-nav-logo lg-focusable"
+                  aria-label="ATOM — return to homepage"
+                  onClick={() => {
+                    if (location.pathname === '/') {
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                  }}
                 >
-                  <AnimatePresence mode="wait" initial={false}>
-                    {mobileOpen ? (
-                      <motion.div
-                        key="close"
-                        initial={{ opacity: 0, rotate: -90 }}
-                        animate={{ opacity: 1, rotate: 0 }}
-                        exit={{ opacity: 0, rotate: 90 }}
-                        transition={{ duration: 0.2 }}
+                  <div className="lg-nav-logo__mark">
+                    <img src={atomLogo} alt="" aria-hidden="true" />
+                  </div>
+                  <span className="lg-nav-logo__text">ATOM</span>
+                </Link>
+
+                {/* Desktop nav links with 3D Liquid Glass Magnifying Lens */}
+                <div className="lg-nav-links lg-nav-links-desktop hidden md:flex">
+                  {NAV_LINKS.map(({ path, label }) => {
+                    const isSelected = activePath === path;
+                    const isHash = path.startsWith('/#');
+                    
+                    return (
+                      <Link
+                        key={path}
+                        to={path}
+                        className={`lg-nav-link lg-focusable ${isActive(path) ? 'lg-nav-link--active' : ''}`}
+                        onMouseEnter={() => setHoveredPath(path)}
+                        onMouseLeave={() => setHoveredPath(null)}
+                        onClick={(e) => {
+                          if (isHash && location.pathname === '/') {
+                            e.preventDefault();
+                            const id = path.replace('/#', '');
+                            const el = document.getElementById(id);
+                            if (el) {
+                              el.scrollIntoView({ behavior: 'smooth' });
+                            }
+                          }
+                        }}
+                        aria-current={isActive(path) ? 'page' : undefined}
                       >
-                        <X size={16} />
-                      </motion.div>
-                    ) : (
-                      <motion.div
-                        key="open"
-                        initial={{ opacity: 0, rotate: 90 }}
-                        animate={{ opacity: 1, rotate: 0 }}
-                        exit={{ opacity: 0, rotate: -90 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <Menu size={16} />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </button>
+                        {/* Animated 3D Liquid Lens Magnifier */}
+                        {isSelected && (
+                          <motion.div
+                            layoutId="lg-nav-active-pill"
+                            className="lg-nav-pill-indicator"
+                            transition={springTransition}
+                            aria-hidden="true"
+                          />
+                        )}
+
+                        {/* Text scales up inside the glass lens like underwater magnification */}
+                        <span
+                          className="lg-nav-link__text"
+                          style={{
+                            transform: isSelected ? 'scale(1.12)' : 'scale(1)',
+                            transition: 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s ease',
+                            fontWeight: isSelected ? 700 : 500,
+                          }}
+                        >
+                          {label}
+                        </span>
+                      </Link>
+                    );
+                  })}
+                </div>
+
+                {/* Mobile toggle */}
+                <div className="lg-nav-actions md:hidden">
+                  <button
+                    className="lg-nav-mobile-btn lg-focusable"
+                    onClick={() => setMobileOpen(!mobileOpen)}
+                    aria-expanded={mobileOpen}
+                    aria-controls="lg-mobile-nav"
+                    aria-label={mobileOpen ? 'Close navigation' : 'Open navigation'}
+                  >
+                    <AnimatePresence mode="wait" initial={false}>
+                      {mobileOpen ? (
+                        <motion.div
+                          key="close"
+                          initial={{ opacity: 0, rotate: -90 }}
+                          animate={{ opacity: 1, rotate: 0 }}
+                          exit={{ opacity: 0, rotate: 90 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <X size={16} />
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          key="open"
+                          initial={{ opacity: 0, rotate: 90 }}
+                          animate={{ opacity: 1, rotate: 0 }}
+                          exit={{ opacity: 0, rotate: -90 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <Menu size={16} />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </button>
+                </div>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
 
           {/* ── Mobile Full-Screen Glass Sheet Menu ──────────────────────────── */}
           <AnimatePresence>
             {mobileOpen && (
               <motion.div
                 id="lg-mobile-nav"
-                className="lg-nav-sheet"
+                className="lg-nav-sheet pointer-events-auto"
                 initial={{ opacity: 0, y: -30 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}

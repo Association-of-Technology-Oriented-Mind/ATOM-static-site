@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Hero } from '@/components/Hero';
 import { About } from '@/components/About';
-import { Achievements } from '@/components/Achievements';
 import EventsSection from '@/components/EventsSection';
 import { Clubs } from '@/components/Clubs';
 import CoreMembers from '@/components/CoreMembers';
@@ -65,7 +64,6 @@ const Index = () => {
       >
         <Hero />
         <About />
-        <Achievements />
         <EventsSection />
         <Clubs />
         <CoreMembers />
