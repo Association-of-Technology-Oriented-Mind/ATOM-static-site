@@ -159,11 +159,16 @@ const LiquidGlassNav: React.FC = () => {
                 style={{
                   background: `
                     radial-gradient(
-                      160px circle at ${mouseX}% 50%,
-                      rgba(255,255,255,0.08) 0%,
+                      180px circle at ${mouseX}% 50%,
+                      rgba(255,255,255,0.12) 0%,
                       transparent 70%
                     ),
-                    rgba(10, 10, 18, 0.85)
+                    linear-gradient(
+                      180deg,
+                      rgba(255, 255, 255, 0.08) 0%,
+                      rgba(20, 24, 34, 0.55) 35%,
+                      rgba(10, 12, 18, 0.78) 100%
+                    )
                   `,
                 }}
               >
