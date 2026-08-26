@@ -168,10 +168,16 @@ const Event: React.FC = () => {
                 className="w-7 h-7 opacity-90 transition-transform duration-500 group-hover:rotate-90"
               />
               <span
-                className="hidden sm:inline text-[hsl(var(--chalk))] tracking-[-0.03em]"
+                className="hidden sm:inline text-[hsl(var(--chalk))] tracking-[-0.03em] inline-flex items-center gap-0.5"
                 style={{ fontFamily: 'var(--font-display)', fontSize: '0.9375rem' }}
               >
-                ATOM
+                <span>AT</span>
+                <img
+                  src={atomLogo}
+                  alt="O"
+                  className="w-[0.72em] h-[0.72em] object-contain inline-block align-middle filter drop-shadow-[0_0_8px_rgba(125,249,228,0.35)] -mt-0.5"
+                />
+                <span>M</span>
               </span>
             </button>
           </div>

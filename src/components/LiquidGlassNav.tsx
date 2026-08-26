@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import atomLogo from '@/assets/atom-logo-white.png';
+import atomLogoColor from '@/assets/atom-logo.webp';
 
 // ── iOS Liquid Glass Floating Centered Navbar ────────────────────────────────
 
@@ -180,7 +181,15 @@ const LiquidGlassNav: React.FC = () => {
                   <div className="lg-nav-logo__mark">
                     <img src={atomLogo} alt="" aria-hidden="true" />
                   </div>
-                  <span className="lg-nav-logo__text">ATOM</span>
+                  <span className="lg-nav-logo__text inline-flex items-center gap-0.5">
+                    <span>AT</span>
+                    <img
+                      src={atomLogoColor}
+                      alt="O"
+                      className="w-[0.75em] h-[0.75em] object-contain inline-block align-middle filter drop-shadow-[0_0_8px_rgba(125,249,228,0.4)] -mt-0.5"
+                    />
+                    <span>M</span>
+                  </span>
                 </Link>
 
                 {/* Desktop nav links with 3D Liquid Glass Magnifying Lens */}

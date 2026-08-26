@@ -444,8 +444,14 @@ export const Hero = () => {
         >
           {/* Top brand header */}
           <div className="flex items-center justify-between md:justify-start gap-4">
-            <span className="font-mono text-xl sm:text-2xl font-black tracking-tighter text-[hsl(var(--chalk))]">
-              ATOM
+            <span className="font-mono text-xl sm:text-2xl font-black tracking-tighter text-[hsl(var(--chalk))] inline-flex items-center gap-0.5">
+              <span>AT</span>
+              <img
+                src={atomLogo}
+                alt="O"
+                className="w-[0.72em] h-[0.72em] object-contain inline-block align-middle filter drop-shadow-[0_0_12px_rgba(125,249,228,0.35)] -mt-0.5"
+              />
+              <span>M</span>
             </span>
             <span className="mono-label text-[0.625rem] text-[hsl(var(--graphite))] tracking-widest hidden sm:inline">
               // KARUNYA'S PREMIER TECHNICAL ASSOCIATION
@@ -461,9 +467,15 @@ export const Hero = () => {
           >
             <motion.h1
               variants={itemVariants}
-              className="text-[12vw] md:text-[6.5rem] lg:text-[7.5rem] font-black leading-[0.85] tracking-[-0.04em] uppercase text-[hsl(var(--chalk))]"
+              className="text-[12vw] md:text-[6.5rem] lg:text-[7.5rem] font-black leading-[0.85] tracking-[-0.04em] uppercase text-[hsl(var(--chalk))] inline-flex items-center gap-[0.02em]"
             >
-              ATOM.
+              <span>AT</span>
+              <img
+                src={atomLogo}
+                alt="O"
+                className="w-[0.72em] h-[0.72em] mx-[0.02em] object-contain inline-block align-middle filter drop-shadow-[0_0_20px_rgba(125,249,228,0.3)] -mt-[0.08em]"
+              />
+              <span>M.</span>
             </motion.h1>
             
             <motion.p

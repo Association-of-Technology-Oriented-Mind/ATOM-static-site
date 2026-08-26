@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Github, Mail, Instagram, Linkedin } from 'lucide-react';
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
+import atomLogo from '@/assets/atom-logo.webp';
 
 // ── Footer ────────────────────────────────────────────────────────────────────
 // Elevated treatment with precision grid fade background.
@@ -89,7 +90,15 @@ const Footer = () => {
         >
           {/* Identity column */}
           <div className="footer-identity">
-            <p className="footer-wordmark">ATOM</p>
+            <p className="footer-wordmark flex items-center gap-0.5">
+              <span>AT</span>
+              <img
+                src={atomLogo}
+                alt="O"
+                className="w-[0.72em] h-[0.72em] object-contain inline-block align-middle filter drop-shadow-[0_0_12px_rgba(125,249,228,0.35)] -mt-0.5"
+              />
+              <span>M</span>
+            </p>
             <p className="footer-fullname">
               Association of Technology<br />Oriented Minds
             </p>
