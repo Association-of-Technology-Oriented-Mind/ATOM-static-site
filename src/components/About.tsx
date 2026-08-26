@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import atomLogo from '@/assets/atom-logo.webp';
 
-// ── About Section — 4-Card Grid Layout ────────────────────────────────────────
+// ── About Section — 4-Card Grid Layout with Bottom-to-Top Fill Transitions ────
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -150,8 +150,11 @@ export const About = () => {
                   cursor: 'default',
                 }}
               >
+                {/* Bottom-to-top hover fill layer */}
+                <div className="about-card__fill" aria-hidden="true" />
+
                 {/* Content */}
-                <div style={{ position: 'relative', zIndex: 2, flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <div className="about-card__content" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                   {/* Number */}
                   <span
                     className="about-card__num"
@@ -226,32 +229,52 @@ export const About = () => {
 
       </div>
 
-      {/* Scoped CSS for smooth color transitions and pair switching */}
+      {/* Scoped CSS for bottom-to-top slide fill transitions */}
       <style>{`
-        /* Base smooth transitions */
         .about-card {
-          transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-                      border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-                      transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+          position: relative;
+          overflow: hidden;
+          transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
                       box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .about-card:hover {
           transform: translateY(-4px);
         }
+
+        /* Slide-up fill layer from bottom to top (matched visual speed with buttons) */
+        .about-card__fill {
+          position: absolute;
+          inset: 0;
+          border-radius: 18px;
+          transform: translateY(100%);
+          transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+          z-index: 1;
+          pointer-events: none;
+        }
+        .about-card:hover .about-card__fill {
+          transform: translateY(0%);
+        }
+
+        .about-card__content {
+          position: relative;
+          z-index: 2;
+        }
+
         .about-card .about-card__num,
         .about-card .about-card__title,
         .about-card .about-card__body,
         .about-card .about-card__rule {
-          transition: color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-                      background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-                      border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-                      opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+          transition: color 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+                      background-color 0.45s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* ── CARD 1: Default Mint (#5eead4) ↔ Hover Silver (Card 4 Theme) ── */
+        /* ── CARD 1: Default Mint (#5eead4) → Hover Silver (Slide Fill) ── */
         .about-card--1 {
           background-color: #5eead4;
           border: 1px solid transparent;
+        }
+        .about-card--1 .about-card__fill {
+          background-color: #c8cad0;
         }
         .about-card--1 .about-card__num { color: rgba(0, 0, 0, 0.5); }
         .about-card--1 .about-card__title { color: #000000; }
@@ -259,8 +282,6 @@ export const About = () => {
         .about-card--1 .about-card__rule { background-color: rgba(0, 0, 0, 0.25); }
 
         .about-card--1:hover {
-          background-color: #c8cad0;
-          border-color: transparent;
           box-shadow: 0 16px 36px rgba(200, 202, 208, 0.25);
         }
         .about-card--1:hover .about-card__num { color: rgba(0, 0, 0, 0.45); }
@@ -268,10 +289,13 @@ export const About = () => {
         .about-card--1:hover .about-card__body { color: rgba(0, 0, 0, 0.65); }
         .about-card--1:hover .about-card__rule { background-color: rgba(0, 0, 0, 0.2); }
 
-        /* ── CARD 2: Default Dark ↔ Hover Mint (Card 1 Theme) ── */
+        /* ── CARD 2: Default Dark → Hover Mint (Slide Fill) ── */
         .about-card--2 {
           background-color: rgba(18, 20, 30, 0.85);
           border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .about-card--2 .about-card__fill {
+          background-color: #5eead4;
         }
         .about-card--2 .about-card__num { color: rgba(125, 249, 228, 0.75); }
         .about-card--2 .about-card__title { color: #ffffff; }
@@ -279,8 +303,6 @@ export const About = () => {
         .about-card--2 .about-card__rule { background-color: rgba(125, 249, 228, 0.4); }
 
         .about-card--2:hover {
-          background-color: #5eead4;
-          border-color: transparent;
           box-shadow: 0 16px 36px rgba(94, 234, 212, 0.25);
         }
         .about-card--2:hover .about-card__num { color: rgba(0, 0, 0, 0.5); }
@@ -288,10 +310,13 @@ export const About = () => {
         .about-card--2:hover .about-card__body { color: rgba(0, 0, 0, 0.75); }
         .about-card--2:hover .about-card__rule { background-color: rgba(0, 0, 0, 0.25); }
 
-        /* ── CARD 3: Default Dark ↔ Hover Silver (Card 4 Theme) ── */
+        /* ── CARD 3: Default Dark → Hover Silver (Slide Fill) ── */
         .about-card--3 {
           background-color: rgba(18, 20, 30, 0.85);
           border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .about-card--3 .about-card__fill {
+          background-color: #c8cad0;
         }
         .about-card--3 .about-card__num { color: rgba(125, 249, 228, 0.75); }
         .about-card--3 .about-card__title { color: #ffffff; }
@@ -299,8 +324,6 @@ export const About = () => {
         .about-card--3 .about-card__rule { background-color: rgba(125, 249, 228, 0.4); }
 
         .about-card--3:hover {
-          background-color: #c8cad0;
-          border-color: transparent;
           box-shadow: 0 16px 36px rgba(200, 202, 208, 0.25);
         }
         .about-card--3:hover .about-card__num { color: rgba(0, 0, 0, 0.45); }
@@ -308,10 +331,13 @@ export const About = () => {
         .about-card--3:hover .about-card__body { color: rgba(0, 0, 0, 0.65); }
         .about-card--3:hover .about-card__rule { background-color: rgba(0, 0, 0, 0.2); }
 
-        /* ── CARD 4: Default Silver (#c8cad0) ↔ Hover Mint (Card 1 Theme) ── */
+        /* ── CARD 4: Default Silver → Hover Mint (Slide Fill) ── */
         .about-card--4 {
           background-color: #c8cad0;
           border: 1px solid transparent;
+        }
+        .about-card--4 .about-card__fill {
+          background-color: #5eead4;
         }
         .about-card--4 .about-card__num { color: rgba(0, 0, 0, 0.45); }
         .about-card--4 .about-card__title { color: #000000; }
@@ -319,8 +345,6 @@ export const About = () => {
         .about-card--4 .about-card__rule { background-color: rgba(0, 0, 0, 0.2); }
 
         .about-card--4:hover {
-          background-color: #5eead4;
-          border-color: transparent;
           box-shadow: 0 16px 36px rgba(94, 234, 212, 0.25);
         }
         .about-card--4:hover .about-card__num { color: rgba(0, 0, 0, 0.5); }
