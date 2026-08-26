@@ -34,6 +34,8 @@ const LiquidGlassNav: React.FC = () => {
     location.pathname.startsWith('/login') ||
     location.pathname.startsWith('/registration');
 
+  const [activeSection, setActiveSection] = useState<string>('/');
+
   // Track scroll position to reveal navbar only after Hero section on homepage
   useEffect(() => {
     const handleScroll = () => {
@@ -48,15 +50,48 @@ const LiquidGlassNav: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [location.pathname]);
 
+  // Scroll spy effect to detect which section is currently active in the viewport on the homepage
+  useEffect(() => {
+    if (location.pathname !== '/') return;
+
+    const sections = [
+      { id: 'hero', path: '/' },
+      { id: 'about', path: '/' },
+      { id: 'events-section', path: '/events' },
+      { id: 'clubs-section', path: '/#clubs-section' },
+      { id: 'core-members', path: '/#core-members' },
+      { id: 'gallery-section', path: '/full-gallery' },
+    ];
+
+    const handleScrollSpy = () => {
+      const scrollPos = window.scrollY + window.innerHeight * 0.4;
+
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const el = document.getElementById(sections[i].id);
+        if (el) {
+          const top = el.offsetTop;
+          if (scrollPos >= top) {
+            setActiveSection(sections[i].path);
+            break;
+          }
+        }
+      }
+    };
+
+    handleScrollSpy();
+    window.addEventListener('scroll', handleScrollSpy, { passive: true });
+    return () => window.removeEventListener('scroll', handleScrollSpy);
+  }, [location.pathname]);
+
   const isActive = useCallback(
     (path: string) => {
-      if (path === '/') return location.pathname === '/' && !location.hash;
-      if (path.startsWith('/#')) {
-        return location.pathname === '/' && location.hash === path.substring(1);
+      if (location.pathname !== '/') {
+        if (path === '/') return location.pathname === '/';
+        return location.pathname.startsWith(path);
       }
-      return location.pathname.startsWith(path);
+      return activeSection === path;
     },
-    [location.pathname],
+    [location.pathname, activeSection],
   );
 
   // Close mobile menu on route change
