@@ -42,7 +42,7 @@ const CLUBS: ClubDef[] = [
     id: 'unbias',
     slug: 'unbias',
     name: 'Unbiased',
-    tag: 'AI / ML / NLP',
+    tag: 'AI/ML',
     description:
       'Exploring AI, ML, Deep Learning, NLP, Generative AI and Agents. Weekly sessions, research paper discussions, and hands-on model building — with a focus on department-relevant applications.',
     coordinators: [
@@ -68,7 +68,7 @@ const CLUBS: ClubDef[] = [
     id: 'dotdev',
     slug: 'dotdev',
     name: 'DotDev',
-    tag: 'WEB DEVELOPMENT',
+    tag: 'FULL STACK',
     description:
       'A student community for aspiring software engineers focused on full-stack development. Hackathons, code sprints, mentorship sessions and collaborative projects — from frontend to backend to deployment.',
     coordinators: [
@@ -94,7 +94,7 @@ const CLUBS: ClubDef[] = [
     id: 'hackhive',
     slug: 'hackhive',
     name: 'Hack Hive',
-    tag: 'CYBERSECURITY',
+    tag: 'CYBER SECURITY',
     description:
       'A student-driven club that brings together passionate individuals to explore, learn, and innovate in the field of information security. Hands-on CTFs, ethical hacking workshops, and security competitions.',
     coordinators: [
@@ -120,7 +120,7 @@ const CLUBS: ClubDef[] = [
     id: 'qyro',
     slug: 'qyro',
     name: 'Qyro',
-    tag: 'RESEARCH / INNOVATION',
+    tag: 'QUANTUM',
     description:
       'The Qyro Club under ATOM is a hub for innovation, turning real-world challenges into smart, practical, and startup-ready solutions. It empowers students to explore ideas, build prototypes, and collaborate with industry experts to bring innovations to life.',
     coordinators: [

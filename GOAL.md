@@ -77,6 +77,26 @@ Replaced 18 stale coordinators with the 12 current seats across 6 portfolios
 (Secretariat, Treasury, Technical Events, Event Management, Media, Spiritual).
 Each has a lead and a joint holder. All fields blank, ready to fill.
 
+### Club data — `src/constants/`
+
+- Four active clubs: Hack Hive (`hackhive.ts`), DotDev (`dotdev.ts`), Unbiased (`unbias.ts`), and Qyro (`qyro.ts`).
+- Stale clubs (`rnd.ts`, `career-guidance.ts`) removed.
+- Exactly 3 educators per club configured with WebP assets.
+- Club logos converted to WebP.
+
+### About section — `src/components/About.tsx`
+
+- 4-card grid architecture with metallic chrome branding (`.atom-brand-text`).
+- Sharp tech edges (`borderRadius: 0`) and bottom-to-top slide fill transitions matching button velocity.
+
+### Footer — `src/components/Footer.tsx`
+
+- Clean structured layout with verified contact details (`atom@karunya.edu`), navigation, and social links.
+
+### Club detail pages — `src/pages/ClubPage.tsx`
+
+- Dynamic route `/clubs/:slug` supporting all four clubs with educators, objectives, and project links.
+
 ### Incidental fix
 
 `TextPressure.tsx` injected a bare `.flex { justify-content: space-between }`
@@ -86,49 +106,22 @@ Worth knowing this was silently affecting layout site-wide.
 
 ---
 
-## Not done
+## In Progress / Next Items
 
-In the order it should be tackled.
+In the order to be tackled:
 
-### 1. Club data — `src/constants/`
+### 1. Achievements — `components/Achievements.tsx`
+Replace the unsourced claim metrics with figures derived from `constants/events.ts`.
 
-Still holds last year's five clubs. Required state: **four** clubs — Hack Hive,
-Unbiased, DotDev, **Qyro** (new).
+### 2. Events Timeline — `components/events/PastEventTimeline.tsx`
+Restyle to the lattice. The year-grouping logic (~line 79) is sound — keep it.
 
-- Delete `rnd.ts` and `career-guidance.ts`, remove them from `clubs.ts`
-- Add Qyro. Logo is ready at `src/assets/qyro.webp`
-- Per club: coordinator + joint coordinator + **exactly 3 educators**
-  (current files have 4–5 with inconsistent roles)
-- The three `.ico` club logos are 432 KB each — convert to WebP
+### 3. Gallery — `components/PhotoGallerySection.tsx`, `pages/FullPhotoGallery.tsx`
+Restyle to match lattice theme. Masonry stays.
 
-### 2. Homepage sections
-
-Target order: Hero → About → Achievements → Events → Core Members → Clubs →
-Gallery → Footer. Only Core Members is done.
-
-| Section | File | What's needed |
-| --- | --- | --- |
-| Hero | `components/Hero.tsx` | Keep the `Waves` WebGL background (decided). Replace the rotating-logo stack with display type as the thesis. |
-| About | `components/About.tsx` | **Done** — 4-card grid architecture with metallic chrome branding, sharp tech edges, and bottom-to-top slide fill transitions. |
-| Achievements | `components/Achievements.tsx` | Replace the 5 unsourced claims ("50+ Projects", "150+ Active Members") with figures derived from `constants/events.ts`. |
-| Events | `components/events/PastEventTimeline.tsx` | Restyle to the lattice. The year-grouping logic (~line 79) is sound — keep it. |
-| Clubs | `components/Clubs.tsx` (536 LOC) | Rewrite as `ScrollScene` panels: logo, description, coordinator pair, 3 educators. |
-| Gallery | `components/PhotoGallerySection.tsx`, `pages/FullPhotoGallery.tsx` | Restyle. Masonry stays. |
-| Footer | *(does not exist)* | Build it. Instagram, LinkedIn, GitHub, contact, campus address. |
-
-### 3. `/clubs/:slug` page
-
-Placeholder hero block reserved for Lebi's own design, then per-club detail
-below. Add the route lazily in `App.tsx` and the link in `Navigation.tsx`
-(currently Home / Events / Gallery only).
-
-### 4. Cleanup, once nothing references them
-
-- Delete `ScrollFloat.tsx` (splits text per character — **breaks screen
-  readers**), `TextPressure.tsx`, `ThreeDBackground.tsx`
-- Keep `Waves.tsx` — the Hero still uses it, and it needs `ogl`
-- `EventDetailPage.tsx` is 1363 LOC; decompose it as part of the events
-  rewrite rather than as a separate task
+### 4. Cleanup & Decomposition
+- Delete unused legacy animation widgets (`ScrollFloat.tsx`, `TextPressure.tsx`, `ThreeDBackground.tsx`) once verified.
+- Decompose `EventDetailPage.tsx` (1363 LOC) as part of the events rewrite.
 
 ---
 

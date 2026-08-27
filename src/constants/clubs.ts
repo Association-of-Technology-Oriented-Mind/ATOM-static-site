@@ -9,8 +9,8 @@ export { DotIcon, BiasIcon, HackIcon };
 
 // Combine all clubs into a single array
 export const clubs = [
-  hackhiveClub,
-  dotdevClub,
   unbiasClub,
+  dotdevClub,
+  hackhiveClub,
   qyroClub,
 ];
