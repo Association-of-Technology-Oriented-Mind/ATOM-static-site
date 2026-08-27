@@ -1,13 +1,13 @@
-import deepakumar from '@/assets/UNBIAS/Deepakumar.jpg';
-import thirupathi from '@/assets/Thirupathi S.jpg';
+import deepakumar from '@/assets/UNBIAS/Deepakumar.webp';
+import thirupathi from '@/assets/Thirupathi S.webp';
 import lebi from '@/assets/Lebi.jpg';
 import nithishkumar from '@/assets/NithishkumarS.jpg';
-import sanjay from '@/assets/SanjayS.png';
+import sanjay from '@/assets/SanjayS.webp';
 import shohil from '@/assets/Shohil.jpg';
 import mallika from '@/assets/Mallika.jpg';
 import nithishk from '@/assets/NithishK.jpg';
 import sona from '@/assets/Sona.jpg';
-import jemimah from '@/assets/Jemimah.png';
+import jemimah from '@/assets/Jemimah.webp';
 import evans from '@/assets/EVANS T.jpeg';
 import sanjaynesan from '@/assets/SANJAY NESAN J.jpg';
 

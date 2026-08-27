@@ -1,8 +1,6 @@
 // UnBias Club data and imports
 import Lohith from '@/assets/UNBIAS/Lohith.jpg';
 import Jeffrey from '@/assets/UNBIAS/Jeffrey.jpg';
-import Lebi from '@/assets/Lebi.jpg';
-import Thirupathy from '@/assets/Thirupathi S.webp';
 // Note: Unbias1.jpg, Unbias3.jpg, and Unbias7.jpg don't exist
 import Bias1 from "@/assets/UNBIAS/IMG-20250913-WA0012.webp";
 import Bias2 from "@/assets/UNBIAS/Unbias2.webp";
@@ -12,7 +10,7 @@ import BiasPhoto1 from "@/assets/UNBIAS/PXL_20251014_110651221.webp";
 import BiasPhoto2 from "@/assets/UNBIAS/PXL_20251014_110656735.webp";
 import BiasPhoto3 from "@/assets/UNBIAS/PXL_20251014_110701675.webp";
 import BiasPhoto4 from "@/assets/UNBIAS/PXL_20251014_110723049.webp";
-import BiasIcon from "@/assets/UNBIAS/Bias.ico";
+import BiasIcon from "@/assets/UNBIAS/Bias.webp";
 
 export { BiasIcon };
 
@@ -42,22 +40,6 @@ export const unbiasClub = {
       isMain: false,
       bio: "Co-founder of Build Your Bot robotics startup and Mindkraft Expo winner. Creator of Meowy Companion AI, WeCANN hosting, and Matrix Matrix AnalogKey systems.",
       linkedin: "",
-    },
-    {
-      name: "Thirupathi",
-      role: "Educator",
-      image: Thirupathy,
-      isMain: false,
-      bio: "Software Engineer Intern at GMS and National Level Technoverse Hackathon winner. Main developer of DrugTrace, a LangGraph and Neo4j multi-agent AI drug repurposing platform.",
-      linkedin: "linkedin.com/in/thirupathis",
-    },
-    {
-      name: "Lebi Raja",
-      role: "Educator",
-      image: Lebi,
-      isMain: false,
-      bio: "Junior Software Engineer Intern at Fludigo, specializing in Generative AI, DevOps, and System Design. Winner of Makers Day 2026, Meta × PyTorch Hackathon finalist, and creator of the Athena Indic voice cloning platform.",
-      linkedin: "linkedin.com/in/lebiraja",
     },
   ],
   projects: [

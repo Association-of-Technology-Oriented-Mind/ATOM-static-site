@@ -4,16 +4,17 @@ import { Link } from 'react-router-dom';
 import { Linkedin } from 'lucide-react';
 import ScrollScene from '@/components/scroll/ScrollScene';
 import { easeInOut, prog } from '@/utils/scrollMath';
+import { useClubs } from '@/hooks/useContent';
 
 // Import real club icons & logos
 import { DotIcon, BiasIcon, HackIcon } from '@/constants/clubs';
 import qyroLogo from '@/assets/qyro.webp';
 import lohithImg from '@/assets/UNBIAS/Lohith.jpg';
 import jeffreyImg from '@/assets/UNBIAS/Jeffrey.jpg';
-import allenImg from '@/assets/DOTDEV/Allen.jpg';
+import allenImg from '@/assets/DOTDEV/Allen.webp';
 import yakshiniImg from '@/assets/DOTDEV/Yakshini.jpg';
 import jeffersonImg from '@/assets/HACKHIVE/Jefferson.jpg';
-import daveImg from '@/assets/HACKHIVE/Dave.png';
+import daveImg from '@/assets/HACKHIVE/Dave.webp';
 import alainImg from '@/assets/QYRO/Alain.jpg';
 import ankithaImg from '@/assets/QYRO/Ankitha.jpg';
 
@@ -599,9 +600,43 @@ const ClubScene = ({
   );
 };
 
+const getClubTag = (slug?: string) => {
+  const s = slug?.toLowerCase();
+  if (s === 'unbias' || s === 'unbiased') return 'AI / ML / NLP';
+  if (s === 'dotdev') return 'WEB DEVELOPMENT';
+  if (s === 'hackhive') return 'CYBERSECURITY';
+  if (s === 'qyro') return 'RESEARCH / INNOVATION';
+  return 'TECHNOLOGY';
+};
+
+const mapClubToDef = (club: any): ClubDef => {
+  const slug = club.slug || club.id.toString();
+  return {
+    id: club.id.toString(),
+    slug: slug,
+    name: club.name,
+    tag: getClubTag(slug),
+    description: club.description,
+    logo: club.icon || club.logo || null,
+    logoAlt: `${club.name} logo`,
+    coordinators: (club.coordinators || []).map((c: any) => ({
+      name: c.name,
+      role: c.role,
+      image: c.image || null,
+      bio: c.bio || '',
+      linkedin: c.linkedin || '',
+    })),
+  };
+};
+
 export const Clubs = () => {
   const reducedMotion = useReducedMotion();
   const [isMobile, setIsMobile] = useState(false);
+  const { data: fetchedClubs } = useClubs();
+
+  const clubsList = fetchedClubs && fetchedClubs.length > 0
+    ? fetchedClubs.map((club) => mapClubToDef(club))
+    : CLUBS;
 
   useEffect(() => {
     const checkMobile = () => {
@@ -700,7 +735,7 @@ export const Clubs = () => {
 
       {/* ── Scroll Scenes ── */}
       {/* One ScrollScene per club */}
-      {CLUBS.map((club, index) => (
+      {clubsList.map((club, index) => (
         <div id={`scene-${club.id}`} key={club.id}>
           <ScrollScene heightVh={360}>
             {(progress) => (
