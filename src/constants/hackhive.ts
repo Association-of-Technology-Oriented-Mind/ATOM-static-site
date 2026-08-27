@@ -1,7 +1,5 @@
-// HackHive Club data and imports
 import Jefferson from '@/assets/HACKHIVE/Jefferson.jpg';
-import Dave from "@/assets/HACKHIVE/Dave.png";
-import Nithish from "@/assets/NithishK.jpg";
+import Dave from "@/assets/HACKHIVE/Dave.webp";
 import Hack1 from "@/assets/HACKHIVE/Hack1.webp";
 import Hack2 from "@/assets/HACKHIVE/Hack2.webp";
 import Hack3 from "@/assets/HACKHIVE/Hack3.webp";
@@ -9,7 +7,7 @@ import Hack4 from "@/assets/HACKHIVE/Hack4.webp";
 import Hack5 from "@/assets/HACKHIVE/Hack5.webp";
 import Hack6 from "@/assets/HACKHIVE/Hack6.webp";
 import Hack7 from "@/assets/HACKHIVE/Hack7.webp";
-import HackIcon from "@/assets/HACKHIVE/Hack.ico";
+import HackIcon from "@/assets/HACKHIVE/Hack.webp";
 
 export { HackIcon };
 
@@ -40,14 +38,6 @@ export const hackhiveClub = {
       bio: "Smart India Hackathon 2025 winner. Cryptography and network security researcher who designed RTT temporal anomaly detection and custom DRM media protection protocols.",
       linkedin: "",
     },
-    {
-      name: "Nithishkumar K",
-      role: "Educator",
-      image: Nithish,
-      isMain: false,
-      bio: "Cybersecurity researcher and Tamil Nadu’s No. 1 ranked archer, representing the state and securing 7th place in national level archery championships.",
-      linkedin: "linkedin.com/in/nithishkumar-k-691473351",
-    }
   ],
   projects: [
     {

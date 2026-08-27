@@ -12,7 +12,7 @@ import { coordinators as defaultCoordinators } from '@/constants/coordinators';
 import { clubs as defaultClubs } from '@/constants/clubs';
 import { galleryImages as defaultGalleryImages } from '@/constants/gallery';
 import { COLLECTIONS, db, isFirebaseConfigured } from '@/lib/firebase';
-import { eventSchema } from '@/lib/schemas';
+import { eventSchema, clubSchema } from '@/lib/schemas';
 
 // Firestore is the source of truth once configured. The bundled constants stay
 // as the fallback so the public site still renders on a fresh clone with no
@@ -57,8 +57,17 @@ export const getEvents = async (): Promise<Event[]> => {
 export const getCoordinators = () =>
   fetchCollection<(typeof defaultCoordinators)[number]>(COLLECTIONS.coordinators, defaultCoordinators);
 
-export const getClubs = () =>
-  fetchCollection<(typeof defaultClubs)[number]>(COLLECTIONS.clubs, defaultClubs);
+export const getClubs = async () => {
+  const data = await fetchCollection<any>(COLLECTIONS.clubs, defaultClubs);
+  return data.flatMap(item => {
+    const parsed = clubSchema.safeParse(item);
+    if (!parsed.success) {
+      console.error(`Skipping invalid club document "${item.id || 'unknown'}"`, parsed.error.issues);
+      return [];
+    }
+    return [parsed.data];
+  });
+};
 
 /**
  * Bundled photos plus anything uploaded through the CMS.

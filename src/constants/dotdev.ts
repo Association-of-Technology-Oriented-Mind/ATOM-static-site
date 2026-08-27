@@ -1,5 +1,5 @@
 // DotDev Club data and imports
-import Allen from "@/assets/DOTDEV/Allen.jpg";
+import Allen from "@/assets/DOTDEV/Allen.webp";
 import Yakshini from "@/assets/DOTDEV/Yakshini.jpg";
 
 import Dot1 from "@/assets/DOTDEV/Dot1.webp";
@@ -14,7 +14,7 @@ import Dot9 from "@/assets/DOTDEV/Dot9.webp";
 import Dot10 from "@/assets/DOTDEV/Dot10.webp";
 import Dot13 from "@/assets/DOTDEV/Dot13.webp";
 import Dot14 from "@/assets/DOTDEV/Dot14.webp";
-import DotIcon from "@/assets/Dot.ico";
+import DotIcon from "@/assets/Dot.webp";
 
 export { DotIcon };
 

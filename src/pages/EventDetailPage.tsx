@@ -140,13 +140,7 @@ const EventDetailPage: React.FC = () => {
       {/* ── Absolute Navigation ────────────────────────────────────────────── */}
       <nav className="absolute top-0 left-0 w-full z-50 px-6 sm:px-10 lg:px-16 py-6 sm:py-8 flex items-center bg-gradient-to-b from-black/80 to-transparent">
         <button
-          onClick={() => {
-            if (window.history.length > 1) {
-              navigate(-1);
-            } else {
-              navigate('/events');
-            }
-          }}
+          onClick={() => navigate('/events')}
           className="flex items-center gap-2 group text-white/70 hover:text-white transition-colors uppercase tracking-[0.15em]"
           style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem' }}
         >

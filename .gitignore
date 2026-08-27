@@ -35,3 +35,4 @@ serviceAccount*.json
 *firebase-adminsdk*.json
 *-adminsdk-*.json
 .secrets/
+.vercel

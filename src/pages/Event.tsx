@@ -1,12 +1,11 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
-import { motion, useInView, useScroll, useSpring } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Search, X } from 'lucide-react';
 import { type Event as EventType } from '@/constants/events';
 import { useEvents } from '@/hooks/useContent';
 import { generateSlug } from '@/utils/slug';
 import { useLenis } from '@/hooks/useLenis';
-import { animate, useMotionValue, useTransform } from 'framer-motion';
+import { motion, useInView, useScroll, useSpring, animate, useMotionValue, useTransform } from 'framer-motion';
 import Footer from '@/components/Footer';
 import OrbitalCanvas from '@/components/OrbitalCanvas';
 import PastEventTimeline from '@/components/events/PastEventTimeline';
