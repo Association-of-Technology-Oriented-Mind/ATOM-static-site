@@ -109,7 +109,7 @@ Gallery → Footer. Only Core Members is done.
 | Section | File | What's needed |
 | --- | --- | --- |
 | Hero | `components/Hero.tsx` | Keep the `Waves` WebGL background (decided). Replace the rotating-logo stack with display type as the thesis. |
-| About | `components/About.tsx` | **Remove the `atom-team.webp` background image** and its overlay. Remove `ScrollFloat`. |
+| About | `components/About.tsx` | **Done** — 4-card grid architecture with metallic chrome branding, sharp tech edges, and bottom-to-top slide fill transitions. |
 | Achievements | `components/Achievements.tsx` | Replace the 5 unsourced claims ("50+ Projects", "150+ Active Members") with figures derived from `constants/events.ts`. |
 | Events | `components/events/PastEventTimeline.tsx` | Restyle to the lattice. The year-grouping logic (~line 79) is sound — keep it. |
 | Clubs | `components/Clubs.tsx` (536 LOC) | Rewrite as `ScrollScene` panels: logo, description, coordinator pair, 3 educators. |

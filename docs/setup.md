@@ -60,7 +60,7 @@ new account can open the CMS but all saves fail until this runs.
 ```bash
 npm i -D firebase-admin
 GOOGLE_APPLICATION_CREDENTIALS=.secrets/serviceAccount.json \
-  node scripts/set-admin-claim.mjs atom@karunya.edu.in
+  node scripts/set-admin-claim.mjs atom@karunya.edu
 ```
 
 The user must sign out and back in — claims only land on a freshly issued

@@ -2,6 +2,14 @@
 
 Live activity log. Newest on top.
 
+## [2026-08-27 15:20] — About ATOM redesign & Crystal Glass Navbar updates
+**What:** 
+- Redesigned the About ATOM section into a 4-card grid with sharp tech edges (`borderRadius: 0`), metallic chrome gradient `ABOUT ATOM` badge text (integrating the atom logo in place of O), and calibrated bottom-to-top slide-fill background color transitions (`0.6s cubic-bezier(0.16, 1, 0.3, 1)`) matching the button transition speed.
+- Transformed the floating navigation bar into a crystal clear glass bar with a dark `#050609` charcoal shade tint, specular top rim highlights, and a flat crystal clear active capsule indicator (`.lg-nav-pill-indicator`).
+- Cleaned up unused imports in `LiquidGlassNav.tsx` and `Event.tsx`.
+**Why:** Aligned the landing page and navigation with the latest visual design reference.
+**State:** DONE — verified via `npm run typecheck` (0 errors) and `npm test` (26/26 tests passing).
+
 ## [2026-08-08 19:35] — Core members rebuilt on a scroll-pin scrubber
 **What:** Replaced the static coordinator grid with six scroll-scrubbed scenes,
 one per portfolio. A tall wrapper pins a 100vh stage while progress 0→1 drives

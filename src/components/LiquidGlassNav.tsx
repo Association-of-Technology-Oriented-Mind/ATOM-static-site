@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
-import atomLogo from '@/assets/atom-logo-white.png';
 import atomLogoColor from '@/assets/atom-logo.webp';
 
 // ── iOS Liquid Glass Floating Centered Navbar ────────────────────────────────
