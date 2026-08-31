@@ -61,3 +61,33 @@ export const externalRegistrationSchema = z.object({
 
 export type InternalRegistration = z.infer<typeof internalRegistrationSchema>;
 export type ExternalRegistration = z.infer<typeof externalRegistrationSchema>;
+
+export const clubCoordinatorSchema = z.object({
+  name: z.string().trim().min(1),
+  role: z.string().trim().min(1),
+  image: z.string().nullable().optional(),
+  isMain: z.boolean().optional(),
+  bio: z.string().trim().optional(),
+  linkedin: z.string().trim().optional(),
+});
+
+export const clubProjectSchema = z.object({
+  name: z.string().trim().min(1),
+  description: z.string().trim().min(1),
+  github: z.string().trim().optional(),
+});
+
+export const clubSchema = z.object({
+  id: z.union([z.number(), z.string()]),
+  slug: z.string().optional(),
+  name: z.string().trim().min(1),
+  icon: z.any().optional(),
+  description: z.string().trim().min(1),
+  objectives: z.string().trim().optional().default(''),
+  extraInfo: z.string().trim().optional().default(''),
+  coordinators: z.array(clubCoordinatorSchema),
+  projects: z.array(clubProjectSchema).optional().default([]),
+  gallery: z.array(z.string()).optional().default([]),
+});
+
+export type ClubInput = z.infer<typeof clubSchema>;

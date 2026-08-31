@@ -449,24 +449,36 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: hsl(var(--phosphor) / 0.1);
+    background: hsl(var(--phosphor));
     transform: translateY(100%);
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     z-index: 0;
   }
   
   .btn-tech > * {
     position: relative;
     z-index: 1;
+    transition: color 0.3s ease, stroke 0.3s ease, fill 0.3s ease;
   }
 
   .btn-tech:hover {
     border-color: hsl(var(--phosphor));
-    color: hsl(var(--phosphor));
+    color: #000000 !important;
   }
   
   .btn-tech:hover::before {
     transform: translateY(0);
+  }
+
+  .btn-tech:hover,
+  .btn-tech:hover *,
+  .btn-tech:hover span,
+  .btn-tech:hover a {
+    color: #000000 !important;
+  }
+
+  .btn-tech:hover svg path {
+    stroke: #000000 !important;
   }
 
   /* ─── Bento Grid ─── */
@@ -486,6 +498,16 @@
    ============================================================================ */
 
 @layer utilities {
+  /* Metallic/Chrome Grey Brand Text */
+  .atom-brand-text {
+    background: linear-gradient(to bottom, #9fa2a6 0%, #4e5154 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+  }
+
   /* ─── Precision Grid Background ─── */
   .bg-precision-grid {
     background-size: 40px 40px;

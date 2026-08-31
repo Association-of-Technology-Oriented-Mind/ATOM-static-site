@@ -4,16 +4,17 @@ import { Link } from 'react-router-dom';
 import { Linkedin } from 'lucide-react';
 import ScrollScene from '@/components/scroll/ScrollScene';
 import { easeInOut, prog } from '@/utils/scrollMath';
+import { useClubs } from '@/hooks/useContent';
 
 // Import real club icons & logos
 import { DotIcon, BiasIcon, HackIcon } from '@/constants/clubs';
 import qyroLogo from '@/assets/qyro.webp';
 import lohithImg from '@/assets/UNBIAS/Lohith.jpg';
 import jeffreyImg from '@/assets/UNBIAS/Jeffrey.jpg';
-import allenImg from '@/assets/DOTDEV/Allen.jpg';
+import allenImg from '@/assets/DOTDEV/Allen.webp';
 import yakshiniImg from '@/assets/DOTDEV/Yakshini.jpg';
 import jeffersonImg from '@/assets/HACKHIVE/Jefferson.jpg';
-import daveImg from '@/assets/HACKHIVE/Dave.png';
+import daveImg from '@/assets/HACKHIVE/Dave.webp';
 import alainImg from '@/assets/QYRO/Alain.jpg';
 import ankithaImg from '@/assets/QYRO/Ankitha.jpg';
 
@@ -41,7 +42,7 @@ const CLUBS: ClubDef[] = [
     id: 'unbias',
     slug: 'unbias',
     name: 'Unbiased',
-    tag: 'AI / ML / NLP',
+    tag: 'AI/ML',
     description:
       'Exploring AI, ML, Deep Learning, NLP, Generative AI and Agents. Weekly sessions, research paper discussions, and hands-on model building — with a focus on department-relevant applications.',
     coordinators: [
@@ -67,7 +68,7 @@ const CLUBS: ClubDef[] = [
     id: 'dotdev',
     slug: 'dotdev',
     name: 'DotDev',
-    tag: 'WEB DEVELOPMENT',
+    tag: 'FULL STACK',
     description:
       'A student community for aspiring software engineers focused on full-stack development. Hackathons, code sprints, mentorship sessions and collaborative projects — from frontend to backend to deployment.',
     coordinators: [
@@ -93,7 +94,7 @@ const CLUBS: ClubDef[] = [
     id: 'hackhive',
     slug: 'hackhive',
     name: 'Hack Hive',
-    tag: 'CYBERSECURITY',
+    tag: 'CYBER SECURITY',
     description:
       'A student-driven club that brings together passionate individuals to explore, learn, and innovate in the field of information security. Hands-on CTFs, ethical hacking workshops, and security competitions.',
     coordinators: [
@@ -119,7 +120,7 @@ const CLUBS: ClubDef[] = [
     id: 'qyro',
     slug: 'qyro',
     name: 'Qyro',
-    tag: 'RESEARCH / INNOVATION',
+    tag: 'QUANTUM',
     description:
       'The Qyro Club under ATOM is a hub for innovation, turning real-world challenges into smart, practical, and startup-ready solutions. It empowers students to explore ideas, build prototypes, and collaborate with industry experts to bring innovations to life.',
     coordinators: [
@@ -464,7 +465,6 @@ const ClubScene = ({
             <div className="flex items-center gap-6 mb-4 sm:mb-8 relative">
               {club.logo && (
                 <div className="relative w-12 h-12 sm:w-20 sm:h-20 shrink-0">
-                  <div className="absolute inset-0 bg-[hsl(var(--phosphor))] blur-xl opacity-20 animate-pulse" />
                   <img
                     src={club.logo}
                     alt={club.logoAlt}
@@ -493,17 +493,10 @@ const ClubScene = ({
             >
               <Link
                 to={`/clubs/${club.slug}`}
-                className="group relative inline-flex items-center justify-between gap-4 bg-black/60 border border-[hsl(var(--phosphor)/0.4)] hover:border-[hsl(var(--phosphor))] px-5 py-3 sm:px-8 sm:py-5 w-full md:w-auto overflow-hidden transition-all duration-300 rounded shadow-[0_0_20px_rgba(0,0,0,0.5)] hover:shadow-[0_0_30px_hsl(var(--phosphor)/0.2)]"
+                className="btn-tech flex items-center gap-2 px-8 py-3.5 w-fit"
               >
-                {/* Swipe Glow */}
-                <div className="absolute inset-0 bg-[hsl(var(--phosphor)/0.1)] translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-out" />
-
-                <div className="relative z-10 flex items-center gap-3">
-                  <span className="w-2 h-2 bg-[hsl(var(--phosphor))] rounded-full animate-pulse shadow-[0_0_8px_hsl(var(--phosphor))]" />
-                  <span className="mono-label text-[hsl(var(--chalk))] group-hover:text-white transition-colors uppercase tracking-[0.2em] text-[10px] sm:text-xs">Initiate Handshake</span>
-                </div>
-
-                <svg className="w-4 h-4 text-[hsl(var(--graphite))] group-hover:text-[hsl(var(--phosphor))] transition-colors relative z-10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                <span>Learn More</span>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
                   <path d="M1 6h10M6 1l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </Link>
@@ -607,9 +600,43 @@ const ClubScene = ({
   );
 };
 
+const getClubTag = (slug?: string) => {
+  const s = slug?.toLowerCase();
+  if (s === 'unbias' || s === 'unbiased') return 'AI / ML / NLP';
+  if (s === 'dotdev') return 'WEB DEVELOPMENT';
+  if (s === 'hackhive') return 'CYBERSECURITY';
+  if (s === 'qyro') return 'RESEARCH / INNOVATION';
+  return 'TECHNOLOGY';
+};
+
+const mapClubToDef = (club: any): ClubDef => {
+  const slug = club.slug || club.id.toString();
+  return {
+    id: club.id.toString(),
+    slug: slug,
+    name: club.name,
+    tag: getClubTag(slug),
+    description: club.description,
+    logo: club.icon || club.logo || null,
+    logoAlt: `${club.name} logo`,
+    coordinators: (club.coordinators || []).map((c: any) => ({
+      name: c.name,
+      role: c.role,
+      image: c.image || null,
+      bio: c.bio || '',
+      linkedin: c.linkedin || '',
+    })),
+  };
+};
+
 export const Clubs = () => {
   const reducedMotion = useReducedMotion();
   const [isMobile, setIsMobile] = useState(false);
+  const { data: fetchedClubs } = useClubs();
+
+  const clubsList = fetchedClubs && fetchedClubs.length > 0
+    ? fetchedClubs.map((club) => mapClubToDef(club))
+    : CLUBS;
 
   useEffect(() => {
     const checkMobile = () => {
@@ -708,7 +735,7 @@ export const Clubs = () => {
 
       {/* ── Scroll Scenes ── */}
       {/* One ScrollScene per club */}
-      {CLUBS.map((club, index) => (
+      {clubsList.map((club, index) => (
         <div id={`scene-${club.id}`} key={club.id}>
           <ScrollScene heightVh={360}>
             {(progress) => (

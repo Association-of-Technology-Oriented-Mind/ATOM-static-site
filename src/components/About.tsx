@@ -1,231 +1,357 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { use3DTilt } from '@/hooks/use3DTilt';
+import atomLogo from '@/assets/atom-logo.webp';
 
-// ── About Section — Liquid Glass Editorial Layout ─────────────────────────────
-// A floating 3D glass card presenting ATOM's thesis with interactive specular
-// reflection. Cursor-tracking card tilt courtesy of use3DTilt hook.
+// ── About Section — 4-Card Grid Layout with Bottom-to-Top Fill Transitions ────
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
+const CARDS = [
+  {
+    num: '01',
+    title: 'Who We Are',
+    body: 'ATOM — Association of Technology Oriented Minds is a student-led community under the Division of Data Science and Cyber Security, bringing together curious minds passionate about technology, innovation, and learning.',
+    cardClass: 'about-card--1',
+  },
+  {
+    num: '02',
+    title: 'What We Do',
+    body: 'We create opportunities to learn, build, and collaborate through workshops, hackathons, technical sessions, research discussions, CTFs, and hands-on projects across our four clubs.',
+    cardClass: 'about-card--2',
+  },
+  {
+    num: '03',
+    title: 'Our Mission',
+    body: 'Our mission is to build a platform where students can explore emerging technologies, develop real-world skills, and turn ideas into meaningful solutions.',
+    cardClass: 'about-card--3',
+  },
+  {
+    num: '04',
+    title: 'Beyond Code',
+    body: 'ATOM is more than technology. We foster leadership, teamwork, creativity, communication, and problem-solving to help students grow into confident and well-rounded professionals.',
+    cardClass: 'about-card--4',
+  },
+] as const;
+
 export const About = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
-  const cardRef = use3DTilt<HTMLDivElement>({ max: 8, scale: 1.01 });
+  const isInView = useInView(sectionRef, { once: true, margin: '-80px' });
 
   return (
     <section
       ref={sectionRef}
-      className="lg-about"
       id="about"
       aria-labelledby="about-heading"
+      style={{
+        position: 'relative',
+        background: 'var(--lg-bg, #0a0a12)',
+        padding: 'clamp(4rem, 8vw, 7rem) clamp(1.25rem, 5vw, 3rem)',
+        overflow: 'hidden',
+      }}
     >
-      {/* Ambient light blobs */}
-      <div className="lg-about__ambient" aria-hidden="true" />
+      {/* Subtle ambient glow */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          pointerEvents: 'none',
+          background: 'radial-gradient(ellipse 60% 50% at 80% 30%, rgba(125,249,228,0.04) 0%, transparent 60%)',
+        }}
+      />
 
-      <div className="lg-about__container" style={{ position: 'relative', zIndex: 2 }}>
+      <div style={{ position: 'relative', zIndex: 2, maxWidth: 1200, margin: '0 auto' }}>
 
-        {/* ── Left: Section label + heading ── */}
+        {/* ── Header Row ── */}
         <motion.div
-          initial={{ opacity: 0, x: -32 }}
-          animate={isInView ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.8, ease }}
+          initial={{ opacity: 0, y: 24 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.7, ease }}
+          style={{
+            marginBottom: '3rem',
+          }}
         >
-          <div className="lg-section-label" style={{ marginBottom: '2rem' }}>
-            <span className="lg-section-label__num">01</span>
-            <span className="lg-section-label__line" />
-            <span className="lg-section-label__text">Discover</span>
+          {/* ABOUT ATOM badge with metallic chrome gradient & no dot */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            marginBottom: '1rem',
+          }}>
+            <span style={{
+              fontFamily: 'var(--lg-font-mono, monospace)',
+              fontSize: '0.75rem',
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              fontWeight: 700,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.35em',
+            }}>
+              <span className="atom-brand-text">ABOUT</span>
+              <span className="inline-flex items-center gap-[0.05em]">
+                <span className="atom-brand-text">AT</span>
+                <img
+                  src={atomLogo}
+                  alt="O"
+                  style={{
+                    width: '0.85em',
+                    height: '0.85em',
+                    objectFit: 'contain',
+                    display: 'inline-block',
+                    verticalAlign: 'middle',
+                    marginTop: '-0.1em',
+                  }}
+                />
+                <span className="atom-brand-text">M</span>
+              </span>
+            </span>
           </div>
 
+          {/* Headline */}
           <h2
             id="about-heading"
-            className="lg-section-heading"
-            style={{ marginBottom: '2rem', maxWidth: '10ch' }}
+            style={{
+              fontFamily: 'var(--lg-font-display, sans-serif)',
+              fontSize: 'clamp(2.5rem, 5vw, 3.75rem)',
+              fontWeight: 800,
+              lineHeight: 1.05,
+              letterSpacing: '-0.03em',
+              color: '#fff',
+              margin: 0,
+            }}
           >
-            About
-            {' '}
-            <span
-              style={{
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.15) 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }}
-            >
-              ATOM
-            </span>
+            Get to{' '}
+            <span style={{ color: '#5eead4' }}>know us</span>
           </h2>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={isInView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.7, delay: 0.25, ease }}
-            style={{
-              fontFamily: 'var(--lg-font-body)',
-              fontSize: 'clamp(1rem, 1.4vw, 1.1rem)',
-              color: 'rgba(255,255,255,0.55)',
-              lineHeight: 1.75,
-              fontWeight: 300,
-              maxWidth: '44ch',
-            }}
-          >
-            A student-driven community that fosters innovation, learning, and
-            collaboration. We aim to empower students with hands-on experience,
-            technical skills, and a platform to turn ideas into impactful solutions.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, scaleX: 0 }}
-            animate={isInView ? { opacity: 1, scaleX: 1 } : {}}
-            transition={{ duration: 0.6, delay: 0.45, ease }}
-            style={{
-              transformOrigin: 'left',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.75rem',
-              marginTop: '2rem',
-            }}
-          >
-            <div
-              style={{
-                width: 32,
-                height: 1,
-                background: 'rgba(255,255,255,0.15)',
-              }}
-              aria-hidden="true"
-            />
-            <span
-              style={{
-                fontFamily: 'var(--lg-font-mono)',
-                fontSize: '0.5625rem',
-                letterSpacing: '0.2em',
-                textTransform: 'uppercase',
-                color: 'rgba(255,255,255,0.3)',
-              }}
-            >
-              Karunya Institute of Technology and Sciences
-            </span>
-          </motion.div>
         </motion.div>
 
-        {/* ── Right: 3D Glass Card ── */}
-        <motion.div
-          initial={{ opacity: 0, x: 32, scale: 0.95 }}
-          animate={isInView ? { opacity: 1, x: 0, scale: 1 } : {}}
-          transition={{ duration: 0.8, delay: 0.15, ease }}
-        >
-          <div
-            ref={cardRef}
-            className="lg-about__card liquid-glass-card"
-          >
-            {/* Specular top edge line */}
-            <div
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: '10%',
-                right: '10%',
-                height: 1,
-                background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
-                borderRadius: '0 0 100px 100px',
-              }}
-              aria-hidden="true"
-            />
-
-            <div style={{ position: 'relative', zIndex: 2 }}>
-              {/* Stat row */}
-              <div
+        {/* ── 4-Card Grid ── */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+          gap: '1rem',
+        }}>
+          {CARDS.map(({ num, title, body, cardClass }, i) => {
+            return (
+              <motion.div
+                key={num}
+                initial={{ opacity: 0, y: 32 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.6, delay: 0.1 + i * 0.1, ease }}
+                className={`about-card ${cardClass}`}
                 style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: '1px',
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.05)',
-                  borderRadius: 16,
+                  position: 'relative',
+                  borderRadius: 0,
+                  padding: 'clamp(1.5rem, 2.5vw, 2rem)',
                   overflow: 'hidden',
-                  marginBottom: '2rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  minHeight: 340,
+                  cursor: 'default',
                 }}
               >
-                {[
-                  { value: '4', label: 'Specialist Clubs' },
-                  { value: '6', label: 'Core Portfolios' },
-                  { value: '88+', label: 'Active Members' },
-                  { value: '2025', label: 'Academic Year' },
-                ].map(({ value, label }) => (
-                  <div
-                    key={label}
+                {/* Bottom-to-top hover fill layer */}
+                <div className="about-card__fill" aria-hidden="true" />
+
+                {/* Content */}
+                <div className="about-card__content" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  {/* Number */}
+                  <span
+                    className="about-card__num"
                     style={{
-                      padding: '1.25rem',
-                      background: 'rgba(255,255,255,0.015)',
+                      fontFamily: 'var(--lg-font-display, sans-serif)',
+                      fontSize: '1.25rem',
+                      fontWeight: 700,
+                      letterSpacing: '-0.02em',
+                      lineHeight: 1,
+                      marginBottom: '0.625rem',
                     }}
                   >
-                    <div
-                      style={{
-                        fontFamily: 'var(--lg-font-display)',
-                        fontSize: '1.875rem',
-                        fontWeight: 700,
-                        letterSpacing: '-0.04em',
-                        lineHeight: 1,
-                        color: 'rgba(255,255,255,0.9)',
-                        marginBottom: '0.375rem',
-                      }}
-                    >
-                      {value}
-                    </div>
-                    <div
-                      style={{
-                        fontFamily: 'var(--lg-font-mono)',
-                        fontSize: '0.5625rem',
-                        letterSpacing: '0.14em',
-                        textTransform: 'uppercase',
-                        color: 'rgba(255,255,255,0.3)',
-                      }}
-                    >
-                      {label}
-                    </div>
-                  </div>
-                ))}
-              </div>
+                    {num}
+                  </span>
 
-              {/* Description paragraphs */}
-              <p
-                style={{
-                  fontFamily: 'var(--lg-font-body)',
-                  fontSize: '0.9375rem',
-                  color: 'rgba(255,255,255,0.45)',
-                  lineHeight: 1.7,
-                  fontWeight: 300,
-                  marginBottom: '1.25rem',
-                }}
-              >
-                ATOM (Association of Technology Oriented Minds) is the flagship technical
-                student community at Karunya's Department of Computer Science & Engineering.
-              </p>
-              <p
-                style={{
-                  fontFamily: 'var(--lg-font-body)',
-                  fontSize: '0.9375rem',
-                  color: 'rgba(255,255,255,0.35)',
-                  lineHeight: 1.7,
-                  fontWeight: 300,
-                }}
-              >
-                Through four specialist sub-clubs — Hack Hive, DotDev, Unbiased,
-                and Qyro — we run hands-on programs, hackathons, workshops, and
-                collaborative research across cybersecurity, full-stack development,
-                AI/ML, and quantum computing.
-              </p>
+                  {/* Accent rule under number */}
+                  <div
+                    className="about-card__rule"
+                    style={{
+                      width: 28,
+                      height: 2,
+                      marginBottom: '1.25rem',
+                      borderRadius: 2,
+                    }}
+                  />
 
-              {/* Bottom badge */}
-              <div style={{ marginTop: '2rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                {['Cybersecurity', 'AI / ML', 'Web Dev', 'Quantum'].map(tag => (
-                  <span key={tag} className="lg-badge">{tag}</span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </motion.div>
+                  {/* Title */}
+                  <h3
+                    className="about-card__title"
+                    style={{
+                      fontFamily: 'var(--lg-font-display, sans-serif)',
+                      fontSize: 'clamp(1.3rem, 2vw, 1.6rem)',
+                      fontWeight: 800,
+                      letterSpacing: '-0.03em',
+                      lineHeight: 1.15,
+                      margin: 0,
+                      marginBottom: '0.75rem',
+                    }}
+                  >
+                    {title}
+                  </h3>
+
+                  {/* Rule under title */}
+                  <div
+                    className="about-card__rule"
+                    style={{
+                      width: 28,
+                      height: 2,
+                      marginBottom: '1.25rem',
+                      borderRadius: 2,
+                    }}
+                  />
+
+                  {/* Body */}
+                  <p
+                    className="about-card__body"
+                    style={{
+                      fontFamily: 'var(--lg-font-body, sans-serif)',
+                      fontSize: '0.9rem',
+                      lineHeight: 1.7,
+                      fontWeight: 300,
+                      flex: 1,
+                    }}
+                  >
+                    {body}
+                  </p>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+
       </div>
+
+      {/* Scoped CSS for bottom-to-top slide fill transitions */}
+      <style>{`
+        .about-card {
+          position: relative;
+          overflow: hidden;
+          transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                      box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .about-card:hover {
+          transform: translateY(-4px);
+        }
+
+        /* Slide-up fill layer from bottom to top (matched visual speed with buttons) */
+        .about-card__fill {
+          position: absolute;
+          inset: 0;
+          border-radius: 0;
+          transform: translateY(100%);
+          transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+          z-index: 1;
+          pointer-events: none;
+        }
+        .about-card:hover .about-card__fill {
+          transform: translateY(0%);
+        }
+
+        .about-card__content {
+          position: relative;
+          z-index: 2;
+        }
+
+        .about-card .about-card__num,
+        .about-card .about-card__title,
+        .about-card .about-card__body,
+        .about-card .about-card__rule {
+          transition: color 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+                      background-color 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* ── CARD 1: Default Mint (#5eead4) → Hover Silver (Slide Fill) ── */
+        .about-card--1 {
+          background-color: #5eead4;
+          border: 1px solid transparent;
+        }
+        .about-card--1 .about-card__fill {
+          background-color: #c8cad0;
+        }
+        .about-card--1 .about-card__num { color: rgba(0, 0, 0, 0.5); }
+        .about-card--1 .about-card__title { color: #000000; }
+        .about-card--1 .about-card__body { color: rgba(0, 0, 0, 0.75); }
+        .about-card--1 .about-card__rule { background-color: rgba(0, 0, 0, 0.25); }
+
+        .about-card--1:hover {
+          box-shadow: 0 16px 36px rgba(200, 202, 208, 0.25);
+        }
+        .about-card--1:hover .about-card__num { color: rgba(0, 0, 0, 0.45); }
+        .about-card--1:hover .about-card__title { color: #000000; }
+        .about-card--1:hover .about-card__body { color: rgba(0, 0, 0, 0.65); }
+        .about-card--1:hover .about-card__rule { background-color: rgba(0, 0, 0, 0.2); }
+
+        /* ── CARD 2: Default Dark → Hover Mint (Slide Fill) ── */
+        .about-card--2 {
+          background-color: rgba(18, 20, 30, 0.85);
+          border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .about-card--2 .about-card__fill {
+          background-color: #5eead4;
+        }
+        .about-card--2 .about-card__num { color: rgba(125, 249, 228, 0.75); }
+        .about-card--2 .about-card__title { color: #ffffff; }
+        .about-card--2 .about-card__body { color: rgba(255, 255, 255, 0.6); }
+        .about-card--2 .about-card__rule { background-color: rgba(125, 249, 228, 0.4); }
+
+        .about-card--2:hover {
+          box-shadow: 0 16px 36px rgba(94, 234, 212, 0.25);
+        }
+        .about-card--2:hover .about-card__num { color: rgba(0, 0, 0, 0.5); }
+        .about-card--2:hover .about-card__title { color: #000000; }
+        .about-card--2:hover .about-card__body { color: rgba(0, 0, 0, 0.75); }
+        .about-card--2:hover .about-card__rule { background-color: rgba(0, 0, 0, 0.25); }
+
+        /* ── CARD 3: Default Dark → Hover Silver (Slide Fill) ── */
+        .about-card--3 {
+          background-color: rgba(18, 20, 30, 0.85);
+          border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .about-card--3 .about-card__fill {
+          background-color: #c8cad0;
+        }
+        .about-card--3 .about-card__num { color: rgba(125, 249, 228, 0.75); }
+        .about-card--3 .about-card__title { color: #ffffff; }
+        .about-card--3 .about-card__body { color: rgba(255, 255, 255, 0.6); }
+        .about-card--3 .about-card__rule { background-color: rgba(125, 249, 228, 0.4); }
+
+        .about-card--3:hover {
+          box-shadow: 0 16px 36px rgba(200, 202, 208, 0.25);
+        }
+        .about-card--3:hover .about-card__num { color: rgba(0, 0, 0, 0.45); }
+        .about-card--3:hover .about-card__title { color: #000000; }
+        .about-card--3:hover .about-card__body { color: rgba(0, 0, 0, 0.65); }
+        .about-card--3:hover .about-card__rule { background-color: rgba(0, 0, 0, 0.2); }
+
+        /* ── CARD 4: Default Silver → Hover Mint (Slide Fill) ── */
+        .about-card--4 {
+          background-color: #c8cad0;
+          border: 1px solid transparent;
+        }
+        .about-card--4 .about-card__fill {
+          background-color: #5eead4;
+        }
+        .about-card--4 .about-card__num { color: rgba(0, 0, 0, 0.45); }
+        .about-card--4 .about-card__title { color: #000000; }
+        .about-card--4 .about-card__body { color: rgba(0, 0, 0, 0.6); }
+        .about-card--4 .about-card__rule { background-color: rgba(0, 0, 0, 0.2); }
+
+        .about-card--4:hover {
+          box-shadow: 0 16px 36px rgba(94, 234, 212, 0.25);
+        }
+        .about-card--4:hover .about-card__num { color: rgba(0, 0, 0, 0.5); }
+        .about-card--4:hover .about-card__title { color: #000000; }
+        .about-card--4:hover .about-card__body { color: rgba(0, 0, 0, 0.75); }
+        .about-card--4:hover .about-card__rule { background-color: rgba(0, 0, 0, 0.25); }
+      `}</style>
     </section>
   );
 };

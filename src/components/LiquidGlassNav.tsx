@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
-import atomLogo from '@/assets/atom-logo-white.png';
+import atomLogoColor from '@/assets/atom-logo.webp';
 
 // ── iOS Liquid Glass Floating Centered Navbar ────────────────────────────────
 
@@ -158,11 +158,16 @@ const LiquidGlassNav: React.FC = () => {
                 style={{
                   background: `
                     radial-gradient(
-                      160px circle at ${mouseX}% 50%,
-                      rgba(255,255,255,0.08) 0%,
+                      180px circle at ${mouseX}% 50%,
+                      rgba(255,255,255,0.12) 0%,
                       transparent 70%
                     ),
-                    rgba(10, 10, 18, 0.85)
+                    linear-gradient(
+                      180deg,
+                      rgba(255, 255, 255, 0.06) 0%,
+                      rgba(12, 14, 20, 0.7) 40%,
+                      rgba(5, 6, 9, 0.88) 100%
+                    )
                   `,
                 }}
               >
@@ -177,10 +182,15 @@ const LiquidGlassNav: React.FC = () => {
                     }
                   }}
                 >
-                  <div className="lg-nav-logo__mark">
-                    <img src={atomLogo} alt="" aria-hidden="true" />
-                  </div>
-                  <span className="lg-nav-logo__text">ATOM</span>
+                  <span className="lg-nav-logo__text inline-flex items-center gap-0.5">
+                    <span className="atom-brand-text">AT</span>
+                    <img
+                      src={atomLogoColor}
+                      alt="O"
+                      className="w-[0.75em] h-[0.75em] object-contain inline-block align-middle -mt-0.5"
+                    />
+                    <span className="atom-brand-text">M</span>
+                  </span>
                 </Link>
 
                 {/* Desktop nav links with 3D Liquid Glass Magnifying Lens */}

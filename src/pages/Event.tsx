@@ -1,13 +1,11 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
-import { motion, useInView, useScroll, useSpring } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Search, X } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import { type Event as EventType } from '@/constants/events';
 import { useEvents } from '@/hooks/useContent';
 import { generateSlug } from '@/utils/slug';
-import atomLogo from '@/assets/atom-logo.webp';
 import { useLenis } from '@/hooks/useLenis';
-import { animate, useMotionValue, useTransform } from 'framer-motion';
+import { motion, useInView, useScroll, useSpring, animate, useMotionValue, useTransform } from 'framer-motion';
 import Footer from '@/components/Footer';
 import OrbitalCanvas from '@/components/OrbitalCanvas';
 import PastEventTimeline from '@/components/events/PastEventTimeline';
@@ -120,72 +118,7 @@ const Event: React.FC = () => {
         }}
       />
 
-      {/* ── Sticky Nav ──────────────────────────────────────────────────── */}
-      <motion.nav
-        className="fixed top-0 left-0 w-full z-40"
-        style={{
-          height: 'var(--nav-height)',
-          backgroundColor: 'hsla(var(--ink), 0.85)',
-          backdropFilter: 'blur(16px)',
-          borderBottom: '1px solid hsl(var(--rule))'
-        }}
-        initial={{ opacity: 0, y: -12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: 'easeOut' }}
-      >
-        <div
-          className="mx-auto flex items-center justify-between h-full"
-          style={{
-            maxWidth: 'var(--container-xl)',
-            padding: '0 var(--space-6)',
-          }}
-        >
-          {/* Logo & Back Button - Left aligned */}
-          <div className="flex items-center gap-4 sm:gap-6">
-            <button
-              onClick={() => {
-                if (window.history.length > 1) {
-                  navigate(-1);
-                } else {
-                  navigate('/');
-                }
-              }}
-              className="focus-phosphor flex items-center gap-1.5 text-[hsl(var(--graphite))] hover:text-[hsl(var(--chalk))] transition-colors uppercase tracking-[0.15em] group"
-              style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem' }}
-            >
-              <ArrowLeft className="w-3 h-3 transition-transform group-hover:-translate-x-1" />
-              <span>Back</span>
-            </button>
 
-            <button
-              onClick={() => navigate('/')}
-              className="focus-phosphor flex items-center gap-2.5 group"
-              aria-label="Return to homepage"
-            >
-              <img
-                src={atomLogo}
-                alt="ATOM"
-                className="w-7 h-7 opacity-90 transition-transform duration-500 group-hover:rotate-90"
-              />
-              <span
-                className="hidden sm:inline text-[hsl(var(--chalk))] tracking-[-0.03em]"
-                style={{ fontFamily: 'var(--font-display)', fontSize: '0.9375rem' }}
-              >
-                ATOM
-              </span>
-            </button>
-          </div>
-
-          <div className="flex items-center gap-6">
-            <span
-              className="text-[hsl(var(--chalk))] uppercase tracking-[0.15em]"
-              style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem' }}
-            >
-              Events Archive
-            </span>
-          </div>
-        </div>
-      </motion.nav>
 
       {/* ── Hero Section ────────────────────────────────────────────────── */}
       <section

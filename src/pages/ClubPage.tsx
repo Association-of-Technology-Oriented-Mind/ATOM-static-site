@@ -4,6 +4,7 @@ import { motion, useScroll, useTransform, useMotionValue, useSpring } from 'fram
 import { ArrowLeft, Github, Linkedin, Maximize2, X, Target, Users, Code } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
+import { useClubs } from '@/hooks/useContent';
 import { hackhiveClub } from '@/constants/hackhive';
 import { dotdevClub } from '@/constants/dotdev';
 import { unbiasClub } from '@/constants/unbias';
@@ -139,7 +140,11 @@ const FloatingOrbs = ({ color }: { color: string }) => {
 
 const ClubPage = () => {
   const { slug } = useParams<{ slug: string }>();
-  const club = getClubData(slug);
+  const { data: storedClubs } = useClubs();
+  
+  const club = storedClubs && slug
+    ? storedClubs.find(c => c.slug?.toLowerCase() === slug.toLowerCase() || c.id?.toString().toLowerCase() === slug.toLowerCase()) || getClubData(slug)
+    : getClubData(slug);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const navigate = useNavigate();
   const heroRef = useRef<HTMLDivElement>(null);
@@ -167,13 +172,7 @@ const ClubPage = () => {
             The dossier you are looking for does not exist or has been relocated.
           </p>
           <button 
-            onClick={() => {
-              if (window.history.length > 1) {
-                navigate(-1);
-              } else {
-                navigate('/#clubs-section');
-              }
-            }} 
+            onClick={() => navigate('/#clubs-section')} 
             className="inline-flex items-center gap-3 mono-label text-xs tracking-widest text-[hsl(var(--chalk))] hover:text-[hsl(var(--phosphor))] transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -211,10 +210,7 @@ const ClubPage = () => {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease, delay: 0.1 }}
-          onClick={() => {
-            if (window.history.length > 1) navigate(-1);
-            else navigate('/#clubs-section');
-          }}
+          onClick={() => navigate('/#clubs-section')}
           className="absolute top-28 left-6 md:left-12 inline-flex items-center gap-3 mono-label text-xs tracking-widest text-white/50 hover:text-[hsl(var(--phosphor))] transition-colors z-20 bg-white/5 backdrop-blur-md px-4 py-2 rounded-full border border-white/10"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
@@ -230,7 +226,6 @@ const ClubPage = () => {
             style={{ scale: logoScale, opacity: logoOpacity, y: yParallax }}
             className="w-40 h-40 md:w-56 md:h-56 lg:w-64 lg:h-64 mb-8 relative z-0 flex items-center justify-center"
           >
-            <div className="absolute inset-0 bg-[hsl(var(--phosphor))] blur-3xl opacity-20 rounded-full" />
             {typeof club.icon === 'string' ? (
               <img src={club.icon} alt={club.name} className="w-full h-full object-contain relative z-10 drop-shadow-2xl" />
             ) : (

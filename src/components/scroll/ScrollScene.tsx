@@ -33,6 +33,7 @@ const ScrollScene = ({ heightVh = 400, children, className = '' }: ScrollScenePr
   const rafRef = useRef<number | null>(null);
   const [progress, setProgress] = useState(0);
   const [stage, setStage] = useState<Stage>('before');
+  const [inView, setInView] = useState(false);
 
   const tick = useCallback(() => {
     const container = containerRef.current;
@@ -56,11 +57,32 @@ const ScrollScene = ({ heightVh = 400, children, className = '' }: ScrollScenePr
   }, []);
 
   useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setInView(entry.isIntersecting);
+      },
+      {
+        rootMargin: '100px 0px 100px 0px',
+      }
+    );
+
+    observer.observe(container);
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!inView) return;
+
     rafRef.current = requestAnimationFrame(tick);
     return () => {
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
     };
-  }, [tick]);
+  }, [tick, inView]);
 
   const stageStyle: React.CSSProperties =
     stage === 'fixed'
