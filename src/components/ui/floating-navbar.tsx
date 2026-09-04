@@ -10,10 +10,10 @@ export interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { name: 'Home',    link: '/' },
-  { name: 'Events',  link: '/events' },
-  { name: 'Clubs',   link: '/#clubs-section' },
-  { name: 'Team',    link: '/core' },
+  { name: 'Home', link: '/' },
+  { name: 'Events', link: '/events' },
+  { name: 'Clubs', link: '/#clubs-section' },
+  { name: 'Team', link: '/core' },
   { name: 'Gallery', link: '/full-gallery' },
 ];
 
@@ -87,7 +87,6 @@ function buildDisplacementMap(w: number, h: number, borderRadius: number) {
 export const FloatingNav = () => {
   const { scrollY }  = useScroll();
   const location     = useLocation();
-  const [visible,    setVisible]    = useState(false);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
   const filterId  = 'lg-nav-filter';
@@ -102,26 +101,42 @@ export const FloatingNav = () => {
     location.pathname.startsWith('/login') ||
     location.pathname.startsWith('/registration');
 
-  /* scroll visibility */
-  useMotionValueEvent(scrollY, 'change', (latest) => {
-    if (isExcludedPage) { setVisible(false); return; }
-    const previous = scrollY.getPrevious() ?? 0;
-    const isDown   = latest > previous;
+  const [visible, setVisible] = useState(() => {
+    if (isExcludedPage) return false;
+    if (location.pathname === '/') return false;
+    return true;
+  });
 
-    if (location.pathname === '/') {
-      const threshold = window.innerHeight * 0.75;
-      if (latest < threshold) setVisible(false);
-      else setVisible(!isDown);
-    } else {
-      if (latest < 50) setVisible(true);
-      else setVisible(!isDown);
+  const checkVisibility = (y: number) => {
+    if (isExcludedPage) {
+      setVisible(false);
+      return;
     }
+    if (location.pathname === '/') {
+      const clubsEl = document.getElementById('clubs-section');
+      const minThreshold = window.innerHeight * 0.75;
+      let threshold = minThreshold;
+      
+      if (clubsEl && clubsEl.offsetTop > minThreshold) {
+        threshold = clubsEl.offsetTop - 200;
+      }
+      
+      setVisible(y >= threshold);
+    } else {
+      setVisible(true);
+    }
+  };
+
+  useMotionValueEvent(scrollY, 'change', (latest) => {
+    checkVisibility(latest);
   });
 
   useEffect(() => {
-    if (isExcludedPage) { setVisible(false); return; }
-    if (location.pathname !== '/') setVisible(true);
-    else setVisible(window.scrollY > window.innerHeight * 0.75);
+    checkVisibility(window.scrollY);
+    const timer = setTimeout(() => {
+      checkVisibility(window.scrollY);
+    }, 300);
+    return () => clearTimeout(timer);
   }, [location.pathname, isExcludedPage]);
 
   /* Build displacement map & update SVG filter */
@@ -165,7 +180,7 @@ export const FloatingNav = () => {
 
   return (
     <>
-      {/* Hidden SVG holding the displacement filter */}
+      {/* Hidden SVG holding displacement filter */}
       <svg
         ref={svgRef}
         xmlns="http://www.w3.org/2000/svg"
@@ -205,50 +220,40 @@ export const FloatingNav = () => {
           <motion.div
             ref={navRef}
             initial={{ opacity: 0, y: -100, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0,    scale: 1 }}
-            exit={{    opacity: 0, y: -100, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -100, scale: 0.95 }}
             transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             onAnimationComplete={buildFilter}
             className={cn(
-              'fixed top-6 inset-x-0 mx-auto z-[9999]',
-              'flex items-center justify-between',
-              'w-[90%] max-w-lg px-4 sm:px-6 py-2.5 rounded-full',
+              "fixed top-6 inset-x-0 mx-auto z-[9999]",
+              "flex items-center justify-between",
+              "w-[90%] max-w-lg px-4 sm:px-6 py-2 rounded-full",
+              "bg-black/40 backdrop-blur-xl border border-white/[0.12]",
+              "shadow-[0_8px_32px_0_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.08)]"
             )}
-            style={{
-              backdropFilter: `url(#${filterId}) blur(20px) contrast(1.1) brightness(1.06) saturate(1.15)`,
-              WebkitBackdropFilter: `blur(20px) contrast(1.1) brightness(1.06) saturate(1.15)`,
-              background: 'linear-gradient(135deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.04) 60%, rgba(125,249,228,0.04) 100%)',
-              border: '1px solid rgba(255,255,255,0.14)',
-              boxShadow: [
-                '0 8px 32px rgba(0,0,0,0.55)',
-                '0 1.5px 0 rgba(255,255,255,0.14) inset',
-                '0 -1px 0 rgba(0,0,0,0.3) inset',
-                '0 0 0 0.5px rgba(255,255,255,0.06) inset',
-              ].join(','),
-            }}
           >
             {/* Brand logo */}
             <Link
               to="/"
-              className="flex items-center gap-1.5 focus:outline-none pl-1 shrink-0"
+              className="flex items-center focus:outline-none pl-1 group"
               onClick={() => {
                 if (location.pathname === '/') {
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
               }}
+              aria-label="ATOM Homepage"
             >
               <img
                 src={atomLogo}
                 alt="ATOM"
-                className="w-6 h-6 sm:w-7 sm:h-7 object-contain"
-                style={{ filter: 'drop-shadow(0 0 7px rgba(125,249,228,0.4))' }}
+                className="w-6 h-6 sm:w-7 sm:h-7 object-contain opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-300 filter drop-shadow-[0_0_8px_rgba(125,249,228,0.4)]"
               />
             </Link>
 
-            {/* Nav items */}
-            <nav className="flex items-center gap-0.5 relative">
+            {/* Navigation Pill Items */}
+            <nav className="flex items-center gap-1 relative">
               {navItems.map((item, idx) => {
-                const isHash   = item.link.includes('#');
+                const isHash = item.link.includes('#');
                 const isActive = isHash
                   ? location.pathname === '/' && location.hash === '#clubs-section'
                   : location.pathname === item.link;
@@ -257,45 +262,58 @@ export const FloatingNav = () => {
                   if (isHash && location.pathname === '/') {
                     e.preventDefault();
                     const targetId = item.link.split('#')[1];
-                    document.getElementById(targetId)?.scrollIntoView({ behavior: 'smooth' });
+                    const element = document.getElementById(targetId);
+                    if (element) {
+                      element.scrollIntoView({ behavior: 'smooth' });
+                    }
                   }
                 };
-
-                const linkClass = cn(
-                  'relative z-10 flex items-center focus:outline-none',
-                  'font-mono text-[10px] sm:text-[11px] tracking-widest uppercase font-medium',
-                  'transition-colors duration-200 select-none',
-                  isActive ? 'text-[hsl(var(--phosphor))]' : 'text-white/70 hover:text-white'
-                );
 
                 return (
                   <div
                     key={item.name}
                     onMouseEnter={() => setHoveredIdx(idx)}
                     onMouseLeave={() => setHoveredIdx(null)}
-                    className="relative px-3 py-2"
+                    className="relative px-2.5 py-1.5 sm:px-3 sm:py-2"
                   >
-                    {/* Sliding hover capsule — mint cyan themed */}
-                    {hoveredIdx === idx && (
+                    {/* Sliding Theme-colored Liquid Glass capsule effect */}
+                    {(hoveredIdx === idx || (hoveredIdx === null && isActive)) && (
                       <motion.div
                         layoutId="nav-hover-pill"
-                        className="absolute inset-0 rounded-full overflow-hidden"
-                        transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-                        style={{
-                          background: 'linear-gradient(135deg, rgba(125,249,228,0.20) 0%, rgba(125,249,228,0.07) 100%)',
-                          border: '1px solid rgba(125,249,228,0.28)',
-                          boxShadow: '0 0 14px rgba(125,249,228,0.18) inset',
-                        }}
+                        className={cn(
+                          "absolute inset-0 rounded-full border transition-colors duration-200",
+                          hoveredIdx === idx
+                            ? "bg-[hsl(var(--phosphor)/0.18)] border-[hsl(var(--phosphor)/0.35)] shadow-[0_0_12px_hsl(var(--phosphor)/0.25)]"
+                            : "bg-[hsl(var(--phosphor)/0.12)] border-[hsl(var(--phosphor)/0.22)]"
+                        )}
+                        transition={{ type: "spring", stiffness: 350, damping: 25 }}
                       />
                     )}
 
                     {isHash ? (
-                      <a href={item.link} onClick={handleClick} className={linkClass}>
-                        {item.name}
+                      <a
+                        href={item.link}
+                        onClick={handleClick}
+                        className={cn(
+                          "relative z-10 flex items-center focus:outline-none transition-colors duration-200",
+                          isActive ? "text-[hsl(var(--phosphor))]" : "text-white/70 hover:text-white"
+                        )}
+                      >
+                        <span className="font-mono text-[10px] sm:text-xs tracking-widest uppercase font-medium">
+                          {item.name}
+                        </span>
                       </a>
                     ) : (
-                      <Link to={item.link} className={linkClass}>
-                        {item.name}
+                      <Link
+                        to={item.link}
+                        className={cn(
+                          "relative z-10 flex items-center focus:outline-none transition-colors duration-200",
+                          isActive ? "text-[hsl(var(--phosphor))]" : "text-white/70 hover:text-white"
+                        )}
+                      >
+                        <span className="font-mono text-[10px] sm:text-xs tracking-widest uppercase font-medium">
+                          {item.name}
+                        </span>
                       </Link>
                     )}
                   </div>
@@ -308,5 +326,3 @@ export const FloatingNav = () => {
     </>
   );
 };
-
-

@@ -151,7 +151,6 @@ const EventDetailPage: React.FC = () => {
           Return to Events
         </button>
       </nav>
-
       {/* ── Cinematic Hero ─────────────────────────────────────────────────── */}
       <div className="relative w-full h-[70vh] lg:h-[80vh] flex flex-col justify-end">
         {/* Parallax Background */}

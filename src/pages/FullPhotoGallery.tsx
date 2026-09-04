@@ -441,34 +441,8 @@ const FullPhotoGallery = () => {
 
   return (
     <main className="min-h-screen bg-[hsl(var(--ink))] overflow-hidden">
-      {/* Header with back button */}
-      <div className="absolute top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-[hsl(var(--rule))]" style={{ backgroundColor: 'hsla(var(--ink), 0.85)' }}>
-        <div className="mx-auto px-6 sm:px-10 lg:px-16 py-0 flex items-center justify-between" style={{ maxWidth: 'var(--container-xl)', height: 'var(--nav-height)' }}>
-          <motion.button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-[hsl(var(--graphite))] hover:text-[hsl(var(--chalk))] transition-colors"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span className="hidden sm:inline uppercase tracking-[0.15em] mono-label" style={{ fontSize: '0.625rem' }}>Back</span>
-          </motion.button>
-
-          <motion.h1
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-base sm:text-lg uppercase absolute left-1/2 -translate-x-1/2"
-            style={{ fontFamily: 'var(--font-display)', color: 'hsl(var(--chalk))', letterSpacing: '-0.02em' }}
-          >
-            Event Gallery
-          </motion.h1>
-
-          <div className="w-16 sm:w-20"></div> {/* Spacer for centering */}
-        </div>
-      </div>
-
       {/* GSAP Masonry Gallery */}
-      <div className="w-full h-screen pt-20 p-8 overflow-y-auto">
+      <div className="w-full h-screen pt-24 sm:pt-28 p-4 sm:p-8 overflow-y-auto">
         {loadedItems.length > 0 ? (
           <Masonry
             items={loadedItems}
