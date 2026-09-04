@@ -38,16 +38,16 @@ const ModernEventModal: React.FC<ModernEventModalProps> = ({
 
     // Helper: build a Date object from ISO date (YYYY-MM-DD) and various time formats
     const buildEventDate = (dateStr: string, timeStr?: string) => {
-      // Try to parse YYYY-MM-DD first
-      const isoMatch = dateStr.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+      const cleanDateStr = dateStr.includes(',') ? dateStr.split(',')[0].trim() : dateStr.trim();
+      const isoMatch = cleanDateStr.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
       let year: number, month: number, day: number;
       if (isoMatch) {
         year = parseInt(isoMatch[1], 10);
         month = parseInt(isoMatch[2], 10) - 1;
         day = parseInt(isoMatch[3], 10);
       } else {
-        const d = new Date(dateStr);
-        if (isNaN(d.getTime())) return new Date(dateStr); // fallback
+        const d = new Date(cleanDateStr);
+        if (isNaN(d.getTime())) return new Date();
         return d;
       }
 
@@ -403,7 +403,18 @@ const ModernEventModal: React.FC<ModernEventModalProps> = ({
                     </div>
 
                     {/* Registration Button */}
-                    {onRegister && !showRegistrationOptions && (
+                    {event.registrationLink ? (
+                      <div className="text-center">
+                        <a
+                          href={event.registrationLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-block bg-gradient-to-r from-atom-primary to-electric hover:from-atom-primary/80 hover:to-electric/80 text-white px-12 py-5 text-xl font-bold rounded-2xl transition-all duration-300 hover:scale-105 shadow-2xl hover:shadow-atom-primary/25"
+                        >
+                          Register Now 🚀
+                        </a>
+                      </div>
+                    ) : onRegister && !showRegistrationOptions && (
                       <div className="text-center">
                         <Button
                           onClick={() => setShowRegistrationOptions(true)}

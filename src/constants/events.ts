@@ -21,7 +21,40 @@ export const events: Event[] = [
   // -----------------------------
   // Upcoming Events
   // -----------------------------
-  // No upcoming events currently - check back soon!
+  {
+    id: 13,
+    title: "HALO 2026",
+    date: "2026-09-22,2026-09-23",
+    time: "09:00 AM",
+    location: "Karunya Institute of Technology and Sciences, Coimbatore",
+    description: `The Division of Data Science and Cyber Security, through **ATOM — Association of Technology Oriented Minds**, presents **HALO 2026**, a 2-day hackathon.
+
+### 🗓️ Event Schedule & Bootcamp
+- **6-Day Preparatory Bootcamp:** September 7th – 12th, 2026 (Covering AI, Agentic AI, Full-Stack Development, Cybersecurity, Deployment & DevOps)
+- **Registration Deadline:** September 10th, 2026
+- **2-Day Hackathon:** September 22nd & 23rd, 2026
+
+### 👥 Team Composition
+- **Team Size:** Exactly 3 Members per Team
+
+---
+
+### 🚨 Important Registration Instructions
+- **Single Submission:** Only one member from each team, designated as the **Team Leader**, should submit the registration form.
+- **Team Leader Responsibility:** The Team Leader is responsible for registering all three members of the team.
+- **Team Composition:** Each team must consist of **exactly 3 members**.
+- **Accuracy:** Please ensure that the information provided for all team members is accurate and up to date.
+- **No Duplicates:** Do not submit multiple registrations for the same team.
+
+---
+
+*Further information regarding the hackathon, challenge domains, guidelines, and submission process will be communicated to the registered teams. Please ensure all information provided in the registration form is accurate.*`,
+    image: "/EVENTS/HALO 2026.webp",
+    status: "upcoming",
+    category: "Hackathon",
+    eventType: "free",
+    registrationLink: "https://forms.gle/Zx7yN2TRAVGxxWFi9",
+  },
 
 
   // -----------------------------

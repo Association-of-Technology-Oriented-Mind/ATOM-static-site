@@ -19,15 +19,16 @@ interface TimeLeft {
 }
 
 const buildEventDate = (dateStr: string, timeStr?: string) => {
-  const isoMatch = dateStr.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  const cleanDateStr = dateStr.includes(',') ? dateStr.split(',')[0].trim() : dateStr.trim();
+  const isoMatch = cleanDateStr.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
   let year: number, month: number, day: number;
   if (isoMatch) {
     year = parseInt(isoMatch[1], 10);
     month = parseInt(isoMatch[2], 10) - 1;
     day = parseInt(isoMatch[3], 10);
   } else {
-    const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return new Date(dateStr);
+    const d = new Date(cleanDateStr);
+    if (isNaN(d.getTime())) return new Date();
     return d;
   }
 
@@ -241,40 +242,51 @@ const EventDetailPage: React.FC = () => {
 
             {/* Registration CTA Section */}
             <div className="w-full lg:w-[35%] flex flex-col items-start lg:items-end lg:border-l border-[hsl(var(--rule))] pt-8 lg:pt-0 lg:pl-10">
-               {event.status === 'upcoming' && !isExpired ? (
+               {event.status === 'upcoming' ? (
                  <div className="w-full">
-                   <AnimatePresence mode="wait">
-                     {!showRegistrationOptions ? (
-                       <motion.div key="btn" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -10 }}>
-                         <button 
-                           onClick={() => setShowRegistrationOptions(true)} 
-                           className="btn-tech w-full py-5 text-sm uppercase tracking-widest shadow-[0_0_20px_hsl(var(--phosphor)/0.3)] hover:shadow-[0_0_30px_hsl(var(--phosphor)/0.5)] transition-all"
-                         >
-                           Secure Your Spot
-                         </button>
-                       </motion.div>
-                     ) : (
-                       <motion.div key="options" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-3 w-full">
-                         <button 
-                           onClick={() => navigate('/registration/internal')} 
-                           className="w-full py-4 uppercase tracking-widest text-[11px] font-bold border border-[hsl(var(--phosphor)/0.5)] bg-[hsl(var(--phosphor)/0.05)] hover:bg-[hsl(var(--phosphor)/0.15)] text-[hsl(var(--chalk))] transition-colors rounded"
-                           style={{ fontFamily: 'var(--font-mono)' }}
-                         >
-                           Internal (Karunya)
-                         </button>
-                         <button 
-                           onClick={() => navigate('/registration/external')} 
-                           className="btn-tech w-full py-4 text-[11px]"
-                         >
-                           External Participant
-                         </button>
-                       </motion.div>
-                     )}
-                   </AnimatePresence>
-                 </div>
-               ) : event.status === 'upcoming' && isExpired ? (
-                 <div className="w-full text-center py-5 border border-red-500/30 bg-red-500/10 rounded-lg">
-                   <p className="mono-label text-red-400">REGISTRATION CLOSED</p>
+                   {event.registrationLink ? (
+                     <a
+                       href={event.registrationLink}
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       className="btn-tech w-full py-5 text-sm uppercase tracking-widest shadow-[0_0_20px_hsl(var(--phosphor)/0.3)] hover:shadow-[0_0_30px_hsl(var(--phosphor)/0.5)] transition-all flex items-center justify-center gap-2"
+                     >
+                       Register Now 🚀
+                     </a>
+                   ) : !isExpired ? (
+                     <AnimatePresence mode="wait">
+                       {!showRegistrationOptions ? (
+                         <motion.div key="btn" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -10 }}>
+                           <button 
+                             onClick={() => setShowRegistrationOptions(true)} 
+                             className="btn-tech w-full py-5 text-sm uppercase tracking-widest shadow-[0_0_20px_hsl(var(--phosphor)/0.3)] hover:shadow-[0_0_30px_hsl(var(--phosphor)/0.5)] transition-all"
+                           >
+                             Secure Your Spot
+                           </button>
+                         </motion.div>
+                       ) : (
+                         <motion.div key="options" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-3 w-full">
+                           <button 
+                             onClick={() => navigate('/registration/internal')} 
+                             className="w-full py-4 uppercase tracking-widest text-[11px] font-bold border border-[hsl(var(--phosphor)/0.5)] bg-[hsl(var(--phosphor)/0.05)] hover:bg-[hsl(var(--phosphor)/0.15)] text-[hsl(var(--chalk))] transition-colors rounded"
+                             style={{ fontFamily: 'var(--font-mono)' }}
+                           >
+                             Internal (Karunya)
+                           </button>
+                           <button 
+                             onClick={() => navigate('/registration/external')} 
+                             className="btn-tech w-full py-4 text-[11px]"
+                           >
+                             External Participant
+                           </button>
+                         </motion.div>
+                       )}
+                     </AnimatePresence>
+                   ) : (
+                     <div className="w-full text-center py-5 border border-red-500/30 bg-red-500/10 rounded-lg">
+                       <p className="mono-label text-red-400">REGISTRATION CLOSED</p>
+                     </div>
+                   )}
                  </div>
                ) : (
                  <div className="w-full text-center py-5 border border-[hsl(var(--rule))] bg-black/20 rounded-lg">
