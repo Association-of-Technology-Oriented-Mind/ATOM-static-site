@@ -464,11 +464,11 @@ export const Hero = () => {
               <img
                 src={atomLogo}
                 alt="O"
-                className="w-[0.72em] h-[0.72em] mx-[0.02em] object-contain inline-block align-middle -mt-[0.08em]"
+                className="w-[0.72em] h-[0.72em] mx-[0.02em] object-contain inline-block align-middle -mt-[0.08em] filter drop-shadow-[0_0_16px_rgba(125,249,228,0.25)] transition-transform duration-700 hover:rotate-45"
               />
               <span className="atom-brand-text">M</span>
             </motion.h1>
-            
+
             <motion.p
               variants={itemVariants}
               className="text-[4vw] md:text-[2rem] lg:text-[2.25rem] font-semibold text-[hsl(var(--phosphor))] leading-tight mt-4 mb-8"
@@ -491,7 +491,7 @@ export const Hero = () => {
             >
               <a
                 href="#clubs-section"
-                className="btn-tech flex items-center gap-2 px-8 py-3.5"
+                className="btn-tech flex items-center gap-2 border border-[hsl(var(--rule))] px-8 py-3.5 bg-transparent hover:border-[hsl(var(--phosphor))] font-mono text-xs uppercase"
               >
                 <span>Explore Clubs</span>
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
@@ -500,7 +500,7 @@ export const Hero = () => {
               </a>
               <a
                 href="#core-members"
-                className="btn-tech px-8 py-3.5"
+                className="btn-tech border border-[hsl(var(--rule))] px-8 py-3.5 bg-transparent hover:border-[hsl(var(--phosphor))] font-mono text-xs uppercase"
               >
                 <span>Core Team</span>
               </a>

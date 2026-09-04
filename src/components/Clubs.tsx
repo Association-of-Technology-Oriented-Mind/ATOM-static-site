@@ -493,10 +493,18 @@ const ClubScene = ({
             >
               <Link
                 to={`/clubs/${club.slug}`}
-                className="btn-tech flex items-center gap-2 px-8 py-3.5 w-fit"
+<<<<<<< HEAD
+                className="group relative inline-flex items-center justify-between gap-6 bg-transparent border border-[hsl(var(--phosphor)/0.4)] hover:border-[hsl(var(--phosphor))] px-8 py-5 w-full md:w-auto overflow-hidden transition-all duration-300 rounded shadow-[0_0_20px_rgba(0,0,0,0.5)]"
               >
-                <span>Learn More</span>
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                {/* Sliding Mint Cyan Background from Bottom to Top */}
+                <div className="absolute inset-0 bg-[hsl(var(--phosphor))] translate-y-[100%] group-hover:translate-y-0 transition-transform duration-400 ease-out pointer-events-none" />
+
+                <div className="relative z-10 flex items-center gap-3">
+                  <span className="w-2 h-2 bg-[hsl(var(--phosphor))] group-hover:bg-black rounded-full transition-colors duration-300 shadow-[0_0_8px_hsl(var(--phosphor))]" />
+                  <span className="mono-label text-[hsl(var(--chalk))] group-hover:text-black transition-colors duration-300 uppercase tracking-[0.2em] text-xs">Initiate Handshake</span>
+                </div>
+
+                <svg className="w-4 h-4 text-[hsl(var(--graphite))] group-hover:text-black transition-colors duration-300 relative z-10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
                   <path d="M1 6h10M6 1l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </Link>
